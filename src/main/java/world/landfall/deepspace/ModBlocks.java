@@ -35,6 +35,9 @@ public class ModBlocks {
             .sound(SoundType.STONE)
             .mapColor(MapColor.COLOR_GRAY)
     ));
+
+    public static final DeferredBlock<Block> PICKLE_VINE_BLOCK = BLOCKS.register("pickle_vine_block", () -> new PicklePlantBlock(BlockBehaviour.Properties.of().instabreak().dynamicShape()));
+
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }

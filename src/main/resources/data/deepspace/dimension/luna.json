@@ -18,8 +18,8 @@
       "noise": {
         "min_y": -64,
         "height": 208,
-        "size_horizontal": 1,
-        "size_vertical": 1
+        "size_horizontal": 2,
+        "size_vertical": 2
       },
       "noise_router": {
         "barrier": 0,
@@ -32,15 +32,19 @@
         "erosion": "minecraft:overworld/erosion",
         "depth": {
           "type": "minecraft:mul",
-          "argument1": "minecraft:overworld/depth",
+          "argument1": "deepspace:depth",
           "argument2": 0.5
         },
         "ridges": "minecraft:overworld/ridges",
-        "initial_density_without_jaggedness": "minecraft:overworld/depth",
+        "initial_density_without_jaggedness": {
+          "type": "minecraft:mul",
+          "argument1": "minecraft:overworld/depth",
+          "argument2": 0.5
+        },
         "final_density": "minecraft:overworld/depth",
-        "vein_toggle": 0.5,
-        "vein_ridged": 0.5,
-        "vein_gap": 0.5
+        "vein_toggle": 1,
+        "vein_ridged": 1,
+        "vein_gap": 1
       },
       "surface_rule": {
         "type": "minecraft:sequence",
