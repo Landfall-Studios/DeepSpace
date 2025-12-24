@@ -78,6 +78,9 @@ public class SpacePlayerEvents {
 
                 var keyPressed = player.getData(ModAttatchments.IS_ROCKETING_FORWARD);
                 var rocketVelocity = lookAngle.toVector3f().mul(.04f).rotateY(moveDir.angle(new Vector3f(1, 0, 0)) * ((l - r < 0 ? -1 : 1)));
+                if (moveDir.x < 0) {
+                    rocketVelocity.y *= -1;
+                }
                 Vector3f newVelocity = new Vector3f(storedVelocity);
                 if (!noGravity) {
                     rocketVelocity.add(new Vector3f(0f, .04f, 0f)).mul(.1f, 2f, .1f);
