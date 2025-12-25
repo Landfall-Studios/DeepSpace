@@ -76,7 +76,7 @@ public class SpaceSkyRenderer {
         RenderType renderType = skyShaderType(SPACE_SKY_TEXTURE);
         var poseStack = matrixStack.toPoseStack();
         poseStack.pushPose();
-        skySphere.render(poseStack, builder, new Vector3f(), camera.rotation().invert());
+        skySphere.render(poseStack, builder, new Vector3f(), new Quaternionf(camera.rotation()).invert());
 
         IrisIntegration.bindPipeline();
         RenderSystem.setShaderColor(0f, 0f, 0f, 0f);

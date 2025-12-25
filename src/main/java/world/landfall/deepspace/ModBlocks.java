@@ -1,8 +1,12 @@
 package world.landfall.deepspace;
 
 import com.simibubi.create.AllItems;
+import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -10,6 +14,11 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.CubeVoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -45,21 +54,32 @@ public class ModBlocks {
             .dynamicShape()
             .replaceable()
             .lightLevel(state -> 1)
-            .noCollission()
+            .noCollission(),
+            Shapes.create(new AABB(0, 0, 0, 1, 2/16., 1))
     );
     public static final DeferredBlock<Block> PICKLE_MOSS_BLOCK = makePickleBlock("pickle_moss_block", BlockBehaviour.Properties.of()
-            .replaceable()
+
     );
 
     public static DeferredBlock<Block> makePickleBlock(String name, BlockBehaviour.Properties properties) {
         return BLOCKS.register(name, () -> new PicklePlantBlock(properties));
     }
-    public static DeferredBlock<Block> makeUnstablePickleBlock(String name, BlockBehaviour.Properties properties) {
+    public static DeferredBlock<Block> makeUnstablePickleBlock(String name, BlockBehaviour.Properties properties, VoxelShape shape) {
         return BLOCKS.register(name, () -> new PicklePlantBlock(properties) {
             @Override
             protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
                 var below = level.getBlockState(pos.below());
                 return !below.canBeReplaced() && !below.is(Blocks.AIR) && !below.getBlock().hasDynamicShape();
+            }
+
+            @Override
+            protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+                return shape;
+            }
+
+            @Override
+            protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+                return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
             }
         });
     }
