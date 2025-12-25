@@ -1,10 +1,14 @@
 package world.landfall.deepspace;
 
 import com.simibubi.create.AllItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -36,7 +40,29 @@ public class ModBlocks {
             .mapColor(MapColor.COLOR_GRAY)
     ));
 
-    public static final DeferredBlock<Block> PICKLE_VINE_BLOCK = BLOCKS.register("pickle_vine_block", () -> new PicklePlantBlock(BlockBehaviour.Properties.of().instabreak().dynamicShape()));
+    public static final DeferredBlock<Block> PICKLE_VINE_BLOCK = makeUnstablePickleBlock("pickle_vine_block", BlockBehaviour.Properties.of()
+            .instabreak()
+            .dynamicShape()
+            .replaceable()
+            .lightLevel(state -> 1)
+            .noCollission()
+    );
+    public static final DeferredBlock<Block> PICKLE_MOSS_BLOCK = makePickleBlock("pickle_moss_block", BlockBehaviour.Properties.of()
+            .replaceable()
+    );
+
+    public static DeferredBlock<Block> makePickleBlock(String name, BlockBehaviour.Properties properties) {
+        return BLOCKS.register(name, () -> new PicklePlantBlock(properties));
+    }
+    public static DeferredBlock<Block> makeUnstablePickleBlock(String name, BlockBehaviour.Properties properties) {
+        return BLOCKS.register(name, () -> new PicklePlantBlock(properties) {
+            @Override
+            protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+                var below = level.getBlockState(pos.below());
+                return !below.canBeReplaced() && !below.is(Blocks.AIR) && !below.getBlock().hasDynamicShape();
+            }
+        });
+    }
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
