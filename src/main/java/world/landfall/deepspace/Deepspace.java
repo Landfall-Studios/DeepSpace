@@ -104,6 +104,7 @@ public class Deepspace {
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("Performing common setup for Deep Space");
         PlanetRegistry.init();
+        ModBlockStressValues.register();
     }
 
     // Add the example block item to the building blocks tab

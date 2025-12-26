@@ -76,10 +76,6 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
 
     }
 
-    @Override
-    public float calculateStressApplied() {
-        return 4f;
-    }
 
     @Override
     public void tick() {
