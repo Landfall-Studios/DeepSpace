@@ -19,6 +19,16 @@ public class ModItems {
     public static final DeferredItem<BlockItem> MOONSTONE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MOON_STONE);
     public static final DeferredItem<BlockItem> LUNAR_COBBLE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LUNAR_COBBLE);
     public static final DeferredItem<BlockItem> LUNAR_SOIL = ITEMS.registerSimpleBlockItem(ModBlocks.LUNAR_SOIL);
+
+    public static final DeferredItem<BlockItem> PICKLE_MOSS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PICKLE_MOSS_BLOCK);
+    public static final DeferredItem<BlockItem> PICKLE_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PICKLE_CORE_BLOCK);
+    public static final DeferredItem<BlockItem> PICKLE_VINE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PICKLE_VINE_BLOCK);
+
+    public static final DeferredItem<BlockItem> SELENIC_GRASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_GRASS_BLOCK);
+    public static final DeferredItem<BlockItem> SELENIC_FAUNA_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_FAUNA_BLOCK);
+    public static final DeferredItem<BlockItem> SELENIC_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_CORE_BLOCK);
+    public static final DeferredItem<BlockItem> SELENIC_VINE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_VINE_BLOCK);
+
     public static final Supplier<ItemStack> CREATIVE_JETPACK_ITEM = () -> {
         var item = JETPACK_ITEM.toStack();
         item.set(JetpackItem.JetpackComponent.SUPPLIER, new JetpackItem.JetpackComponent(100, -1));

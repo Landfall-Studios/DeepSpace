@@ -50,22 +50,75 @@ public class ModBlocks {
     ));
 
     public static final DeferredBlock<Block> PICKLE_VINE_BLOCK = makeUnstablePickleBlock("pickle_vine_block", BlockBehaviour.Properties.of()
-            .instabreak()
-            .dynamicShape()
-            .replaceable()
-            .lightLevel(state -> 1)
-            .noCollission(),
+
+            .lightLevel(state -> 1),
             Shapes.create(new AABB(0, 0, 0, 1, 2/16., 1))
     );
-    public static final DeferredBlock<Block> PICKLE_MOSS_BLOCK = makePickleBlock("pickle_moss_block", BlockBehaviour.Properties.of()
+    public static final DeferredBlock<Block> PICKLE_MOSS_BLOCK = makePickleBlock("pickle_moss_block", BlockBehaviour.Properties.of());
+    public static final DeferredBlock<Block> PICKLE_CORE_BLOCK = BLOCKS.register("pickle_core_block", () -> new PicklePlantBlock(BlockBehaviour.Properties.of()) {
+        @Override
+        public int spreadRadius() {
+            return 5;
+        }
 
+        @Override
+        public float spreadSpeed() {
+            return .6f;
+        }
+    });
+
+    public static final DeferredBlock<Block> SELENIC_GRASS_BLOCK = makeSelenicBlock("selenic_grass_block", BlockBehaviour.Properties.of());
+    public static final DeferredBlock<Block> SELENIC_VINE_BLOCK = makeUnstableSelenicBlock("selenic_vine_block", BlockBehaviour.Properties.of(),
+            Shapes.create(new AABB(0, 0, 0, 1, 2/16., 1))
     );
+    public static final DeferredBlock<Block> SELENIC_FAUNA_BLOCK = makeUnstableSelenicBlock("selenic_fauna_block", BlockBehaviour.Properties.of(),
+            Shapes.create(new AABB(1/16., 0, 1/16., 15/16., 15/16., 15/16.))
+    );
+    public static final DeferredBlock<Block> SELENIC_CORE_BLOCK = BLOCKS.register("selenic_core_block", () -> new SelenicPlantBlock(BlockBehaviour.Properties.of()) {
+        @Override
+        public int spreadRadius() {
+            return 5;
+        }
+
+        @Override
+        public float spreadSpeed() {
+            return .6f;
+        }
+    });
 
     public static DeferredBlock<Block> makePickleBlock(String name, BlockBehaviour.Properties properties) {
         return BLOCKS.register(name, () -> new PicklePlantBlock(properties));
     }
     public static DeferredBlock<Block> makeUnstablePickleBlock(String name, BlockBehaviour.Properties properties, VoxelShape shape) {
-        return BLOCKS.register(name, () -> new PicklePlantBlock(properties) {
+        return BLOCKS.register(name, () -> new PicklePlantBlock(properties.instabreak()
+                .dynamicShape()
+                .replaceable()
+                .noCollission()) {
+            @Override
+            protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+                var below = level.getBlockState(pos.below());
+                return !below.canBeReplaced() && !below.is(Blocks.AIR) && !below.getBlock().hasDynamicShape();
+            }
+
+            @Override
+            protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+                return shape;
+            }
+
+            @Override
+            protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+                return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
+            }
+        });
+    }
+    public static DeferredBlock<Block> makeSelenicBlock(String name, BlockBehaviour.Properties properties) {
+        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties));
+    }
+    public static DeferredBlock<Block> makeUnstableSelenicBlock(String name, BlockBehaviour.Properties properties, VoxelShape shape) {
+        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties.instabreak()
+                .dynamicShape()
+                .replaceable()
+                .noCollission()) {
             @Override
             protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
                 var below = level.getBlockState(pos.below());

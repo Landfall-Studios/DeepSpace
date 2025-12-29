@@ -1,7 +1,16 @@
 {
   "variants": {
-    "": {
+    "": [ {
       "model": "deepspace:block/pickle_vine_block"
-    }
+    }, {
+      "model": "deepspace:block/pickle_vine_block",
+      "y": 90
+    }, {
+      "model": "deepspace:block/pickle_vine_block",
+      "y": 180
+    }, {
+      "model": "deepspace:block/pickle_vine_block",
+      "y": 270
+    } ]
   }
 }

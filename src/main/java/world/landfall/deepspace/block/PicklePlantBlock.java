@@ -37,7 +37,7 @@ public class PicklePlantBlock extends AbstractPlantBlock {
 
     @Override
     public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-        return 90;
+        return 130;
     }
 
     @Override
