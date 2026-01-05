@@ -4,6 +4,9 @@ import com.simibubi.create.AllItems;
 import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
@@ -14,6 +17,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.CubeVoxelShape;
@@ -23,6 +27,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import world.landfall.deepspace.block.*;
+
+import java.util.List;
 
 public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Deepspace.MODID);
@@ -63,7 +69,7 @@ public class ModBlocks {
 
         @Override
         public float spreadSpeed() {
-            return .6f;
+            return .9f;
         }
     });
 
@@ -93,7 +99,8 @@ public class ModBlocks {
         return BLOCKS.register(name, () -> new PicklePlantBlock(properties.instabreak()
                 .dynamicShape()
                 .replaceable()
-                .noCollission()) {
+                .noCollission()
+                .requiresCorrectToolForDrops()) {
             @Override
             protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
                 var below = level.getBlockState(pos.below());
@@ -108,6 +115,11 @@ public class ModBlocks {
             @Override
             protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
                 return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
+            }
+
+            @Override
+            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
             }
         });
     }
