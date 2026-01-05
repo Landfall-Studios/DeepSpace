@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=z": {
+      "x": 90,
+      "model": "deepspace:block/oxygenator"
+    },
+    "axis=x": {
+      "y": -90,
+      "x": 90,
+      "model": "deepspace:block/oxygenator"
+    },
+    "axis=y": {
+      "model": "deepspace:block/oxygenator"
+    }
+  }
+}

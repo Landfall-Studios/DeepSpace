@@ -1,20 +1,19 @@
 {
-  "ultrawarm": false,
+  "ultrawarm": true,
   "natural": false,
-  "piglin_safe": false,
-  "respawn_anchor_works": false,
+  "piglin_safe": true,
+  "respawn_anchor_works": true,
   "bed_works": false,
   "has_raids": false,
   "has_skylight": true,
   "has_ceiling": false,
   "coordinate_scale": 1.0,
   "ambient_light": 0.0,
-  "fixed_time": 18000,
   "logical_height": 256,
   "effects": "deepspace:sarrion",
-  "infiniburn": "#minecraft:infiniburn_overworld",
+  "infiniburn": "#minecraft:infiniburn_nether",
   "min_y": -64,
-  "height": 256,
-  "monster_spawn_light_level": 0,
-  "monster_spawn_block_light_limit": 0
+  "height": 320,
+  "monster_spawn_light_level": 7,
+  "monster_spawn_block_light_limit": 15
 }

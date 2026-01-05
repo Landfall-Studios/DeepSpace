@@ -11,7 +11,7 @@ import org.joml.Matrix4f;
 
 public class SpaceDimensionEffects extends DimensionSpecialEffects {
     public SpaceDimensionEffects() {
-        super(0, false, SkyType.NONE, false, true);
+        super(-200, false, SkyType.NONE, false, true);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SpaceDimensionEffects extends DimensionSpecialEffects {
     @Override
     public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
         //return super.renderSky(level, ticks, partialTick, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
-        return false;
+        return true;
     }
 
     @Override

@@ -1,0 +1,128 @@
+{
+  "type": "deepspace:luna",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": {
+      "sea_level": 63,
+      "disable_mob_generation": false,
+      "ore_veins_enabled": true,
+      "aquifers_enabled": false,
+      "legacy_random_source": false,
+      "default_block": {
+        "Name": "deepspace:moonstone"
+      },
+      "default_fluid": {
+        "Name": "minecraft:air"
+      },
+      "spawn_target": [],
+      "noise": {
+        "min_y": -64,
+        "height": 208,
+        "size_horizontal": 2,
+        "size_vertical": 2
+      },
+      "noise_router": {
+        "barrier": 0,
+        "fluid_level_floodedness": 0,
+        "fluid_level_spread": 0,
+        "lava": 0,
+        "temperature": 0.5,
+        "vegetation": 0,
+        "continents": "minecraft:overworld/continents",
+        "erosion": "minecraft:overworld/erosion",
+        "depth": {
+          "type": "minecraft:mul",
+          "argument1": "deepspace:depth",
+          "argument2": 0.5
+        },
+        "ridges": "minecraft:overworld/ridges",
+        "initial_density_without_jaggedness": {
+          "type": "minecraft:mul",
+          "argument1": "minecraft:overworld/depth",
+          "argument2": 0.5
+        },
+        "final_density": "minecraft:overworld/depth",
+        "vein_toggle": 1,
+        "vein_ridged": 1,
+        "vein_gap": 1
+      },
+      "surface_rule": {
+        "type": "minecraft:sequence",
+        "sequence": [
+          {
+            "type": "minecraft:condition",
+            "if_true": {
+              "type": "minecraft:vertical_gradient",
+              "random_name": "minecraft:bedrock_floor",
+              "true_at_and_below": {
+                "above_bottom": 0
+              },
+              "false_at_and_above": {
+                "above_bottom": 5
+              }
+            },
+            "then_run": {
+              "type": "minecraft:block",
+              "result_state": {
+                "Name": "minecraft:bedrock"
+              }
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": {
+              "type": "minecraft:biome",
+              "biome_is": [
+                "deepspace:lunar_plains"
+              ]
+            },
+            "then_run": {
+              "type": "minecraft:condition",
+              "if_true": {
+                "type": "minecraft:y_above",
+                "anchor": {
+                  "absolute": 50
+                },
+                "surface_depth_multiplier": 2,
+                "add_stone_depth": false
+              },
+              "then_run": {
+                "type": "minecraft:condition",
+                "if_true": {
+                  "type": "minecraft:stone_depth",
+                  "offset": 4,
+                  "surface_type": "floor",
+                  "add_surface_depth": false,
+                  "secondary_depth_range": 0
+                },
+                "then_run": {
+                  "type": "minecraft:block",
+                  "result_state": {
+                    "Name": "deepspace:lunar_soil"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "biome_source": {
+      "type": "minecraft:multi_noise",
+      "biomes": [
+        {
+          "biome": "deepspace:lunar_plains",
+          "parameters": {
+            "continentalness": 0,
+            "depth": 0,
+            "erosion": -0.5,
+            "humidity": 0,
+            "offset": 0,
+            "temperature": 0,
+            "weirdness": -0.5
+          }
+        }
+      ]
+    }
+  }
+}

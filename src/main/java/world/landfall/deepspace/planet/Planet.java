@@ -1,13 +1,16 @@
 package world.landfall.deepspace.planet;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.Util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,9 +58,14 @@ public class Planet {
             Vec3.CODEC.fieldOf("boundingBoxMin").forGetter(Planet::getBoundingBoxMin),
             Vec3.CODEC.fieldOf("boundingBoxMax").forGetter(Planet::getBoundingBoxMax),
             Codec.list(PlanetDecoration.CODEC).optionalFieldOf("decorations").forGetter(Planet::getDecorations),
+            Codec.DOUBLE.listOf().comapFlatMap((p_338175_) -> Util.fixedSize(p_338175_, 3).map((p_231081_) -> new Vec2((float)p_231081_.get(0).doubleValue(), (float)p_231081_.get(1).doubleValue())), (p_231083_) -> List.of((double)p_231083_.x, (double)p_231083_.y)).fieldOf("physicalMin").forGetter(Planet::getPhysicalMin),
+            Codec.DOUBLE.listOf().comapFlatMap((p_338175_) -> Util.fixedSize(p_338175_, 3).map((p_231081_) -> new Vec2((float)p_231081_.get(0).doubleValue(), (float)p_231081_.get(1).doubleValue())), (p_231083_) -> List.of((double)p_231083_.x, (double)p_231083_.y)).fieldOf("physicalMax").forGetter(Planet::getPhysicalMax),
             Codec.STRING.optionalFieldOf("description", "").forGetter(Planet::getDescription)
-        ).apply(instance, (id, name, dimensionLocation, min, max, decorations, description) ->
-            new Planet(id, name, ResourceKey.create(Registries.DIMENSION, dimensionLocation), min, max, decorations.orElseGet(List::of), description)
+        ).apply(instance, (id, name, dimensionLocation, min, max, decorations, physicalMin, physicalMax, description) ->
+            new Planet(id, name, ResourceKey.create(Registries.DIMENSION, dimensionLocation),
+                    min, max, decorations.orElseGet(List::of), description,
+                    physicalMin, physicalMax
+            )
         )
     );
 
@@ -69,6 +77,8 @@ public class Planet {
     private final Vec3 boundingBoxMax;
     private final String description;
     private final Collection<PlanetDecoration> decorations;
+    private final Vec2 physicalMin;
+    private final Vec2 physicalMax;
 
     /**
      * Creates a new Planet instance.
@@ -81,7 +91,8 @@ public class Planet {
      * @param description Optional description of the planet
      */
     public Planet(@NotNull String id, @NotNull String name, @NotNull ResourceKey<Level> dimension,
-                  @NotNull Vec3 boundingBoxMin, @NotNull Vec3 boundingBoxMax, @Nullable Collection<PlanetDecoration> decorations, @Nullable String description) {
+                  @NotNull Vec3 boundingBoxMin, @NotNull Vec3 boundingBoxMax, @Nullable Collection<PlanetDecoration> decorations, @Nullable String description,
+                  @NotNull Vec2 physicalMin, @NotNull Vec2 physicalMax) {
         this.id = Objects.requireNonNull(id, "Planet ID cannot be null");
         this.name = Objects.requireNonNull(name, "Planet name cannot be null");
         this.dimension = Objects.requireNonNull(dimension, "Planet dimension cannot be null");
@@ -89,7 +100,8 @@ public class Planet {
         this.boundingBoxMax = Objects.requireNonNull(boundingBoxMax, "Bounding box maximum cannot be null");
         this.description = description != null ? description : "";
         this.decorations = decorations != null ? decorations : List.of();
-
+        this.physicalMin = physicalMin;
+        this.physicalMax = physicalMax;
         // Validate bounding box
         if (boundingBoxMin.x > boundingBoxMax.x || boundingBoxMin.y > boundingBoxMax.y || boundingBoxMin.z > boundingBoxMax.z) {
             throw new IllegalArgumentException("Invalid bounding box: minimum coordinates must be less than maximum coordinates");
@@ -100,8 +112,9 @@ public class Planet {
      * Creates a new Planet instance without description.
      */
     public Planet(@NotNull String id, @NotNull String name, @NotNull ResourceKey<Level> dimension,
-                  @NotNull Vec3 boundingBoxMin, @NotNull Vec3 boundingBoxMax, @NotNull Collection<PlanetDecoration> decorations) {
-        this(id, name, dimension, boundingBoxMin, boundingBoxMax, decorations, "");
+                  @NotNull Vec3 boundingBoxMin, @NotNull Vec3 boundingBoxMax, @NotNull Collection<PlanetDecoration> decorations,
+                  @NotNull Vec2 physicalMin, @NotNull Vec2 physicalMax) {
+        this(id, name, dimension, boundingBoxMin, boundingBoxMax, decorations, "", physicalMin, physicalMax);
     }
 
     /**
@@ -143,6 +156,21 @@ public class Planet {
     public Vec3 getBoundingBoxMax() {
         return boundingBoxMax;
     }
+    /**
+     * @return The minimum coordinates of the dimension as it appears in the planet texture
+     */
+    @NotNull
+    public Vec2 getPhysicalMin() {
+        return physicalMin;
+    }
+
+    /**
+     * @return The maximum coordinates of the dimension as it appears in the planet texture
+     */
+    @NotNull
+    public Vec2 getPhysicalMax() {
+        return physicalMax;
+    }
 
     @NotNull
     public Optional<List<PlanetDecoration>> getDecorations() {
@@ -178,6 +206,8 @@ public class Planet {
      */
     public boolean isPlayerTouching(@NotNull Player player) {
         //return isWithinBounds(player.position()) || isWithinBounds(player.position().add(0, 2, 0));
+        if (!player.level().dimension().location().equals(ResourceLocation.parse("deepspace:space")))
+            return false;
         Objects.requireNonNull(player);
         var position = player.position();
         return position.x >= boundingBoxMin.x - .5 && position.x <= boundingBoxMax.x + .5 &&
@@ -216,6 +246,10 @@ public class Planet {
         buffer.writeDouble(boundingBoxMax.y);
         buffer.writeDouble(boundingBoxMax.z);
         buffer.writeCollection(decorations, PlanetDecoration::toNetwork);
+        buffer.writeDouble(physicalMin.x);
+        buffer.writeDouble(physicalMin.y);
+        buffer.writeDouble(physicalMax.x);
+        buffer.writeDouble(physicalMax.y);
         buffer.writeUtf(description);
     }
 
@@ -235,8 +269,10 @@ public class Planet {
         Vec3 boundingBoxMin = new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
         Vec3 boundingBoxMax = new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
         Collection<PlanetDecoration> decorations = buffer.readList(PlanetDecoration::fromNetwork);
+        Vec2 physicalMin = new Vec2((float)buffer.readDouble(), (float)buffer.readDouble());
+        Vec2 physicalMax = new Vec2((float)buffer.readDouble(), (float)buffer.readDouble());
         String description = buffer.readUtf();
-        return new Planet(id, name, dimension, boundingBoxMin, boundingBoxMax, decorations, description);
+        return new Planet(id, name, dimension, boundingBoxMin, boundingBoxMax, decorations, description, physicalMin, physicalMax);
     }
 
     @Override

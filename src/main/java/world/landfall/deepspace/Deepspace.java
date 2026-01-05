@@ -25,6 +25,7 @@ import world.landfall.deepspace.dimension.SpaceDimensionType;
 import world.landfall.deepspace.integration.CreateIntegration;
 import world.landfall.deepspace.planet.PlanetRegistry;
 import world.landfall.deepspace.render.SpaceRenderSystem;
+import world.landfall.deepspace.worldgen.ModPlacedFeatures;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -42,8 +43,9 @@ public class Deepspace {
                 output.accept(ModItems.CREATIVE_JETPACK_ITEM.get());
                 output.accept(ModItems.JET_HELMET_ITEM);
                 output.accept(ModItems.CREATIVE_JET_HELMET_ITEM.get());
-                output.accept(ModItems.ANGEL_BLOCK_ITEM);
                 output.accept(ModItems.ROCKET_BOOSTER_ITEM);
+                output.accept(ModItems.ANGEL_BLOCK_ITEM);
+                output.accept(ModItems.OXYGENATOR_BLOCK_ITEM);
             })
             .icon(ModItems.ANGEL_BLOCK_ITEM::toStack)
             .title(Component.translatable("menu.deepspace.creative_mode_tab"))
@@ -65,13 +67,15 @@ public class Deepspace {
             LOGGER.error("Failed to register space dimension", e);
             throw new RuntimeException("Failed to initialize mod", e);
         }
-
         // Register the Deferred Register to the mod event bus so blocks get registered
         ModBlocks.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
+        ModPlantTypes.register(modEventBus);
+        ModArmorMaterials.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModAttatchments.register(modEventBus);
+
         CreateIntegration.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
@@ -89,17 +93,18 @@ public class Deepspace {
 
     }
 
+    public static ResourceLocation path(String s) {
+        return ResourceLocation.fromNamespaceAndPath(MODID,s);
+    }
     /**
      * Handles common setup tasks for both client and server.
      *
      * @param event The common setup event
      */
-    public static ResourceLocation path(String s) {
-        return ResourceLocation.fromNamespaceAndPath(MODID,s);
-    }
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("Performing common setup for Deep Space");
         PlanetRegistry.init();
+        ModBlockStressValues.register();
     }
 
     // Add the example block item to the building blocks tab
@@ -118,7 +123,7 @@ public class Deepspace {
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {

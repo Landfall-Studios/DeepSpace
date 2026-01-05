@@ -19,6 +19,9 @@ public class ModAttatchments {
     public static final Supplier<AttachmentType<Vector3f>> JETPACK_VELOCITY = ATTACHMENT_TYPES.register(
             "jetpack_velocity", () -> AttachmentType.<Vector3f>builder(() -> new Vector3f()).build()
     );
+    public static final Supplier<AttachmentType<Float>> LAST_OXYGENATED = ATTACHMENT_TYPES.register(
+            "last_oxygenated", () -> AttachmentType.builder(() -> 0f).build()
+    );
     public static void register(IEventBus eventBus) {
         ATTACHMENT_TYPES.register(eventBus);
     }

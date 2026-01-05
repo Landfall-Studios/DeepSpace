@@ -15,17 +15,17 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.DimensionSpecialEffectsManager;
 import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import world.landfall.deepspace.dimension.SarrionDimensionEffects;
 import world.landfall.deepspace.dimension.SpaceDimensionEffects;
 import world.landfall.deepspace.dimension.SpaceDimensionType;
 
 @EventBusSubscriber(modid = Deepspace.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModDimensionEffects {
     public static DimensionSpecialEffects DEEPSPACE_EFFECTS = new SpaceDimensionEffects();
+    public static DimensionSpecialEffects SARRION_EFFECTS = new SarrionDimensionEffects();
     @SubscribeEvent
     public static void onRegisterDimensionSpecialEffects(RegisterDimensionSpecialEffectsEvent event) {
         event.register(ResourceLocation.fromNamespaceAndPath(Deepspace.MODID, "space"), DEEPSPACE_EFFECTS);
+        event.register(ResourceLocation.fromNamespaceAndPath(Deepspace.MODID, "sarrion"), SARRION_EFFECTS);
     }
 }

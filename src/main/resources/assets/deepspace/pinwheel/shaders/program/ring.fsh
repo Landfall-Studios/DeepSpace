@@ -59,7 +59,7 @@ void main() {
     float noise_value1 = random(vec2(int(dist_from_center * scale * 10)));
     //vec4 color = vec4(noise_value3, noise_value2, noise_value1, value) * vertexColor * variation + (vec4(1, 1, 1, 0) - variation);
     //vec4 color = vec4(mod(texCoord0.xy, 1), 0, .5);
-    vec4 color = vec4(1, 1, 1, value * noise_value1);
+    vec4 color = vec4(1, 1, 1, value * noise_value1) * (1 - linear_fog_fade(4000, 3900, vertexDistance));
 
     fragColor = color * vertexColor * ColorModulator;
 

@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/block",
+  "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "deepspace:item/jet_helmet"
   }

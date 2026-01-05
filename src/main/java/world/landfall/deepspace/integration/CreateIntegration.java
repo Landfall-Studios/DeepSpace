@@ -1,12 +1,14 @@
 package world.landfall.deepspace.integration;
 import com.simibubi.create.api.registry.CreateBuiltInRegistries;
 import com.simibubi.create.api.registry.CreateRegistries;
+import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.fan.AirCurrent;
 import com.simibubi.create.content.kinetics.fan.IAirCurrentSource;
 import com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes;
 import com.simibubi.create.content.kinetics.fan.processing.FanProcessing;
 import com.simibubi.create.content.kinetics.fan.processing.FanProcessingType;
 import com.simibubi.create.content.kinetics.fan.processing.FanProcessingTypeRegistry;
+import com.simibubi.create.content.logistics.depot.DepotBehaviour;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import net.minecraft.core.BlockPos;
@@ -21,6 +23,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.IModBusEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 import world.landfall.deepspace.ModItems;
 import world.landfall.deepspace.item.JetHelmetItem;
@@ -28,8 +31,19 @@ import world.landfall.deepspace.item.JetHelmetItem;
 import java.util.List;
 
 public class CreateIntegration {
-    public static void handleAir(List<Entity> entities) {
-
+    public static void handleAir(List<Entity> entities, List<Pair<TransportedItemStackHandlerBehaviour, FanProcessingType>> handlers) {
+        for (var x : handlers) {
+            var behavior = x.getLeft().blockEntity.getBehaviour(DepotBehaviour.TYPE);
+            if (behavior == null) continue;
+            var stack = behavior.itemHandler.getStackInSlot(0);
+            if (stack.is(ModItems.JET_HELMET_ITEM)) {
+                var data = stack.get(JetHelmetItem.JetHelmetComponent.SUPPLIER);
+                if (data == null) continue;
+                if (data.maxOxygen() < 0 || data.currentOxygen() >= data.maxOxygen()) continue;
+                if (x.getLeft().getWorld().getBlockTicks().count() % 4 == 0)
+                    stack.set(JetHelmetItem.JetHelmetComponent.SUPPLIER, new JetHelmetItem.JetHelmetComponent(data.currentOxygen()+1, data.maxOxygen()));
+            }
+        }
         for (var x : entities) {
             if (x instanceof ItemEntity itemEntity) {
                 if (itemEntity.getItem().is(ModItems.JET_HELMET_ITEM.get())) {
@@ -51,7 +65,7 @@ public class CreateIntegration {
         }
     }
     public static void register(IEventBus eventBus) {
-
+        
 
         //FanProcessingTypeRegistry.init();
     }

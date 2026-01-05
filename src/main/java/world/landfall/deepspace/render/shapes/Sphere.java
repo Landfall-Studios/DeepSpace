@@ -33,13 +33,14 @@ public class Sphere implements DeepSpaceRenderable {
         int v = 1;
         for (int latitude = 0; latitude < latitudeLines; latitude++)
             for (int longitude = 0; longitude <= longitudeLines; longitude++) {
+
+                float theta = longitude * longitudeSpacing * 2.0f * (float)Math.PI;
+                float phi = (1.0f - (latitude + 1) * latitudeSpacing - 0.5f) * (float)Math.PI;
                 texcoords[v] = new Vec2(
                         longitude * longitudeSpacing,
-                        1.0f - (latitude + 1) * latitudeSpacing
+//                        1.0f - (latitude + 1) * latitudeSpacing
+                        (phi) / (1 * (float)Math.PI) + .5f
                 );
-
-                float theta = texcoords[v].x * 2.0f * (float)Math.PI;
-                float phi = (texcoords[v].y - 0.5f) * (float)Math.PI;
 
                 float c = (float)Math.cos(phi);
 
@@ -70,7 +71,6 @@ public class Sphere implements DeepSpaceRenderable {
 
         // Body Triangles
         for (int latitude = 1; latitude < latitudeLines; latitude++) {
-            System.out.println(latitude);
             for (int longitude = 0; longitude < longitudeLines; longitude++) {
                 int correctedLongitudeLines = longitudeLines+1;
                 Vec3 pos1 = positions[(latitude - 1) * correctedLongitudeLines + longitude + 1];

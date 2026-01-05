@@ -18,6 +18,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagBuilder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,6 +32,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import world.landfall.deepspace.Deepspace;
+import world.landfall.deepspace.ModArmorMaterials;
+import world.landfall.deepspace.ModAttatchments;
 
 import java.awt.*;
 import java.util.List;
@@ -38,8 +41,8 @@ import java.util.function.Supplier;
 
 public class JetHelmetItem extends ArmorItem {
     public JetHelmetItem() {
-        super(ArmorMaterials.IRON, Type.HELMET,new Properties()
-                .durability(-1)
+        super(ModArmorMaterials.JET_ARMOR_MATERIAL, Type.HELMET,new Properties()
+                .durability(Integer.MAX_VALUE)
                 .component(JetHelmetComponent.SUPPLIER, new JetHelmetComponent(100, 100))
                 .component(DataComponents.RARITY, Rarity.EPIC)
                 .component(DataComponents.CUSTOM_DATA, CustomData.of(
@@ -49,6 +52,7 @@ public class JetHelmetItem extends ArmorItem {
 
     }
     private static CompoundTag createModTag() {
+
         var createTag = new CompoundTag();
         var data = new CompoundTag();
         data.put("Processing", StringTag.valueOf("BLASTING"));
@@ -72,15 +76,34 @@ public class JetHelmetItem extends ArmorItem {
     }
 
     @Override
+    public boolean isDamaged(ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public boolean isDamageable(ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public boolean canBeHurtBy(ItemStack stack, DamageSource source) {
+        return false;
+    }
+
+    @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
-
         var equipped = slotId == 39;
-        if (equipped && entity instanceof Player player && !player.isCreative()) {
+        if (!(entity instanceof Player player)) return;
+        var dim = player.level().dimension().location();
+        if (equipped &&
+                !player.isCreative() && (dim.equals(Deepspace.path("space")) || dim.equals(Deepspace.path("luna"))) &&
+                player.getData(ModAttatchments.LAST_OXYGENATED) > 3
+        ) {
             var tick = player.tickCount;
             var component = stack.getComponents().get(JetHelmetComponent.SUPPLIER.get());
             if (component == null) return;
-            if (tick % 40 == 0 && component.maxOxygen >= 0) {
+            if (tick % 40 == 0 && component.maxOxygen >= 0 && component.currentOxygen > 0) {
                 stack.set(JetHelmetComponent.SUPPLIER, new JetHelmetComponent(component.currentOxygen - 1, component.maxOxygen));
             }
         }
@@ -111,10 +134,7 @@ public class JetHelmetItem extends ArmorItem {
         return (component != null && component.playerOxygen() > 100) ? Color.WHITE.getRGB() : Color.RED.getRGB();
     }
 
-    @Override
-    public @Nullable ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
-        return ResourceLocation.parse("minecraft:block/glass");
-    }
+
 
 //    @Override
 //    public @NotNull Model getGenericArmorModel(@NotNull LivingEntity livingEntity, @NotNull ItemStack itemStack, @NotNull EquipmentSlot equipmentSlot, @NotNull HumanoidModel<?> original) {

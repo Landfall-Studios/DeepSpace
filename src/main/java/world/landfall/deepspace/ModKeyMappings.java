@@ -16,17 +16,10 @@ import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
-@EventBusSubscriber(modid = Deepspace.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Deepspace.MODID, value = Dist.CLIENT)
 public class ModKeyMappings {
-    public static final Lazy<KeyMapping> BEGIN_FLYING = Lazy.of(() -> new KeyMapping(
-            "key.deepspace.begin_flying",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_LEFT_SHIFT,
-            "key.categories.movement"
-    ));
     @SubscribeEvent
     public static void registerBindings(RegisterKeyMappingsEvent event) {
-        event.register(BEGIN_FLYING.get());
 
     }
 }

@@ -18,8 +18,8 @@ public class SpaceRenderSystem {
     private static final Collection<Renderer> renderers = new LinkedList<>();
     public static void init() {
 
-        SpaceSkyRenderer.init();
         PlanetRenderer.init();
+        SpaceSkyRenderer.init();
         SunRenderer.init();
         PlanetDecorationsRenderer.init();
 

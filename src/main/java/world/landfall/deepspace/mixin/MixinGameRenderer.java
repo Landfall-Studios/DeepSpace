@@ -28,7 +28,7 @@ public abstract class MixinGameRenderer {
                 (float)(fov * (float) (Math.PI / 180.0)),
                 (float)this.minecraft.getWindow().getWidth() / (float)this.minecraft.getWindow().getHeight(),
                 0.05F,
-                this.getDepthFar() * 4f
+                this.getDepthFar() * 16f
         ));
         cir.cancel();
     }

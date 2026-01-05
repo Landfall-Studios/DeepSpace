@@ -58,7 +58,7 @@ public abstract class MixinAirCurrent {
         tickAffectedEntities(world);
         tickAffectedHandlers();
 
-        CreateIntegration.handleAir(caughtEntities);
+        CreateIntegration.handleAir(caughtEntities, affectedItemHandlers);
         ci.cancel();
     }
     @Shadow public abstract void rebuild();

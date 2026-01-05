@@ -1,5 +1,5 @@
 {
-  "itemGroup.deepspace": "Example Mod Tab",
+  "itemGroup.deepspace": "Deepspace",
   "options.deepspace.decorationDetail": "Planet decorations",
   "options.deepspace.decorationDetail.tooltip": "Level of detail for planet decorations (e.g. atmospheres, rings)",
   "options.deepspace.decorationDetail.none": "None",
@@ -9,6 +9,9 @@
   "options.deepspace.shadingDetail": "Planet Shading",
   "options.deepspace.shadingDetail.tooltip": "Level of detail for planet shading (e.g. shadows, bloom)",
   "block.deepspace.angel_block": "Angel Block",
+  "block.deepspace.oxygenator": "Oxygenator",
+  "block.deepspace.moonstone": "Moonstone",
+  "block.deepspace.lunar_soil": "Lunar Soil",
   "item.deepspace.rocket_booster": "Rocket Booster",
   "item.deepspace.jetpack": "Jetpack",
   "item.deepspace.jetpack.tooltip": "Fuel remaining: ",
@@ -16,5 +19,7 @@
   "item.deepspace.jet_helmet.tooltip": "Oxygen remaining: ",
   "menu.deepspace.creative_mode_tab": "Deepspace",
   "item.deepspace.jetpack.creative": "Creative Jetpack",
-  "item.deepspace.jet_helmet.creative": "Creative Jet Helmet"
+  "item.deepspace.jet_helmet.creative": "Creative Jet Helmet",
+  "item.deepspace.jet_helmet.jei": "Jet helmets can be aired up using a fan from Create.",
+  "deepspace.hurt.no_air": "%s succumbed to the cold grasp of space."
 }

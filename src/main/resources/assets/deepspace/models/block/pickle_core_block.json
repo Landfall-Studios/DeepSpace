@@ -1,0 +1,60 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"1": "deepspace:block/pickle_core_block",
+		"particle": "deepspace:block/pickle_core_block"
+	},
+	"elements": [
+		{
+			"name": "admin_block",
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [6, 0, 5]},
+			"faces": {
+				"north": {"uv": [2, 6, 4, 8], "texture": "#1"},
+				"east": {"uv": [0, 6, 2, 8], "texture": "#1"},
+				"south": {"uv": [6, 6, 8, 8], "texture": "#1"},
+				"west": {"uv": [4, 6, 6, 8], "texture": "#1"},
+				"up": {"uv": [4, 6, 2, 4], "texture": "#1"},
+				"down": {"uv": [6, 4, 4, 6], "texture": "#1"}
+			}
+		},
+		{
+			"name": "rod2",
+			"from": [5, 1, 16],
+			"to": [7, 13, 18],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11, 0, 21]},
+			"faces": {
+				"north": {"uv": [11.25, 7.5, 11.5, 9], "texture": "#1"},
+				"east": {"uv": [11, 7.5, 11.25, 9], "texture": "#1"},
+				"south": {"uv": [11.75, 7.5, 12, 9], "texture": "#1"},
+				"west": {"uv": [11.5, 7.5, 11.75, 9], "texture": "#1"},
+				"up": {"uv": [11.5, 7.5, 11.25, 7.25], "texture": "#1"},
+				"down": {"uv": [11.75, 7.25, 11.5, 7.5], "texture": "#1"}
+			}
+		},
+		{
+			"name": "rod1",
+			"from": [1, 1, 16],
+			"to": [3, 13, 18],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 21]},
+			"faces": {
+				"north": {"uv": [11.25, 9.25, 11.5, 10.75], "texture": "#1"},
+				"east": {"uv": [11, 9.25, 11.25, 10.75], "texture": "#1"},
+				"south": {"uv": [11.75, 9.25, 12, 10.75], "texture": "#1"},
+				"west": {"uv": [11.5, 9.25, 11.75, 10.75], "texture": "#1"},
+				"up": {"uv": [11.5, 9.25, 11.25, 9], "texture": "#1"},
+				"down": {"uv": [11.75, 9, 11.5, 9.25], "texture": "#1"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "core",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [0, 1, 2]
+		}
+	]
+}

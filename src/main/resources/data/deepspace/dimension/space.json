@@ -3,7 +3,7 @@
     "generator": {
         "type": "minecraft:flat",
         "settings": {
-            "biome": "minecraft:plains",
+            "biome": "deepspace:space",
             "lakes": false,
             "features": false,
             "layers": [],

@@ -23,7 +23,7 @@ import world.landfall.deepspace.dimension.SpaceDimensionEffects;
 import world.landfall.deepspace.item.JetpackItem;
 import world.landfall.deepspace.network.JetpackPacket;
 
-@EventBusSubscriber(modid = Deepspace.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Deepspace.MODID, value = Dist.CLIENT)
 public class SpaceClientEvents {
     @SubscribeEvent
     public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event) {
@@ -46,11 +46,13 @@ public class SpaceClientEvents {
                 event.getEntity().setData(ModAttatchments.IS_ROCKETING_FORWARD, rocketing);
 
 
-                if (ModKeyMappings.BEGIN_FLYING.get().isDown() && component.canFly()) {
-                    PacketDistributor.sendToServer(
-                            new JetpackPacket.BeginFlying(true)
-                    );
-                    event.getEntity().setData(ModAttatchments.IS_FLYING_JETPACK, true);
+                if (Minecraft.getInstance().options.keySprint.isDown() && component.canFly()) {
+                    if (!player.onGround()) {
+                        PacketDistributor.sendToServer(
+                                new JetpackPacket.BeginFlying(true)
+                        );
+                        event.getEntity().setData(ModAttatchments.IS_FLYING_JETPACK, true);
+                    }
                 }
                 if (Minecraft.getInstance().options.keyShift.isDown()) {
                     PacketDistributor.sendToServer(

@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "world.landfall.deepspace.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "deepspace.mixins.refmap.json",
+  "mixins": [
+    "MixinAirCurrent"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

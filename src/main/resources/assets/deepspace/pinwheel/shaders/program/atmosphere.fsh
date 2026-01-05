@@ -47,7 +47,7 @@ in vec2 texCoord0;
 
 out vec4 fragColor;
 void main() {
-    vec4 color = vec4(1, 1, 1, texture(Sampler0, texCoord0).r) * ColorModulator * vertexColor;
+    vec4 color = vec4(1, 1, 1, texture(Sampler0, texCoord0).r) * ColorModulator * vertexColor * (1 - linear_fog_fade(4000, 3900, vertexDistance));
     //vec4 color = vec4(mod(texCoord0.xy, 1), 0, .5);
 
     fragColor = color;

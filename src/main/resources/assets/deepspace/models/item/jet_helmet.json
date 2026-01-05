@@ -1,3 +1,6 @@
 {
-  "parent": "deepspace:block/angel_block"
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "deepspace:item/jet_helmet"
+  }
 }

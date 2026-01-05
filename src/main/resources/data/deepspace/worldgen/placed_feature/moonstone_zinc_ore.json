@@ -1,0 +1,63 @@
+{
+  "feature": {
+    "config": {
+      "targets": [
+        {
+          "target": {
+            "predicate_type": "minecraft:random_blockstate_match",
+            "block_state": {
+              "Name": "deepspace:moonstone"
+            },
+            "probability": 0.1
+          },
+          "state": {
+            "Name": "create:raw_zinc_block"
+          }
+        },
+        {
+          "target": {
+            "predicate_type": "minecraft:random_blockstate_match",
+            "block_state": {
+              "Name": "deepspace:moonstone"
+            },
+            "probability": 0.9
+          },
+          "state": {
+            "Name": "deepspace:moonstone_zinc_ore_block"
+          }
+        }
+      ],
+      "size": 12,
+      "discard_chance_on_air_exposure": 0.2
+    },
+    "type": "minecraft:ore"
+  },
+  "placement": [
+    {
+      "type": "minecraft:biome"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": 0
+        },
+        "max_inclusive": {
+          "absolute": 80
+        }
+      }
+    },
+    {
+      "type": "minecraft:count",
+      "count": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 2,
+        "max_inclusive": 6
+      }
+    },
+    {
+      "type": "minecraft:in_square"
+    }
+  ]
+}

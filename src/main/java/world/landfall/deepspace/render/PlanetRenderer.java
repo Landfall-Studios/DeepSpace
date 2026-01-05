@@ -64,6 +64,7 @@ public class PlanetRenderer {
     public static RenderType planetUnshadedRenderType() {
         var renderType = RenderType.CompositeState.builder()
                 .setShaderState(PLANET_UNSHADED_RENDER_TYPE)
+                .setCullState(RenderStateShard.CullStateShard.NO_CULL)
                 .createCompositeState(true);
         return RenderType.create(
                 "planet_unshaded",
@@ -100,6 +101,9 @@ public class PlanetRenderer {
         var instance = Minecraft.getInstance();
         if (!instance.level.dimension().location().equals(ResourceLocation.fromNamespaceAndPath(Deepspace.MODID,"space")))
             return;
+        var requiredStage = IrisIntegration.isShaderPackEnabled() ? VeilRenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS : VeilRenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS;
+        if (!stage.equals(requiredStage))
+            return;
         RenderType planetRenderType = planetRenderType();
         RenderType planetUnshadedRenderType = planetUnshadedRenderType();
         var poseStack = matrixStack.toPoseStack();
@@ -114,8 +118,9 @@ public class PlanetRenderer {
                     .getOrCreateUniform("SunPosition")
                     .setVector(center.toVector3f().sub(camera.getPosition().toVector3f()));
 
+            var rot = IrisIntegration.isShaderPackEnabled() ? new Quaternionf() : camera.rotation();
+            x.getValue().render(poseStack, planetBuilder, camera.getPosition().toVector3f().mul(-1), rot);
 
-            x.getValue().render(poseStack, planetBuilder, camera.getPosition().toVector3f().mul(-1), new Quaternionf());
             RenderSystem.setShaderTexture(0, texture);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             IrisIntegration.bindPipeline();
@@ -130,6 +135,7 @@ public class PlanetRenderer {
     public static void init() {
         refreshMeshes();
         SpaceRenderSystem.registerRenderer(PlanetRenderer::render, VeilRenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS);
+        SpaceRenderSystem.registerRenderer(PlanetRenderer::render, VeilRenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS);
 
     }
     private static Matrix4f projectionMatrix(double fov, GameRenderer gameRenderer) {
