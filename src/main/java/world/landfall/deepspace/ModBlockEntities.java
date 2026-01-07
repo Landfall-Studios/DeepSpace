@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import world.landfall.deepspace.blockentity.GroundSolarPanelBlockEntity;
 import world.landfall.deepspace.blockentity.OxygenatorBlockEntity;
 
 import java.util.function.Supplier;
@@ -18,6 +19,9 @@ public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Deepspace.MODID);
     public static final Supplier<BlockEntityType<OxygenatorBlockEntity>> OXYGENATOR_BLOCK_ENTITY_TYPE = BLOCK_ENTITIES.register(
             "oxygenator_block_entity",() -> OxygenatorBlockEntity.TYPE
+    );
+    public static final Supplier<BlockEntityType<?>> GROUND_SOLAR_PANEL_BLOCK_ENTITY_TYPE = BLOCK_ENTITIES.register(
+            "ground_solar_panel_block_entity", () -> GroundSolarPanelBlockEntity.TYPE
     );
 
     public static void register(IEventBus eventBus) {

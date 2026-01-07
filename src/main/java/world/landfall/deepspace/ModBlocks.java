@@ -34,6 +34,7 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Deepspace.MODID);
     public static final DeferredBlock<Block> ANGEL_BLOCK = BLOCKS.register("angel_block", () -> new AngelBlock(BlockBehaviour.Properties.of()));
     public static final DeferredBlock<Block> OXYGENATOR_BLOCK = BLOCKS.register("oxygenator", OxygenatorBlock::new);
+    public static final DeferredBlock<Block> GROUND_SOLAR_PANEL_BLOCK = BLOCKS.register("ground_solar_panel", GroundSolarPanelBlock::new);
     public static final DeferredBlock<Block> MOONSTONE_ZINC_ORE_BLOCK = BLOCKS.register("moonstone_zinc_ore_block", () -> new MoonstoneOreBlock(AllItems.RAW_ZINC));
     public static final DeferredBlock<Block> MOONSTONE_QUARTZ_ORE_BLOCK = BLOCKS.register("moonstone_quartz_ore_block", () -> new MoonstoneOreBlock(() -> Items.QUARTZ));
     public static final DeferredBlock<Block> MOONSTONE_IRON_ORE_BLOCK = BLOCKS.register("moonstone_iron_ore_block", () -> new MoonstoneOreBlock(() -> Items.RAW_IRON));
@@ -145,6 +146,10 @@ public class ModBlocks {
             @Override
             protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
                 return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
+            }
+            @Override
+            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
             }
         });
     }
