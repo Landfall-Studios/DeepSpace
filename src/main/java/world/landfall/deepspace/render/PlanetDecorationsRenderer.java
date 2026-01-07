@@ -58,7 +58,7 @@ public class PlanetDecorationsRenderer {
                 if (decoration.type().equals(Planet.PlanetDecoration.ATMOSPHERE))
                     ATMOSPHERE_MESHES.put(x.getId(), new Atmosphere(
                             new Cube(x.getBoundingBoxMin().toVector3f(), x.getBoundingBoxMax().toVector3f(), decoration.scale(), true),
-                            decoration.scale(),
+                            decoration.scale()+.02f,
                             decoration.color()
                     ));
                 else if (decoration.type().equals(Planet.PlanetDecoration.RINGS)) {
@@ -159,12 +159,12 @@ public class PlanetDecorationsRenderer {
         var ringRenderType = ringRenderType();
         var poseStack = matrixStack.toPoseStack();
         IrisIntegration.bindPipeline();
-
+        poseStack.pushPose();
         for (var x : ATMOSPHERE_MESHES.entrySet()) {
 
             // Planet Atmosphere
             BufferBuilder atmosphereBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.NEW_ENTITY);
-            x.getValue().cube.render(poseStack, atmosphereBuilder, camera.getPosition().toVector3f().mul(-1), new Quaternionf());
+            x.getValue().cube.render(poseStack, atmosphereBuilder, camera.getPosition().toVector3f().mul(-1).add(1, .125f, 0), new Quaternionf());
             var color = new Color(x.getValue().color);
             VeilRenderSystem.setShader(Deepspace.path("atmosphere"));
 
@@ -196,6 +196,7 @@ public class PlanetDecorationsRenderer {
 
             RenderSystem.setShaderColor(1, 1, 1, 1);
         }
+        poseStack.popPose();
 
     }
     private record Atmosphere(Cube cube, float scale, int color) {}

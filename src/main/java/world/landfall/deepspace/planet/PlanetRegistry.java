@@ -214,11 +214,11 @@ public class PlanetRegistry {
             
             // Nether planet
             Planet nether = new Planet(
-                "nether",
-                "The Nether",
+                "sarrion",
+                "Sarrion",
                 Level.NETHER,
-                new Vec3(200, -50, -100),
-                new Vec3(400, 150, 100),
+                new Vec3(200, -100, -100),
+                new Vec3(400, 100, 100),
                 List.of(
                         new Planet.PlanetDecoration(Planet.PlanetDecoration.ATMOSPHERE, 1f, Color.RED.getRGB()),
                         new Planet.PlanetDecoration(Planet.PlanetDecoration.RINGS, 1.2f, Color.RED.getRGB())
@@ -231,12 +231,12 @@ public class PlanetRegistry {
             
             // End planet
             Planet end = new Planet(
-                "end",
-                "The End",
+                "luna",
+                "The Moon",
                 Level.END,
-                new Vec3(-200, 100, -100),
-                new Vec3(0, 300, 100),
-                List.of(new Planet.PlanetDecoration(Planet.PlanetDecoration.ATMOSPHERE, 1f, Color.WHITE.getRGB())),
+                new Vec3(500, -100, -100),
+                new Vec3(700, 100, 100),
+                List.of(new Planet.PlanetDecoration(Planet.PlanetDecoration.ASTEROIDS, 1f, Color.WHITE.getRGB())),
                 "The final dimension, home to the Ender Dragon",
                 new Vec2(-1000, -1000),
                 new Vec2(1000, 1000)

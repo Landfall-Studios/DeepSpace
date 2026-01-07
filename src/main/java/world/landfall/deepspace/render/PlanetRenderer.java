@@ -107,6 +107,7 @@ public class PlanetRenderer {
         RenderType planetRenderType = planetRenderType();
         RenderType planetUnshadedRenderType = planetUnshadedRenderType();
         var poseStack = matrixStack.toPoseStack();
+        poseStack.pushPose();
         for (var x : MESHES.entrySet()) {
             // Planet surface
             BufferBuilder planetBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.NEW_ENTITY);
@@ -119,7 +120,7 @@ public class PlanetRenderer {
                     .setVector(center.toVector3f().sub(camera.getPosition().toVector3f()));
 
             var rot = IrisIntegration.isShaderPackEnabled() ? new Quaternionf() : camera.rotation();
-            x.getValue().render(poseStack, planetBuilder, camera.getPosition().toVector3f().mul(-1), rot);
+            x.getValue().render(poseStack, planetBuilder, camera.getPosition().toVector3f().mul(-1).add(0, 0, 0), new Quaternionf(rot).invert());
 
             RenderSystem.setShaderTexture(0, texture);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -131,6 +132,7 @@ public class PlanetRenderer {
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         }
+        poseStack.popPose();
     }
     public static void init() {
         refreshMeshes();

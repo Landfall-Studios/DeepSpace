@@ -112,7 +112,7 @@ public class PlanetTeleportHandler {
                 finalPos = new float[] {0f, 0f};
             player.teleportTo(
                     newLevel,
-                    finalPos[0] * levelRadius + levelCenter.x, newLevel.getHeight(), finalPos[1] * levelRadius + levelCenter.z,
+                    finalPos[0] * levelRadius + levelCenter.x, newLevel.getMaxBuildHeight(), finalPos[1] * levelRadius + levelCenter.z,
                     Set.of(),
                     0, 0
             );
