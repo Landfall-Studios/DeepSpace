@@ -19,9 +19,11 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import org.checkerframework.checker.units.qual.C;
 import org.joml.Matrix4fc;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import world.landfall.deepspace.Deepspace;
 import world.landfall.deepspace.ModOptions;
@@ -48,9 +50,12 @@ public class PlanetDecorationsRenderer {
         ShaderProgram shader = VeilRenderSystem.setShader(ATMOSPHERE_SHADER);
         return VeilRenderBridge.toShaderInstance(shader);
     });
+    private static final HashMap<String, Asteroids> ASTEROIDS = new HashMap<>();
+
     public static void refreshMeshes() {
         RING_MESHES.clear();
         ATMOSPHERE_MESHES.clear();
+        ASTEROIDS.clear();
         for (var x : PlanetRegistry.getAllPlanets()) {
             var decorations = x.getDecorations();
             if (decorations.isEmpty()) return;
@@ -67,8 +72,22 @@ public class PlanetDecorationsRenderer {
                             decoration.scale(),
                             decoration.color()
                     ));
+                } else if (decoration.type().equals(Planet.PlanetDecoration.ASTEROIDS)) {
+                    ASTEROIDS.put(x.getId(), new Asteroids(
+                            x.getCenter().toVector3f(),
+                            decoration.scale(),
+                            decoration.color()
+                    ));
                 }
             }
+        }
+        VeilRenderSystem.renderer().getParticleManager().clear();
+        for (var x : ASTEROIDS.entrySet()) {
+            var asteroid = x.getValue();
+            var emitter = VeilRenderSystem.renderer().getParticleManager().createEmitter(ResourceLocation.parse("deepspace:asteroid_particle"));
+            if (emitter == null) continue;
+            emitter.setPosition(new Vec3(asteroid.pos));
+            VeilRenderSystem.renderer().getParticleManager().addParticleSystem(emitter);
         }
     }
     public static void init() {
@@ -196,9 +215,13 @@ public class PlanetDecorationsRenderer {
 
             RenderSystem.setShaderColor(1, 1, 1, 1);
         }
+        for (var x : ASTEROIDS.entrySet()) {
+
+        }
         poseStack.popPose();
 
     }
     private record Atmosphere(Cube cube, float scale, int color) {}
     private record Ring(Plane mesh, float scale, int color) {}
+    private record Asteroids(Vector3f pos, float scale, int color) {}
 }

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "group": "deepspace",
+  "category": "misc",
+  "ingredient": {
+    "item": "deepspace:raw_silicon"
+  },
+  "result": {
+    "id": "deepspace:silicon_crystal"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "max_lifetime": 20,
+  "loop": true,
+  "rate": 1,
+  "count": 2,
+  "emitter_settings": {
+    "shape": "veil:disc"
+  },
+  "particle_data": {
+    "should_collide": false,
+    "face_velocity": true
+  }
+}
