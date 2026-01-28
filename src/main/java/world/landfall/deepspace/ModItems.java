@@ -1,5 +1,6 @@
 package world.landfall.deepspace;
 
+import com.simibubi.create.content.logistics.vault.ItemVaultBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +37,7 @@ public class ModItems {
     public static final Supplier<ItemStack> CREATIVE_JETPACK_ITEM = () -> {
         var item = JETPACK_ITEM.toStack();
         item.set(JetpackItem.JetpackComponent.SUPPLIER, new JetpackItem.JetpackComponent(100, -1));
+
         return item;
     };
     public static final DeferredItem<JetHelmetItem> JET_HELMET_ITEM = ITEMS.register("jet_helmet", JetHelmetItem::new);
