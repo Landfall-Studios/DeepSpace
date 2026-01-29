@@ -52,6 +52,7 @@ public class OxygenatorBlock extends AbstractSimpleShaftBlock implements EntityB
 
     }
 
+
     @Override
     protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
         return List.of(ModItems.OXYGENATOR_BLOCK_ITEM.toStack(1));

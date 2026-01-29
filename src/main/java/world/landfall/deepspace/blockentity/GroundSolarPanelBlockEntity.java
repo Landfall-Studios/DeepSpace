@@ -1,5 +1,8 @@
 package world.landfall.deepspace.blockentity;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -38,6 +41,13 @@ public class GroundSolarPanelBlockEntity extends BlockEntity {
             entity.targetAngle = (float)sunAngle;
         }
 
+    }
+    public static class Renderer implements BlockEntityRenderer<GroundSolarPanelBlockEntity> {
+
+        @Override
+        public void render(GroundSolarPanelBlockEntity groundSolarPanelBlockEntity, float v, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int i1) {
+
+        }
     }
 
 }

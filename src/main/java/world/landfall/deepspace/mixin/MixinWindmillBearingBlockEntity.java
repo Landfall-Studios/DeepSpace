@@ -39,7 +39,7 @@ public abstract class MixinWindmillBearingBlockEntity extends MechanicalBearingB
         super(type, pos, state);
     }
 
-    @Inject(at = @At("HEAD"), method = "Lcom/simibubi/create/content/contraptions/bearing/WindmillBearingBlockEntity;getGeneratedSpeed()F",remap = false, cancellable = true)
+    @Inject(at = @At("HEAD"), method = "getGeneratedSpeed()F",remap = false, cancellable = true)
     public void getGeneratedSpeed(CallbackInfoReturnable<Float> cir) {
         if (!this.running) {
             cir.setReturnValue(0f);

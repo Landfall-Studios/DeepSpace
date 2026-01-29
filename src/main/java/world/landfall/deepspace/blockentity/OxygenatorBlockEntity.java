@@ -9,6 +9,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
+import com.simibubi.create.foundation.utility.CreateLang;
 import foundry.veil.api.client.registry.LightTypeRegistry;
 import foundry.veil.api.client.render.CullFrustum;
 import foundry.veil.api.client.render.VeilRenderBridge;
@@ -18,6 +19,7 @@ import foundry.veil.api.client.render.light.data.PointLightData;
 import foundry.veil.api.client.render.light.renderer.LightRenderHandle;
 import foundry.veil.api.client.render.light.renderer.LightRenderer;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -27,6 +29,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -55,6 +58,7 @@ import world.landfall.deepspace.block.OxygenatorBlock;
 import world.landfall.deepspace.integration.IrisIntegration;
 import world.landfall.deepspace.render.shapes.Sphere;
 
+import java.util.List;
 import java.util.Set;
 
 public class OxygenatorBlockEntity extends KineticBlockEntity {
@@ -76,6 +80,27 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
 
     }
 
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+//        tooltip.addFirst(Component.literal("    Radius: " + this.radius + " blocks"));
+        CreateLang.text("Kinetic Stats:")
+                .forGoggles(tooltip);
+        CreateLang.text("Radius: ")
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+        CreateLang.text(" " + radius + " blocks")
+                .style(ChatFormatting.GOLD)
+                .add(Component.literal(" at current speed").withStyle(ChatFormatting.DARK_GRAY))
+                .forGoggles(tooltip);
+        CreateLang.text("Kinetic Stress Impact: ")
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+        CreateLang.text(" " + this.lastStressApplied + "SU")
+                .style(ChatFormatting.AQUA)
+                .add(Component.literal(" at current speed").withStyle(ChatFormatting.DARK_GRAY))
+                .forGoggles(tooltip);
+        return true;
+    }
 
     @Override
     public void tick() {
