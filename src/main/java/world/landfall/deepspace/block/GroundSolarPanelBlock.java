@@ -1,6 +1,7 @@
 package world.landfall.deepspace.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -13,6 +14,9 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import org.jetbrains.annotations.Nullable;
 import world.landfall.deepspace.blockentity.GroundSolarPanelBlockEntity;
+import world.landfall.deepspace.blockentity.HeatTransferable;
+
+import java.util.stream.Stream;
 
 public class GroundSolarPanelBlock extends Block implements EntityBlock {
     public GroundSolarPanelBlock() {
@@ -32,6 +36,13 @@ public class GroundSolarPanelBlock extends Block implements EntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 
+    }
+    public static Stream<Direction> validTransferDirections(BlockState state, BlockPos pos, Level level) {
+        return Direction.stream().filter(direction -> {
+            var relative = pos.relative(direction);
+            var adjacentState = level.getBlockState(relative);
+            return adjacentState.hasBlockEntity() && level.getBlockEntity(relative) instanceof HeatTransferable;
+        });
     }
 
 

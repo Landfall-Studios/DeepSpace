@@ -11,6 +11,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import world.landfall.deepspace.blockentity.GroundSolarPanelBlockEntity;
+import world.landfall.deepspace.blockentity.HeatPipeBlockEntity;
 import world.landfall.deepspace.blockentity.OxygenatorBlockEntity;
 
 import java.util.function.Supplier;
@@ -23,6 +24,9 @@ public class ModBlockEntities {
     public static final Supplier<BlockEntityType<?>> GROUND_SOLAR_PANEL_BLOCK_ENTITY_TYPE = BLOCK_ENTITIES.register(
             "ground_solar_panel_block_entity", () -> GroundSolarPanelBlockEntity.TYPE
     );
+    public static final Supplier<BlockEntityType<?>> HEAT_PIPE_BLOCK_ENTITY_TYPE = BLOCK_ENTITIES.register(
+            "heat_pipe_block_entity", () -> HeatPipeBlockEntity.TYPE
+    );
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
@@ -30,5 +34,6 @@ public class ModBlockEntities {
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(OxygenatorBlockEntity.TYPE, OxygenatorBlockEntity.Renderer::new);
+        event.registerBlockEntityRenderer(HeatPipeBlockEntity.TYPE, HeatPipeBlockEntity.Renderer::new);
     }
 }

@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector2d;
 import world.landfall.deepspace.ModBlocks;
+import world.landfall.deepspace.block.GroundSolarPanelBlock;
 import world.landfall.deepspace.planet.PlanetRegistry;
 
 public class GroundSolarPanelBlockEntity extends BlockEntity {
@@ -39,6 +40,16 @@ public class GroundSolarPanelBlockEntity extends BlockEntity {
             var diff2D = new Vector2d(diff.x, diff.y);
             var sunAngle = diff2D.angle(new Vector2d(1, 0));
             entity.targetAngle = (float)sunAngle;
+        } else {
+            var time = level.getDayTimeFraction();
+            entity.targetAngle = time * (float)Math.PI * 2;
+        }
+        if (entity.targetAngle > Math.PI / 2 && entity.targetAngle < (3 * Math.PI) / 2) {
+            GroundSolarPanelBlock.validTransferDirections(state, pos, level).forEach(dir -> {
+                var ent = level.getBlockEntity(pos);
+                if (!(ent instanceof HeatTransferable transferable)) return;
+                transferable.addHeat((float)Math.abs(entity.targetAngle - Math.PI) * 10);
+            });
         }
 
     }
