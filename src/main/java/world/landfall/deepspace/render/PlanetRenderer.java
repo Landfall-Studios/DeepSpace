@@ -116,7 +116,7 @@ public class PlanetRenderer {
             var sun = PlanetRegistry.getSun();
             var center = sun.getCenter();
             VeilRenderSystem.setShader(Deepspace.path("planet"))
-                    .getOrCreateUniform("SunPosition")
+                    .getUniform("SunPosition")
                     .setVector(center.toVector3f().sub(camera.getPosition().toVector3f()));
 
             var rot = IrisIntegration.isShaderPackEnabled() ? new Quaternionf() : camera.rotation();

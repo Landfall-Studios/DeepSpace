@@ -190,7 +190,7 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
 //            ShaftRenderer.renderRotatingKineticBlock(oxygenatorBlockEntity, state, poseStack, shaftBuf, i);
             VeilRenderSystem.setShader(Deepspace.path("bubble"));
             var enabled = oxygenatorBlockEntity.enabled;
-            var TIME_UNIFORM = VeilRenderSystem.getShader().getOrCreateUniform("Time");
+            var TIME_UNIFORM = VeilRenderSystem.getShader().getUniform("Time");
             TIME_UNIFORM.setFloat((oxygenatorBlockEntity.level.getDayTime() + v) / 2f);
             var fakeShaft = AllBlocks.SHAFT.getDefaultState().setValue(BlockStateProperties.AXIS, state.getValue(BlockStateProperties.AXIS));
             KineticBlockEntityRenderer.renderRotatingKineticBlock(oxygenatorBlockEntity, fakeShaft, poseStack, shaftBuf, i);
