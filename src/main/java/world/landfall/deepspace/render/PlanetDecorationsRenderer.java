@@ -203,9 +203,9 @@ public class PlanetDecorationsRenderer {
             var color = new Color(x.getValue().color);
             VeilRenderSystem.setShader(Deepspace.path("ring"));
 
-            var TIME_UNIFORM = VeilRenderSystem.getShader().getUniform("Time");
+//            var TIME_UNIFORM = VeilRenderSystem.getShader().getUniform("Time");
 
-            TIME_UNIFORM.setFloat(camera.getPartialTickTime() + renderTick);
+//            TIME_UNIFORM.setFloat(camera.getPartialTickTime() + renderTick);
             RenderSystem.setShaderColor(color.getRed()/256f, color.getGreen()/256f, color.getBlue()/256f, 1f);
             RenderSystem.setShaderTexture(0, Deepspace.path("textures/atmosphere.png"));
             switch (ModOptions.options().atmosphereDetail) {

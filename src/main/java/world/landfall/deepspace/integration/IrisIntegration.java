@@ -15,14 +15,14 @@ public class IrisIntegration {
             IRIS_INSTANCE_CLASS = Class.forName("net.irisshaders.iris.api.v0.IrisApi");
             IRIS_INSTANCE = IRIS_INSTANCE_CLASS.getDeclaredMethod("getInstance").invoke(null);
         } catch (ReflectiveOperationException | NullPointerException e) {
-            logger.error("", e);
+//            logger.error("", e);
         }
     }
     public static boolean isShaderPackEnabled() {
         try {
             return (Boolean)IRIS_INSTANCE_CLASS.getDeclaredMethod("isShaderPackInUse").invoke(IRIS_INSTANCE);
         } catch (ReflectiveOperationException  | NullPointerException e) {
-            logger.error("", e);
+//            logger.error("", e);
             return false;
         }
     }
@@ -47,7 +47,7 @@ public class IrisIntegration {
                 }
             });
         } catch (ReflectiveOperationException | NullPointerException e) {
-            logger.error("Error in bindPipeline()", e);
+            logger.error("Error in bindPipeline()");
         }
     }
 }
