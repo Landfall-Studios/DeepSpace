@@ -21,6 +21,7 @@ import net.minecraft.world.level.pathfinder.FlyNodeEvaluator;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.Tags;
@@ -38,7 +39,7 @@ import world.landfall.deepspace.item.JetHelmetItem;
 import world.landfall.deepspace.item.JetpackItem;
 
 public class SpacePlayerEvents {
-    @EventBusSubscriber(modid = Deepspace.MODID)
+    @EventBusSubscriber(modid = Deepspace.MODID, value = Dist.CLIENT)
     public static class Tick {
         private static void jetpackTick(Player player, Level level, ItemStack jetpack, boolean noGravity) {
             var hasJetpack = jetpack.is(ModItems.JETPACK_ITEM.get());

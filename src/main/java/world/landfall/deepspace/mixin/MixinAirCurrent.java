@@ -41,25 +41,9 @@ public abstract class MixinAirCurrent {
     private void init(CallbackInfo ci) {
 
     }
-    @Inject(at = @At("HEAD"), method = "tick", remap = false, cancellable = true)
+    @Inject(at = @At("TAIL"), method = "tick", remap = false, cancellable = true)
     private void tick(CallbackInfo ci) {
-        if (direction == null)
-            rebuild();
-        Level world = source.getAirCurrentWorld();
-        if (world != null && world.isClientSide) {
-            float offset = pushing ? 0.5f : maxDistance + .5f;
-            Vec3 pos = VecHelper.getCenterOf(source.getAirCurrentPos())
-                    .add(Vec3.atLowerCornerOf(direction.getNormal())
-                            .scale(offset));
-            if (world.random.nextFloat() < AllConfigs.client().fanParticleDensity.get())
-                world.addParticle(new AirFlowParticleData(source.getAirCurrentPos()), pos.x, pos.y, pos.z, 0, 0, 0);
-        }
-
-        tickAffectedEntities(world);
-        tickAffectedHandlers();
-
         CreateIntegration.handleAir(caughtEntities, affectedItemHandlers);
-        ci.cancel();
     }
     @Shadow public abstract void rebuild();
     @Shadow protected abstract void tickAffectedEntities(Level world);
