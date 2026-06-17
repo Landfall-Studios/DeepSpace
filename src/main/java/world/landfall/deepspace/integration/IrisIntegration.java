@@ -10,6 +10,7 @@ public class IrisIntegration {
     private static Logger logger = LogUtils.getLogger();
     private static Class IRIS_INSTANCE_CLASS;
     private static Object IRIS_INSTANCE;
+    private static boolean hasFailedPipeline;
     static {
         try {
             IRIS_INSTANCE_CLASS = Class.forName("net.irisshaders.iris.api.v0.IrisApi");
@@ -17,6 +18,7 @@ public class IrisIntegration {
         } catch (ReflectiveOperationException | NullPointerException e) {
 //            logger.error("", e);
         }
+        hasFailedPipeline = false;
     }
     public static boolean isShaderPackEnabled() {
         try {
@@ -47,7 +49,10 @@ public class IrisIntegration {
                 }
             });
         } catch (ReflectiveOperationException | NullPointerException e) {
-            logger.error("Error in bindPipeline()");
+            if (!hasFailedPipeline) {
+                logger.warn("Iris isn't present in the pack, or is an unsupported version");
+                hasFailedPipeline = true;
+            }
         }
     }
 }

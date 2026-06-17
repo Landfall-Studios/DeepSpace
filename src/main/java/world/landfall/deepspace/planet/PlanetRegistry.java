@@ -245,7 +245,7 @@ public class PlanetRegistry {
             sun = new Sun(
                     new Vec3(-500, 0, 0),
                     new Vec3(-300, 200, 200),
-                    1500
+                    500
             );
             LOGGER.info("Created default planet configuration with {} planets", planets.size());
             
