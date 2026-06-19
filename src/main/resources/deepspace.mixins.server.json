@@ -6,7 +6,8 @@
   "refmap": "deepspace.mixins.refmap.json",
   "mixins": [
     "MixinAirCurrent",
-    "MixinWindmillBearingBlockEntity"
+    "MixinWindmillBearingBlockEntity",
+    "MixinLivingEntity"
   ],
   "injectors": {
     "defaultRequire": 1
