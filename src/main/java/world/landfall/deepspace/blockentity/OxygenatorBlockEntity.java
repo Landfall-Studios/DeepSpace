@@ -109,12 +109,11 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, OxygenatorBlockEntity blockEntity) {
-
         if (!state.is(ModBlocks.OXYGENATOR_BLOCK.get()))
             return;
         var radius = blockEntity.radius;
-        var corner1 = pos.offset(radius, radius, radius);
-        var corner2 = pos.offset(-radius, -radius, -radius);
+//        var corner1 = pos.offset(radius, radius, radius);
+//        var corner2 = pos.offset(-radius, -radius, -radius);
         var ticks = blockEntity.lazyTickCounter;
         if (ticks % 10 != 0)
             return;
@@ -125,12 +124,22 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
 
         blockEntity.enabled = (Math.abs(blockEntity.speed) >= 4f) && !blockEntity.overStressed;
         blockEntity.radius = Math.clamp((int)(Math.abs(blockEntity.speed) / 2f), 4, 32);
-        level.getNearbyPlayers(TargetingConditions.DEFAULT, null, AABB.of(BoundingBox.fromCorners(
-                corner1,
-                corner2
-        ))).forEach((player) -> {
-            if (blockEntity.enabled && player.position().distanceTo(pos.getCenter()) < radius) {
-                player.setData(ModAttatchments.LAST_OXYGENATED, 0f);
+
+
+//        level.getNearbyPlayers(TargetingConditions.DEFAULT, null, AABB.ofSize(
+//                blockEntity.worldPosition.getCenter(), radius, radius, radius
+//        )).forEach((player) -> {
+//            if (blockEntity.enabled && player.position().distanceTo(pos.getCenter()) < radius) {
+//                player.setData(ModAttatchments.LAST_OXYGENATED, 0f);
+//            }
+//        });
+        level.players().forEach(p -> {
+            if (blockEntity.enabled && p.position().distanceTo(pos.getCenter()) < radius) {
+                p.setData(ModAttatchments.LAST_OXYGENATED, 0f);
+                System.out.println("Oxygenated Player");
+
+            } else {
+                System.out.println("Too far away!");
             }
         });
 
