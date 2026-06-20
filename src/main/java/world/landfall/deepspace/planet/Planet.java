@@ -299,4 +299,9 @@ public class Planet {
                ", description='" + description + '\'' +
                '}';
     }
+    public float blockScale() {
+        var dist1 = Math.abs(boundingBoxMax.subtract(boundingBoxMin).x);
+        var dist2 = Math.abs(physicalMax.x - physicalMin.x);
+        return (float) (dist2 / dist1);
+    }
 } 

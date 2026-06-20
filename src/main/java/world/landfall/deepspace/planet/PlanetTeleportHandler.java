@@ -1,6 +1,8 @@
 package world.landfall.deepspace.planet;
 
 import com.mojang.logging.LogUtils;
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,6 +31,7 @@ import world.landfall.deepspace.Deepspace;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @EventBusSubscriber(modid = Deepspace.MODID)
 public class PlanetTeleportHandler {
@@ -78,6 +81,17 @@ public class PlanetTeleportHandler {
                     0
             );
         } else if (closestPlanet!=null&&dimension.equals(ResourceLocation.parse("deepspace:space")) && (closestPlanet.isPlayerTouching(player))) {
+
+            var sublevelContainer = SubLevelContainer.getContainer(level);
+            var isTrackingSublevel = new AtomicBoolean(false);
+            sublevelContainer.getAllSubLevels().forEach(s -> {
+                if (s instanceof ServerSubLevel subLevel) {
+                    if (subLevel.getTrackingPlayers().contains(player.getUUID()))
+                        isTrackingSublevel.set(true);
+                }
+            });
+            if (isTrackingSublevel.get()) return;
+
             var newLevel = player.getServer().getLevel(closestPlanet.getDimension());
             var playerPos = player.position();
             var planetPos = closestPlanet.getCenter();
