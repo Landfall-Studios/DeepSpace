@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.types.Type;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -56,6 +57,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
+import org.slf4j.Logger;
 import world.landfall.deepspace.Deepspace;
 import world.landfall.deepspace.ModAttatchments;
 import world.landfall.deepspace.ModBlocks;
@@ -67,6 +69,8 @@ import java.util.List;
 import java.util.Set;
 
 public class OxygenatorBlockEntity extends KineticBlockEntity {
+
+    static Logger LOGGER = LogUtils.getLogger();
     public static final BlockEntityType<OxygenatorBlockEntity> TYPE = BlockEntityType.Builder.of(
             OxygenatorBlockEntity::new,
             ModBlocks.OXYGENATOR_BLOCK.get()
@@ -139,12 +143,20 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
 //            }
 //        });
         level.players().forEach(p -> {
-            if (blockEntity.enabled && p.position().distanceTo(pos.getCenter()) < radius) {
+            SubLevelAccess subLevel = SableCompanion.INSTANCE.getContaining(blockEntity.getLevel(), blockEntity.worldPosition);
+            Vec3 realPos;
+            if (subLevel != null){
+                var pose = subLevel.logicalPose();
+                realPos = pose.transformPosition(pos.getCenter());
+            }else {
+                realPos = pos.getCenter();
+            }
+            if (blockEntity.enabled && p.position().distanceTo(realPos) < radius) {
                 p.setData(ModAttatchments.LAST_OXYGENATED, 0f);
-                System.out.println("Oxygenated Player");
+                LOGGER.debug("Oxygenated Player");
 
             } else {
-                System.out.println("Too far away!");
+                LOGGER.debug("Too far away!");
             }
         });
 
