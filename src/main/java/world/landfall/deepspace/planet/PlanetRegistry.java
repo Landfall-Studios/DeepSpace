@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 
 import net.minecraft.server.level.ServerPlayer;
@@ -203,9 +204,9 @@ public class PlanetRegistry {
                 "overworld",
                 "Overworld",
                 Level.OVERWORLD,
-                new Vec3(-100, -100, -100),
-                new Vec3(100, 100, 100),
-                List.of(new Planet.PlanetDecoration(Planet.PlanetDecoration.ATMOSPHERE, 1.05f, Color.WHITE.getRGB())),
+                new Vec3(2000, 100, -100),
+                new Vec3(2200, 300, 100),
+                List.of(new Planet.PlanetDecoration(Planet.PlanetDecoration.ATMOSPHERE, 1.0f, Color.WHITE.getRGB())),
                 "The main world where players spawn",
                 new Vec2(-1000, -1000),
                 new Vec2(1000, 1000)
@@ -216,35 +217,21 @@ public class PlanetRegistry {
             Planet nether = new Planet(
                 "sarrion",
                 "Sarrion",
-                Level.NETHER,
-                new Vec3(200, -100, -100),
-                new Vec3(400, 100, 100),
+                ResourceKey.create(Registries.DIMENSION, Deepspace.path("sarrion")),
+                new Vec3(-1000, 50, -1000),
+                new Vec3(-750, 300, -750),
                 List.of(
-                        new Planet.PlanetDecoration(Planet.PlanetDecoration.ATMOSPHERE, 1f, Color.RED.getRGB()),
-                        new Planet.PlanetDecoration(Planet.PlanetDecoration.RINGS, 1.2f, Color.RED.getRGB())
+                        new Planet.PlanetDecoration(Planet.PlanetDecoration.ATMOSPHERE, 1.05f, Color.RED.getRGB()),
+                        new Planet.PlanetDecoration(Planet.PlanetDecoration.RINGS, 1.0f, Color.RED.getRGB())
                 ),
                 "A hellish dimension filled with lava and dangerous creatures",
                 new Vec2(-1000, -1000),
                 new Vec2(1000, 1000)
             );
             registerPlanetUnsafe(nether);
-            
-            // End planet
-            Planet end = new Planet(
-                "luna",
-                "The Moon",
-                Level.END,
-                new Vec3(500, -100, -100),
-                new Vec3(700, 100, 100),
-                List.of(new Planet.PlanetDecoration(Planet.PlanetDecoration.ASTEROIDS, 1f, Color.WHITE.getRGB())),
-                "The final dimension, home to the Ender Dragon",
-                new Vec2(-1000, -1000),
-                new Vec2(1000, 1000)
-            );
-            registerPlanetUnsafe(end);
             sun = new Sun(
-                    new Vec3(-500, 0, 0),
-                    new Vec3(-300, 200, 200),
+                    new Vec3(-200, 0, -200),
+                    new Vec3(200, 400, 200),
                     500
             );
             LOGGER.info("Created default planet configuration with {} planets", planets.size());

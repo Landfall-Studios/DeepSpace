@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @EventBusSubscriber(modid = Deepspace.MODID)
 public class SubLevelEvents {
 
-    private static final float GravitationalConstant = 100f;
+    private static final float GravitationalConstant = 300f;
     private static final float DistanceScale = 1.0f;
     private static final int Tickrate = 20;
 
