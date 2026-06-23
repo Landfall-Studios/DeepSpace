@@ -10,6 +10,11 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
 import com.simibubi.create.foundation.utility.CreateLang;
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.companion.SableCompanion;
+import dev.ryanhcode.sable.companion.SubLevelAccess;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
+import dev.ryanhcode.sable.sublevel.SubLevel;
 import foundry.veil.api.client.registry.LightTypeRegistry;
 import foundry.veil.api.client.render.CullFrustum;
 import foundry.veil.api.client.render.VeilRenderBridge;
@@ -209,7 +214,16 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
                 return;
             RenderSystem.setShaderTexture(0, Deepspace.path("textures/atmosphere.png"));
             poseStack.pushPose();
-            mesh.render(poseStack, buf, oxygenatorBlockEntity.worldPosition.getCenter().toVector3f().sub(cam.getPosition().toVector3f()), new Quaternionf());
+
+            SubLevelAccess levelAccess = SableCompanion.INSTANCE.getContaining(oxygenatorBlockEntity.getLevel(), oxygenatorBlockEntity.worldPosition);
+            if (levelAccess != null){
+                Pose3dc pose = levelAccess.logicalPose();
+                mesh.render(poseStack, buf, pose.transformPosition(oxygenatorBlockEntity.worldPosition.getCenter()).toVector3f().sub(cam.getPosition().toVector3f()), new Quaternionf());
+            }
+            else{
+                mesh.render(poseStack, buf, oxygenatorBlockEntity.worldPosition.getCenter().toVector3f().sub(cam.getPosition().toVector3f()), new Quaternionf());
+            }
+
             type.draw(buf.buildOrThrow());
 
 //            super.renderSafe(oxygenatorBlockEntity, v, poseStack, multiBufferSource, i, i1);
