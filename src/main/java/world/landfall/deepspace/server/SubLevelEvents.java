@@ -96,6 +96,7 @@ public class SubLevelEvents {
                         var dist = planet.getCenter().subtract(new Vec3(
                                 pos.x, pos.y, pos.z
                         ));
+                        dist.multiply(planet.blockScale(), planet.blockScale(), planet.blockScale());
                         var flyingSidways = Math.abs(dist.x) > Math.abs(dist.y) || Math.abs(dist.z) > Math.abs(dist.y);
                         if (flyingSidways) {
 
