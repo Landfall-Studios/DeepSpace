@@ -55,7 +55,7 @@ public class PlanetTeleportHandler {
     private static final RandomSource random = RandomSource.create();
     private static final float DISTANCE_FROM_PLANET_TO_TELEPORT_FROM = 1.5f;
     // How high above the height limit do you need to go to teleport to deep space
-    private static final int SPACE_DISTANCE_FROM_CEILING = 10;
+    public static final int SPACE_DISTANCE_FROM_CEILING = 10;
     @SubscribeEvent
     public static void serverPlayerTick(PlayerTickEvent.Post event) {
         var player = event.getEntity();
@@ -67,6 +67,15 @@ public class PlanetTeleportHandler {
         var height = level.getMaxBuildHeight();
 
         if (player.position().y > height + SPACE_DISTANCE_FROM_CEILING && planet != null) {
+            var sublevelContainer = SubLevelContainer.getContainer(level);
+            var isTrackingSublevel = new AtomicBoolean(false);
+            sublevelContainer.getAllSubLevels().forEach(s -> {
+                if (s instanceof ServerSubLevel subLevel) {
+                    if (subLevel.getTrackingPlayers().contains(player.getUUID()))
+                        isTrackingSublevel.set(true);
+                }
+            });
+            if (isTrackingSublevel.get()) return;
             LOGGER.info("Teleporting player {} to planet {}", player.getDisplayName().getString(), planet.getName());
             var pos = getSafePlanetExitLocation(planet);
             player.teleportTo(

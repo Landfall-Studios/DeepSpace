@@ -1,5 +1,6 @@
 package world.landfall.deepspace.server;
 
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import dev.egg.DimensionalSable;
 import dev.egg.SubLevelTemplate;
@@ -22,9 +23,12 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,9 +36,13 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.joml.Quaterniond;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
+import org.slf4j.Logger;
 import world.landfall.deepspace.Deepspace;
 import dev.ryanhcode.sable.sublevel.SubLevel;
+import world.landfall.deepspace.planet.Planet;
 import world.landfall.deepspace.planet.PlanetRegistry;
+import world.landfall.deepspace.planet.PlanetTeleportHandler;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -45,16 +53,20 @@ public class SubLevelEvents {
     private static final float GravitationalConstant = 300f;
     private static final float DistanceScale = 1.0f;
     private static final int Tickrate = 20;
+    private static final float PlanetTeleportOffset = 1.2345f;
+
+    private static final Logger LOGGER = LogUtils.getLogger();
+
 
 
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post e) {
         var server = e.getServer();
-        var container = Objects.requireNonNull(ServerSubLevelContainer.getContainer(server.getLevel(ResourceKey.create(
+        var spaceContainer = Objects.requireNonNull(ServerSubLevelContainer.getContainer(server.getLevel(ResourceKey.create(
                 Registries.DIMENSION,
                 Deepspace.path("space")
         ))));
-        var sublevels = container.getAllSubLevels();
+        var sublevels = spaceContainer.getAllSubLevels();
         sublevels.forEach(s -> {
             if (s != null) {
                 var handle = RigidBodyHandle.of(s);
@@ -170,6 +182,114 @@ public class SubLevelEvents {
                 });
             }
         });
+
+        PlanetRegistry.getAllPlanets().forEach(planet -> {
+            var level = server.getLevel(planet.getDimension());
+            if (level == null) return;
+            var container = SubLevelContainer.getContainer(level);
+            if (container == null) return;
+
+            container.getAllSubLevels().forEach(s -> {
+                var buildHeight = level.getMaxBuildHeight();
+                if (s.logicalPose().position().y > buildHeight + PlanetTeleportHandler.SPACE_DISTANCE_FROM_CEILING) {
+                    var sPos = s.logicalPose().position();
+                    var exitPos = calculateExitPosition(new Vec3(
+                            sPos.x,
+                            sPos.y,
+                            sPos.z
+                    ), planet, level);
+
+                    LOGGER.info("Teleporting sublevel to position {} in space, time fraction is {}", exitPos, (float) (level.getGameTime() % ServerLevel.TICKS_PER_DAY) / ServerLevel.TICKS_PER_DAY);
+
+                    Collection<SubLevel> subLevels;
+                    var warpConnected = true;
+                    if (warpConnected) {
+                        subLevels = SubLevelHelper.getConnectedChain(s);
+                    } else {
+                        subLevels = Set.of(s);
+                    }
+                    WarpSubLevels(subLevels, container, spaceContainer, sPos, new Vector3d(
+                            exitPos.x,
+                            exitPos.y,
+                            exitPos.z
+                    ));
+                }
+            });
+        });
+
+
+    }
+
+    private static Vec3 calculateExitPosition(Vec3 previousPosition, Planet planet, Level level) {
+//        int offset = (int) Math.floor(level.getDayTimeFraction() * 4);
+//
+//
+        var sunPos = Objects.requireNonNull(PlanetRegistry.getSun()).getCenter();
+        var planetPos = planet.getCenter();
+
+        var angleBetween = Math.atan2(
+                sunPos.subtract(planetPos).x,
+                sunPos.subtract(planetPos).z
+        ) + Math.PI;
+        angleBetween = (angleBetween) / (Math.PI * 2);
+//        var timeFactor = (float) (level.dayTime() % ServerLevel.TICKS_PER_DAY) / ServerLevel.TICKS_PER_DAY;
+        var timeFactor = level.getTimeOfDay(0);
+        int offset = (int) Math.floor(
+                (
+                        angleBetween +
+                        timeFactor
+                ) * 4
+        ) % 4;
+
+        var exitPos = planetPos;
+        var scaledPos = calculateWorldToPlanetScale(
+                new Vec2((float) previousPosition.x, (float) previousPosition.z),
+                planet
+        );
+        var planetRadius = planet.getBoundingBoxMax().x / 2 - planet.getBoundingBoxMin().x / 2;
+        switch (offset) {
+            case 0 ->
+                    exitPos = exitPos.add(
+                            scaledPos.x * PlanetTeleportOffset,
+                            scaledPos.y,
+                            planetRadius * PlanetTeleportOffset
+                    );
+            case 1 ->
+                    exitPos = exitPos.add(
+                            -planetRadius * PlanetTeleportOffset,
+                            scaledPos.y,
+                            scaledPos.x * PlanetTeleportOffset
+                    );
+
+            case 2 ->
+                    exitPos = exitPos.add(
+                            -scaledPos.x * PlanetTeleportOffset,
+                            scaledPos.y,
+                            -planetRadius * PlanetTeleportOffset
+                    );
+
+            case 3 ->
+                    exitPos = exitPos.add(
+                            planetRadius * PlanetTeleportOffset,
+                            scaledPos.y,
+                            -scaledPos.x * PlanetTeleportOffset
+                    );
+
+        }
+
+        LOGGER.info("Planet teleport offset: {}, Planet scaled position: {} {}", offset, scaledPos.x, scaledPos.y);
+        LOGGER.info("Time factor: {}, angle between: {}", timeFactor, angleBetween);
+
+        return exitPos;
+    }
+
+    private static Vec2 calculateWorldToPlanetScale(Vec2 insidePlanet, Planet planet) {
+        var scale = planet.blockScale();
+        var planetSize = planet.getBoundingBoxMax().x - planet.getBoundingBoxMin().x;
+        return new Vec2(
+                (float) (insidePlanet.x / scale),
+                (float) (insidePlanet.y / scale)
+        );
     }
 
     private static Vec3 calculateGravitationalSpeedDelta(Vec3 targetPos, Vec3 planetPos, float planetSize) {

@@ -206,7 +206,7 @@ public class PlanetRegistry {
                 Level.OVERWORLD,
                 new Vec3(2000, 100, -100),
                 new Vec3(2200, 300, 100),
-                List.of(new Planet.PlanetDecoration(Planet.PlanetDecoration.ATMOSPHERE, 1.0f, Color.WHITE.getRGB())),
+                List.of(new Planet.PlanetDecoration(Planet.PlanetDecoration.ATMOSPHERE, 1.1f, Color.WHITE.getRGB())),
                 "The main world where players spawn",
                 new Vec2(-1000, -1000),
                 new Vec2(1000, 1000)
@@ -221,7 +221,7 @@ public class PlanetRegistry {
                 new Vec3(-1000, 50, -1000),
                 new Vec3(-750, 300, -750),
                 List.of(
-                        new Planet.PlanetDecoration(Planet.PlanetDecoration.ATMOSPHERE, 1.05f, Color.RED.getRGB()),
+                        new Planet.PlanetDecoration(Planet.PlanetDecoration.ATMOSPHERE, 1.05f * 1.1f, Color.RED.getRGB()),
                         new Planet.PlanetDecoration(Planet.PlanetDecoration.RINGS, 1.0f, Color.RED.getRGB())
                 ),
                 "A hellish dimension filled with lava and dangerous creatures",
