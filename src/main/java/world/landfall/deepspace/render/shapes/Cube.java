@@ -15,9 +15,19 @@ public class Cube implements DeepSpaceRenderable {
     private LinkedList<Triangle> TRIANGLES = new LinkedList<>();
     public final Vector3f center;
     private final boolean weirdNormals;
+    private final boolean unwrapped;
     public final float radius;
-    public Cube(Vector3f _corner1, Vector3f _corner2, float scale, boolean weirdNormals) {
+
+    private final boolean[][] unwrappedMap = {
+            {false, true, false, false},
+            {true , true, true , true},
+            {false, true, false, false},
+    };
+
+
+    public Cube(Vector3f _corner1, Vector3f _corner2, float scale, boolean weirdNormals, boolean unwrapped) {
         this.weirdNormals = weirdNormals;
+        this.unwrapped = unwrapped;
         var corner1 = new Vector3f(
                 _corner1.x,
                 _corner1.y,
@@ -35,16 +45,44 @@ public class Cube implements DeepSpaceRenderable {
         Vector3f diff = new Vector3f(corner1).sub(corner2).div(2);
         this.radius = Math.abs(diff.x);
         Quaternionf[] rotations = new Quaternionf[] {
+                new Quaternionf().rotateLocalX(-(float)Math.PI/2),
                 new Quaternionf(),
                 new Quaternionf().rotateLocalY((float)Math.PI/2),
                 new Quaternionf().rotateLocalY((float)Math.PI),
                 new Quaternionf().rotateLocalY((float)Math.PI*1.5f),
                 new Quaternionf().rotateLocalX((float)Math.PI/2),
-                new Quaternionf().rotateLocalX(-(float)Math.PI/2)
         };
         diff.mul(scale);
-        for (var x : rotations) {
 
+
+
+        int faceind = 0;
+        for (var x : rotations) {
+            int xInd = -1, yInd = -1;
+            int counter = 0;
+            for (int i = 0; i < unwrappedMap.length; i++) {
+                for (int j = 0; j < unwrappedMap[i].length; j++) {
+                    if (unwrappedMap[i][j]) {
+                        if (counter++ == faceind) {
+                            xInd = i;
+                            yInd = j;
+                        }
+                    }
+                }
+            }
+
+
+
+            float[][] UVs = unwrapped && xInd > -1 ?
+                    new float[][] {
+                            {
+                                    xInd * .25f, xInd * .25f + .25f
+                            },
+                            {
+                                    yInd * .25f, yInd * .25f + .25f
+                            },
+                    }:
+                    new float[][] {{0, 1}, {0, 1}};
             Vector3f[] vertexes = new Vector3f[] {
                     new Vector3f(diff.x, diff.y, diff.z),
                     new Vector3f(diff.x, -diff.y, diff.z),
@@ -60,9 +98,9 @@ public class Cube implements DeepSpaceRenderable {
                             vertexes[2].rotate(x).add(center)
                     },
                     new Vector2f[] {
-                            new Vector2f(0, 0),
-                            new Vector2f(0, 1),
-                            new Vector2f(1, 0)
+                            new Vector2f(UVs[0][0], UVs[1][0]),
+                            new Vector2f(UVs[0][0], UVs[1][1]),
+                            new Vector2f(UVs[0][1], UVs[1][0])
                     },
                     new Vector3f[] {
                             new Vector3f(0, 0, -1).rotate(x),
@@ -77,9 +115,9 @@ public class Cube implements DeepSpaceRenderable {
                             vertexes[5].rotate(x).add(center)
                     },
                     new Vector2f[] {
-                            new Vector2f(1, 0),
-                            new Vector2f(0, 1),
-                            new Vector2f(1, 1)
+                            new Vector2f(UVs[0][1], UVs[1][0]),
+                            new Vector2f(UVs[0][0], UVs[1][1]),
+                            new Vector2f(UVs[0][1], UVs[1][1])
                     },
                     new Vector3f[] {
                             new Vector3f(0, 0, -1).rotate(x),
@@ -89,8 +127,13 @@ public class Cube implements DeepSpaceRenderable {
             );
             TRIANGLES.add(triangle1);
             TRIANGLES.add(triangle2);
-
+            faceind++;
         }
+    }
+    public Cube(Vector3f _corner1, Vector3f _corner2, float scale, boolean weirdNormals) {
+        this(_corner1, _corner2, scale, weirdNormals, false);
+
+
     }
     @Override
     public void render(PoseStack stack, VertexConsumer consumer, Vector3fc dimensions, Quaternionf rotation) {
