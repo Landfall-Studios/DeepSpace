@@ -34,6 +34,7 @@ public class JetpackRenderer {
     @SubscribeEvent
     public static void onRender(RenderPlayerEvent.Post e) {
         var stack = e.getPoseStack();
+
         var ent = e.getEntity();
         if (!ent.getInventory().getItem(38).is(ModItems.JETPACK_ITEM))
             return;

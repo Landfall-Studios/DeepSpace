@@ -84,7 +84,7 @@ side="BOTH"
 [[dependencies."${mod_id}"]]
 modId="veil"
 type="required"
-versionRange="[2.4.0,2.5)"
+versionRange="[4.0.0,5)"
 ordering="NONE"
 side="BOTH"
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares

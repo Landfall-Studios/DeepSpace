@@ -18,10 +18,13 @@ import java.util.List;
 public class ModPlacedFeatures {
 
     public static final ResourceKey<PlacedFeature> MOONSTONE_ZINC_PLACED_KEY = registerKey("moonstone_zinc_ore_placed");
+    public static final ResourceKey<PlacedFeature> MOONSTONE_SILICON_PLACED_KEY = registerKey("moonstone_silicon_ore_placed");
 
     public static void bootstrap(BootstrapContext<PlacedFeature> ctx) {
         var features = ctx.lookup(Registries.CONFIGURED_FEATURE);
         register(ctx, MOONSTONE_ZINC_PLACED_KEY, features.getOrThrow(ModConfiguredFeatures.MOONSTONE_ZINC_ORE_KEY),
+                ModOrePlacement.commonOrePlacement(12, HeightRangePlacement.uniform(VerticalAnchor.absolute(32), VerticalAnchor.absolute(80))));
+        register(ctx, MOONSTONE_SILICON_PLACED_KEY, features.getOrThrow(ModConfiguredFeatures.MOONSTONE_SILICON_ORE_KEY),
                 ModOrePlacement.commonOrePlacement(12, HeightRangePlacement.uniform(VerticalAnchor.absolute(32), VerticalAnchor.absolute(80))));
     }
     public static ResourceKey<PlacedFeature> registerKey(String name) {

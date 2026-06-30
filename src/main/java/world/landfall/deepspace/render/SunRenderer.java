@@ -111,6 +111,7 @@ public class SunRenderer {
 
         RenderType sunRenderType = sunRenderType();
         var poseStack = matrixStack.toPoseStack();
+        poseStack.pushPose();
         BufferBuilder sunBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.NEW_ENTITY);
         var time = instance.level.getTimeOfDay(partialTicks.getGameTimeDeltaTicks());
         var x = (float)Math.cos(time * 2 * 3.14159f);
@@ -130,6 +131,7 @@ public class SunRenderer {
             case EXPENSIVE -> sunBloomRenderType().draw(sunBuilder.buildOrThrow());
         }
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        poseStack.popPose();
     }
     public static void init() {
         refreshMeshes();

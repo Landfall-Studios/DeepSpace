@@ -4,11 +4,18 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.types.Type;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
 import com.simibubi.create.content.kinetics.simpleRelays.CogWheelBlock;
+import com.simibubi.create.foundation.utility.CreateLang;
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.companion.SableCompanion;
+import dev.ryanhcode.sable.companion.SubLevelAccess;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
+import dev.ryanhcode.sable.sublevel.SubLevel;
 import foundry.veil.api.client.registry.LightTypeRegistry;
 import foundry.veil.api.client.render.CullFrustum;
 import foundry.veil.api.client.render.VeilRenderBridge;
@@ -18,6 +25,7 @@ import foundry.veil.api.client.render.light.data.PointLightData;
 import foundry.veil.api.client.render.light.renderer.LightRenderHandle;
 import foundry.veil.api.client.render.light.renderer.LightRenderer;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -27,6 +35,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -48,6 +57,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
+import org.slf4j.Logger;
 import world.landfall.deepspace.Deepspace;
 import world.landfall.deepspace.ModAttatchments;
 import world.landfall.deepspace.ModBlocks;
@@ -55,9 +65,12 @@ import world.landfall.deepspace.block.OxygenatorBlock;
 import world.landfall.deepspace.integration.IrisIntegration;
 import world.landfall.deepspace.render.shapes.Sphere;
 
+import java.util.List;
 import java.util.Set;
 
 public class OxygenatorBlockEntity extends KineticBlockEntity {
+
+    static Logger LOGGER = LogUtils.getLogger();
     public static final BlockEntityType<OxygenatorBlockEntity> TYPE = BlockEntityType.Builder.of(
             OxygenatorBlockEntity::new,
             ModBlocks.OXYGENATOR_BLOCK.get()
@@ -76,6 +89,27 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
 
     }
 
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+//        tooltip.addFirst(Component.literal("    Radius: " + this.radius + " blocks"));
+        CreateLang.text("Kinetic Stats:")
+                .forGoggles(tooltip);
+        CreateLang.text("Radius: ")
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+        CreateLang.text(" " + radius + " blocks")
+                .style(ChatFormatting.GOLD)
+                .add(Component.literal(" at current speed").withStyle(ChatFormatting.DARK_GRAY))
+                .forGoggles(tooltip);
+        CreateLang.text("Kinetic Stress Impact: ")
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+        CreateLang.text(" " + this.lastStressApplied + "SU")
+                .style(ChatFormatting.AQUA)
+                .add(Component.literal(" at current speed").withStyle(ChatFormatting.DARK_GRAY))
+                .forGoggles(tooltip);
+        return true;
+    }
 
     @Override
     public void tick() {
@@ -84,12 +118,11 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, OxygenatorBlockEntity blockEntity) {
-
         if (!state.is(ModBlocks.OXYGENATOR_BLOCK.get()))
             return;
         var radius = blockEntity.radius;
-        var corner1 = pos.offset(radius, radius, radius);
-        var corner2 = pos.offset(-radius, -radius, -radius);
+//        var corner1 = pos.offset(radius, radius, radius);
+//        var corner2 = pos.offset(-radius, -radius, -radius);
         var ticks = blockEntity.lazyTickCounter;
         if (ticks % 10 != 0)
             return;
@@ -100,12 +133,30 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
 
         blockEntity.enabled = (Math.abs(blockEntity.speed) >= 4f) && !blockEntity.overStressed;
         blockEntity.radius = Math.clamp((int)(Math.abs(blockEntity.speed) / 2f), 4, 32);
-        level.getNearbyPlayers(TargetingConditions.DEFAULT, null, AABB.of(BoundingBox.fromCorners(
-                corner1,
-                corner2
-        ))).forEach((player) -> {
-            if (blockEntity.enabled && player.position().distanceTo(pos.getCenter()) < radius) {
-                player.setData(ModAttatchments.LAST_OXYGENATED, 0f);
+
+
+//        level.getNearbyPlayers(TargetingConditions.DEFAULT, null, AABB.ofSize(
+//                blockEntity.worldPosition.getCenter(), radius, radius, radius
+//        )).forEach((player) -> {
+//            if (blockEntity.enabled && player.position().distanceTo(pos.getCenter()) < radius) {
+//                player.setData(ModAttatchments.LAST_OXYGENATED, 0f);
+//            }
+//        });
+        level.players().forEach(p -> {
+            SubLevelAccess subLevel = SableCompanion.INSTANCE.getContaining(blockEntity.getLevel(), blockEntity.worldPosition);
+            Vec3 realPos;
+            if (subLevel != null){
+                var pose = subLevel.logicalPose();
+                realPos = pose.transformPosition(pos.getCenter());
+            }else {
+                realPos = pos.getCenter();
+            }
+            if (blockEntity.enabled && p.position().distanceTo(realPos) < radius) {
+                p.setData(ModAttatchments.LAST_OXYGENATED, 0f);
+                LOGGER.debug("Oxygenated Player");
+
+            } else {
+                LOGGER.debug("Too far away!");
             }
         });
 
@@ -165,7 +216,7 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
 //            ShaftRenderer.renderRotatingKineticBlock(oxygenatorBlockEntity, state, poseStack, shaftBuf, i);
             VeilRenderSystem.setShader(Deepspace.path("bubble"));
             var enabled = oxygenatorBlockEntity.enabled;
-            var TIME_UNIFORM = VeilRenderSystem.getShader().getOrCreateUniform("Time");
+            var TIME_UNIFORM = VeilRenderSystem.getShader().getUniform("Time");
             TIME_UNIFORM.setFloat((oxygenatorBlockEntity.level.getDayTime() + v) / 2f);
             var fakeShaft = AllBlocks.SHAFT.getDefaultState().setValue(BlockStateProperties.AXIS, state.getValue(BlockStateProperties.AXIS));
             KineticBlockEntityRenderer.renderRotatingKineticBlock(oxygenatorBlockEntity, fakeShaft, poseStack, shaftBuf, i);
@@ -175,7 +226,16 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
                 return;
             RenderSystem.setShaderTexture(0, Deepspace.path("textures/atmosphere.png"));
             poseStack.pushPose();
-            mesh.render(poseStack, buf, oxygenatorBlockEntity.worldPosition.getCenter().toVector3f().sub(cam.getPosition().toVector3f()), new Quaternionf());
+
+            SubLevelAccess levelAccess = SableCompanion.INSTANCE.getContaining(oxygenatorBlockEntity.getLevel(), oxygenatorBlockEntity.worldPosition);
+            if (levelAccess != null){
+                Pose3dc pose = levelAccess.logicalPose();
+                mesh.render(poseStack, buf, pose.transformPosition(oxygenatorBlockEntity.worldPosition.getCenter()).toVector3f().sub(cam.getPosition().toVector3f()), new Quaternionf());
+            }
+            else{
+                mesh.render(poseStack, buf, oxygenatorBlockEntity.worldPosition.getCenter().toVector3f().sub(cam.getPosition().toVector3f()), new Quaternionf());
+            }
+
             type.draw(buf.buildOrThrow());
 
 //            super.renderSafe(oxygenatorBlockEntity, v, poseStack, multiBufferSource, i, i1);

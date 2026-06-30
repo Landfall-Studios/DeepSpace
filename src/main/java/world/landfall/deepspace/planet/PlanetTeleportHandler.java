@@ -1,6 +1,8 @@
 package world.landfall.deepspace.planet;
 
 import com.mojang.logging.LogUtils;
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,6 +31,7 @@ import world.landfall.deepspace.Deepspace;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @EventBusSubscriber(modid = Deepspace.MODID)
 public class PlanetTeleportHandler {
@@ -52,7 +55,7 @@ public class PlanetTeleportHandler {
     private static final RandomSource random = RandomSource.create();
     private static final float DISTANCE_FROM_PLANET_TO_TELEPORT_FROM = 1.5f;
     // How high above the height limit do you need to go to teleport to deep space
-    private static final int SPACE_DISTANCE_FROM_CEILING = 10;
+    public static final int SPACE_DISTANCE_FROM_CEILING = 10;
     @SubscribeEvent
     public static void serverPlayerTick(PlayerTickEvent.Post event) {
         var player = event.getEntity();
@@ -64,6 +67,15 @@ public class PlanetTeleportHandler {
         var height = level.getMaxBuildHeight();
 
         if (player.position().y > height + SPACE_DISTANCE_FROM_CEILING && planet != null) {
+            var sublevelContainer = SubLevelContainer.getContainer(level);
+            var isTrackingSublevel = new AtomicBoolean(false);
+            sublevelContainer.getAllSubLevels().forEach(s -> {
+                if (s instanceof ServerSubLevel subLevel) {
+                    if (subLevel.getTrackingPlayers().contains(player.getUUID()))
+                        isTrackingSublevel.set(true);
+                }
+            });
+            if (isTrackingSublevel.get()) return;
             LOGGER.info("Teleporting player {} to planet {}", player.getDisplayName().getString(), planet.getName());
             var pos = getSafePlanetExitLocation(planet);
             player.teleportTo(
@@ -78,6 +90,17 @@ public class PlanetTeleportHandler {
                     0
             );
         } else if (closestPlanet!=null&&dimension.equals(ResourceLocation.parse("deepspace:space")) && (closestPlanet.isPlayerTouching(player))) {
+
+            var sublevelContainer = SubLevelContainer.getContainer(level);
+            var isTrackingSublevel = new AtomicBoolean(false);
+            sublevelContainer.getAllSubLevels().forEach(s -> {
+                if (s instanceof ServerSubLevel subLevel) {
+                    if (subLevel.getTrackingPlayers().contains(player.getUUID()))
+                        isTrackingSublevel.set(true);
+                }
+            });
+            if (isTrackingSublevel.get()) return;
+
             var newLevel = player.getServer().getLevel(closestPlanet.getDimension());
             var playerPos = player.position();
             var planetPos = closestPlanet.getCenter();
@@ -112,7 +135,7 @@ public class PlanetTeleportHandler {
                 finalPos = new float[] {0f, 0f};
             player.teleportTo(
                     newLevel,
-                    finalPos[0] * levelRadius + levelCenter.x, newLevel.getHeight(), finalPos[1] * levelRadius + levelCenter.z,
+                    finalPos[0] * levelRadius + levelCenter.x, newLevel.getMaxBuildHeight(), finalPos[1] * levelRadius + levelCenter.z,
                     Set.of(),
                     0, 0
             );

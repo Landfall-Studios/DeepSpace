@@ -5,7 +5,9 @@
     "deepspace:moonstone_zinc_ore_block",
     "deepspace:moonstone_iron_ore_block",
     "deepspace:moonstone_gold_ore_block",
-    "deepspace:moonstone_quartz_ore_block"
+    "deepspace:moonstone_quartz_ore_block",
+    "deepspace:moonstone_silicon_ore_block",
+    "deepspace:silicon_block"
   ],
   "replace": false
 }

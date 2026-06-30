@@ -34,10 +34,17 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Deepspace.MODID);
     public static final DeferredBlock<Block> ANGEL_BLOCK = BLOCKS.register("angel_block", () -> new AngelBlock(BlockBehaviour.Properties.of()));
     public static final DeferredBlock<Block> OXYGENATOR_BLOCK = BLOCKS.register("oxygenator", OxygenatorBlock::new);
+    public static final DeferredBlock<Block> GROUND_SOLAR_PANEL_BLOCK = BLOCKS.register("ground_solar_panel", GroundSolarPanelBlock::new);
     public static final DeferredBlock<Block> MOONSTONE_ZINC_ORE_BLOCK = BLOCKS.register("moonstone_zinc_ore_block", () -> new MoonstoneOreBlock(AllItems.RAW_ZINC));
     public static final DeferredBlock<Block> MOONSTONE_QUARTZ_ORE_BLOCK = BLOCKS.register("moonstone_quartz_ore_block", () -> new MoonstoneOreBlock(() -> Items.QUARTZ));
     public static final DeferredBlock<Block> MOONSTONE_IRON_ORE_BLOCK = BLOCKS.register("moonstone_iron_ore_block", () -> new MoonstoneOreBlock(() -> Items.RAW_IRON));
     public static final DeferredBlock<Block> MOONSTONE_GOLD_ORE_BLOCK = BLOCKS.register("moonstone_gold_ore_block", () -> new MoonstoneOreBlock(() -> Items.RAW_GOLD));
+    public static final DeferredBlock<Block> MOONSTONE_SILICON_ORE_BLOCK = BLOCKS.register("moonstone_silicon_ore_block", () -> new MoonstoneOreBlock(ModItems.RAW_SILICON_ITEM::asItem));
+    public static final DeferredBlock<Block> SILICON_BLOCK = BLOCKS.register("silicon_block", () -> new Block(BlockBehaviour.Properties.of()
+            .requiresCorrectToolForDrops()
+            .destroyTime(4)
+            .isRedstoneConductor((state, getter, pos) -> true)
+    ));
     public static final DeferredBlock<Block> LUNAR_SOIL = BLOCKS.register("lunar_soil", () -> new LunarSoilBlock(BlockBehaviour.Properties.of()
             .strength(1, 1)
             .sound(SoundType.SAND)
@@ -92,6 +99,8 @@ public class ModBlocks {
         }
     });
 
+    public static final DeferredBlock<Block> HEAT_PIPE_BLOCK = BLOCKS.register("heat_pipe", HeatPipeBlock::new);
+
     public static DeferredBlock<Block> makePickleBlock(String name, BlockBehaviour.Properties properties) {
         return BLOCKS.register(name, () -> new PicklePlantBlock(properties));
     }
@@ -145,6 +154,10 @@ public class ModBlocks {
             @Override
             protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
                 return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
+            }
+            @Override
+            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
             }
         });
     }

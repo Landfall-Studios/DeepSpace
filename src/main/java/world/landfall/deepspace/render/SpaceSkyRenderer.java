@@ -25,12 +25,20 @@ import org.joml.Vector3f;
 import world.landfall.deepspace.Deepspace;
 
 import world.landfall.deepspace.integration.IrisIntegration;
+import world.landfall.deepspace.render.shapes.Cube;
 import world.landfall.deepspace.render.shapes.Sphere;
 
 
 public class SpaceSkyRenderer {
     private static final Sphere skySphere = new Sphere(30, 32, 64);
-    private static final ResourceLocation SPACE_SKY_TEXTURE = ResourceLocation.fromNamespaceAndPath(Deepspace.MODID, "textures/space_sky.png");
+    private static final Cube skyCube = new Cube(
+            new Vector3f(-1, -1, -1),
+            new Vector3f(1, 1, 1),
+            1f,
+            false,
+            true
+    );
+    private static final ResourceLocation SPACE_SKY_TEXTURE = ResourceLocation.fromNamespaceAndPath(Deepspace.MODID, "textures/deepspace_sky.png");
     private static final ResourceLocation SPACE_SKY_SHADER = Deepspace.path("space_sky");
     private static final ShaderStateShard SPACE_SKY_RENDER_TYPE = new ShaderStateShard(() -> {
         ShaderProgram shader = VeilRenderSystem.setShader(SPACE_SKY_SHADER);
@@ -76,7 +84,7 @@ public class SpaceSkyRenderer {
         RenderType renderType = skyShaderType(SPACE_SKY_TEXTURE);
         var poseStack = matrixStack.toPoseStack();
         poseStack.pushPose();
-        skySphere.render(poseStack, builder, new Vector3f(), new Quaternionf(camera.rotation()).invert());
+        skyCube.render(poseStack, builder, new Vector3f(), new Quaternionf());
 
         IrisIntegration.bindPipeline();
         RenderSystem.setShaderColor(0f, 0f, 0f, 0f);
@@ -93,7 +101,7 @@ public class SpaceSkyRenderer {
     }
     public static void init() {
 
-//        SpaceRenderSystem.registerRenderer(SpaceSkyRenderer::render, VeilRenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS);
-        SpaceRenderSystem.registerRenderer(SpaceSkyRenderer::render, VeilRenderLevelStageEvent.Stage.AFTER_SKY);
+        SpaceRenderSystem.registerRenderer(SpaceSkyRenderer::render, VeilRenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS);
+//        SpaceRenderSystem.registerRenderer(SpaceSkyRenderer::render, VeilRenderLevelStageEvent.Stage.AFTER_SKY);
     }
 }

@@ -19,9 +19,11 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import org.checkerframework.checker.units.qual.C;
 import org.joml.Matrix4fc;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import world.landfall.deepspace.Deepspace;
 import world.landfall.deepspace.ModOptions;
@@ -48,9 +50,12 @@ public class PlanetDecorationsRenderer {
         ShaderProgram shader = VeilRenderSystem.setShader(ATMOSPHERE_SHADER);
         return VeilRenderBridge.toShaderInstance(shader);
     });
+    private static final HashMap<String, Asteroids> ASTEROIDS = new HashMap<>();
+
     public static void refreshMeshes() {
         RING_MESHES.clear();
         ATMOSPHERE_MESHES.clear();
+        ASTEROIDS.clear();
         for (var x : PlanetRegistry.getAllPlanets()) {
             var decorations = x.getDecorations();
             if (decorations.isEmpty()) return;
@@ -58,7 +63,7 @@ public class PlanetDecorationsRenderer {
                 if (decoration.type().equals(Planet.PlanetDecoration.ATMOSPHERE))
                     ATMOSPHERE_MESHES.put(x.getId(), new Atmosphere(
                             new Cube(x.getBoundingBoxMin().toVector3f(), x.getBoundingBoxMax().toVector3f(), decoration.scale(), true),
-                            decoration.scale(),
+                            decoration.scale()+.02f,
                             decoration.color()
                     ));
                 else if (decoration.type().equals(Planet.PlanetDecoration.RINGS)) {
@@ -67,8 +72,22 @@ public class PlanetDecorationsRenderer {
                             decoration.scale(),
                             decoration.color()
                     ));
+                } else if (decoration.type().equals(Planet.PlanetDecoration.ASTEROIDS)) {
+                    ASTEROIDS.put(x.getId(), new Asteroids(
+                            x.getCenter().toVector3f(),
+                            decoration.scale(),
+                            decoration.color()
+                    ));
                 }
             }
+        }
+        VeilRenderSystem.renderer().getParticleManager().clear();
+        for (var x : ASTEROIDS.entrySet()) {
+            var asteroid = x.getValue();
+            var emitter = VeilRenderSystem.renderer().getParticleManager().createEmitter(ResourceLocation.parse("deepspace:asteroid_particle"));
+            if (emitter == null) continue;
+            emitter.setPosition(new Vec3(asteroid.pos));
+            VeilRenderSystem.renderer().getParticleManager().addParticleSystem(emitter);
         }
     }
     public static void init() {
@@ -159,16 +178,16 @@ public class PlanetDecorationsRenderer {
         var ringRenderType = ringRenderType();
         var poseStack = matrixStack.toPoseStack();
         IrisIntegration.bindPipeline();
-
+        poseStack.pushPose();
         for (var x : ATMOSPHERE_MESHES.entrySet()) {
 
             // Planet Atmosphere
             BufferBuilder atmosphereBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.NEW_ENTITY);
-            x.getValue().cube.render(poseStack, atmosphereBuilder, camera.getPosition().toVector3f().mul(-1), new Quaternionf());
+            x.getValue().cube.render(poseStack, atmosphereBuilder, camera.getPosition().toVector3f().mul(-1).add(1, .125f, 0), new Quaternionf());
             var color = new Color(x.getValue().color);
             VeilRenderSystem.setShader(Deepspace.path("atmosphere"));
 
-            var TIME_UNIFORM = VeilRenderSystem.getShader().getOrCreateUniform("Time");
+            var TIME_UNIFORM = VeilRenderSystem.getShader().getUniform("Time");
             TIME_UNIFORM.setFloat(camera.getPartialTickTime() + renderTick);
             RenderSystem.setShaderColor(color.getRed()/256f, color.getGreen()/256f, color.getBlue()/256f, 1f);
             RenderSystem.setShaderTexture(0, Deepspace.path("textures/atmosphere.png"));
@@ -184,8 +203,9 @@ public class PlanetDecorationsRenderer {
             var color = new Color(x.getValue().color);
             VeilRenderSystem.setShader(Deepspace.path("ring"));
 
-            var TIME_UNIFORM = VeilRenderSystem.getShader().getOrCreateUniform("Time");
-            TIME_UNIFORM.setFloat(camera.getPartialTickTime() + renderTick);
+//            var TIME_UNIFORM = VeilRenderSystem.getShader().getUniform("Time");
+
+//            TIME_UNIFORM.setFloat(camera.getPartialTickTime() + renderTick);
             RenderSystem.setShaderColor(color.getRed()/256f, color.getGreen()/256f, color.getBlue()/256f, 1f);
             RenderSystem.setShaderTexture(0, Deepspace.path("textures/atmosphere.png"));
             switch (ModOptions.options().atmosphereDetail) {
@@ -196,8 +216,13 @@ public class PlanetDecorationsRenderer {
 
             RenderSystem.setShaderColor(1, 1, 1, 1);
         }
+        for (var x : ASTEROIDS.entrySet()) {
+
+        }
+        poseStack.popPose();
 
     }
     private record Atmosphere(Cube cube, float scale, int color) {}
     private record Ring(Plane mesh, float scale, int color) {}
+    private record Asteroids(Vector3f pos, float scale, int color) {}
 }

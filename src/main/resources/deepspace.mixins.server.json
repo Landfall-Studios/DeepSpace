@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "deepspace.mixins.refmap.json",
   "mixins": [
-    "MixinAirCurrent"
+    "MixinAirCurrent",
+    "MixinWindmillBearingBlockEntity",
+    "MixinLivingEntity"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -24,8 +24,9 @@ public class SpaceRenderSystem {
         PlanetDecorationsRenderer.init();
 
         VeilEventPlatform.INSTANCE.preVeilPostProcessing((location, pipeline, ctx) -> {
-            pipeline.getOrCreateUniform("Time").setFloat(0.0f);
-            pipeline.getOrCreateUniform("SunLocation").setVector(new float[] {0, 0, 0});
+
+            pipeline.getUniform("Time").setFloat(0.0f);
+            pipeline.getUniform("SunLocation").setVector(new float[] {0, 0, 0});
         });
         VeilEventPlatform.INSTANCE.onVeilRenderLevelStage(
                 (stage,

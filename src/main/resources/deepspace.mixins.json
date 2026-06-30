@@ -6,11 +6,11 @@
   "refmap": "deepspace.mixins.refmap.json",
   "mixins": [
     "MixinGameRenderer",
-    "MixinSodiumOptionsGUI"
+    "MixinLivingEntity"
   ],
   "client": [
     "MixinGameRenderer",
-    "MixinSodiumOptionsGUI"
+    "MixinLivingEntity"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -17,6 +17,7 @@ import java.util.List;
 public class ModConfiguredFeatures {
 
     public static final ResourceKey<ConfiguredFeature<?, ?>> MOONSTONE_ZINC_ORE_KEY = registerKey("moonstone_zinc_ore");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> MOONSTONE_SILICON_ORE_KEY = registerKey("moonstone_silicon_ore");
 
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> ctx) {
         RuleTest moonstoneReplaceables = new BlockMatchTest(ModBlocks.MOON_STONE.get());
@@ -24,7 +25,12 @@ public class ModConfiguredFeatures {
         List<OreConfiguration.TargetBlockState> moonstoneZincOres = List.of(
                 OreConfiguration.target(moonstoneReplaceables, ModBlocks.MOONSTONE_ZINC_ORE_BLOCK.get().defaultBlockState())
         );
-        register(ctx, MOONSTONE_ZINC_ORE_KEY, Feature.ORE, new OreConfiguration(moonstoneZincOres, 9));
+        List<OreConfiguration.TargetBlockState> moonstoneSiliconOres = List.of(
+                OreConfiguration.target(moonstoneReplaceables, ModBlocks.MOONSTONE_SILICON_ORE_BLOCK.get().defaultBlockState())
+        );
+
+        register(ctx, MOONSTONE_ZINC_ORE_KEY, Feature.ORE, new OreConfiguration(moonstoneZincOres, 6));
+        register(ctx, MOONSTONE_SILICON_ORE_KEY, Feature.ORE, new OreConfiguration(moonstoneZincOres, 9));
     }
     public static ResourceKey<ConfiguredFeature<?, ?>> registerKey(String name) {
         return ResourceKey.create(Registries.CONFIGURED_FEATURE, Deepspace.path(name));

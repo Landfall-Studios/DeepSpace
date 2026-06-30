@@ -1,0 +1,8 @@
+{
+  "dimension": "deepspace:luna",
+  "priority": 0,
+  "universal_drag": 0.02,
+  "base_gravity": [0.0, -3.0, 0.0],
+  "base_pressure": 0.0,
+  "magnetic_north": [0.0, 0.0, 0.0]
+}

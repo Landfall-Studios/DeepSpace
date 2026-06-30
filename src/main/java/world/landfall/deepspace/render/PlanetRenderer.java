@@ -101,12 +101,14 @@ public class PlanetRenderer {
         var instance = Minecraft.getInstance();
         if (!instance.level.dimension().location().equals(ResourceLocation.fromNamespaceAndPath(Deepspace.MODID,"space")))
             return;
-        var requiredStage = IrisIntegration.isShaderPackEnabled() ? VeilRenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS : VeilRenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS;
+//        var requiredStage = IrisIntegration.isShaderPackEnabled() ? VeilRenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS : VeilRenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS;
+        var requiredStage = VeilRenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS;
         if (!stage.equals(requiredStage))
             return;
         RenderType planetRenderType = planetRenderType();
         RenderType planetUnshadedRenderType = planetUnshadedRenderType();
         var poseStack = matrixStack.toPoseStack();
+        poseStack.pushPose();
         for (var x : MESHES.entrySet()) {
             // Planet surface
             BufferBuilder planetBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.NEW_ENTITY);
@@ -115,11 +117,11 @@ public class PlanetRenderer {
             var sun = PlanetRegistry.getSun();
             var center = sun.getCenter();
             VeilRenderSystem.setShader(Deepspace.path("planet"))
-                    .getOrCreateUniform("SunPosition")
+                    .getUniform("SunPosition")
                     .setVector(center.toVector3f().sub(camera.getPosition().toVector3f()));
 
             var rot = IrisIntegration.isShaderPackEnabled() ? new Quaternionf() : camera.rotation();
-            x.getValue().render(poseStack, planetBuilder, camera.getPosition().toVector3f().mul(-1), rot);
+            x.getValue().render(poseStack, planetBuilder, camera.getPosition().toVector3f().mul(-1).add(0, 0, 0), new Quaternionf());
 
             RenderSystem.setShaderTexture(0, texture);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -131,11 +133,13 @@ public class PlanetRenderer {
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         }
+        poseStack.popPose();
     }
     public static void init() {
         refreshMeshes();
         SpaceRenderSystem.registerRenderer(PlanetRenderer::render, VeilRenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS);
-        SpaceRenderSystem.registerRenderer(PlanetRenderer::render, VeilRenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS);
+        // This just causes more problems than it resolves
+//        SpaceRenderSystem.registerRenderer(PlanetRenderer::render, VeilRenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS);
 
     }
     private static Matrix4f projectionMatrix(double fov, GameRenderer gameRenderer) {
