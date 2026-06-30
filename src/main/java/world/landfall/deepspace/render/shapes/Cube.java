@@ -24,6 +24,12 @@ public class Cube implements DeepSpaceRenderable {
             {false, true, false, false},
     };
 
+    private final int[][] unwrappedNumMap = {
+            {-1,  4, -1, -1},
+            { 3,  0,  1,  5},
+            {-1,  2, -1, -1}
+    };
+
 
     public Cube(Vector3f _corner1, Vector3f _corner2, float scale, boolean weirdNormals, boolean unwrapped) {
         this.weirdNormals = weirdNormals;
@@ -52,31 +58,37 @@ public class Cube implements DeepSpaceRenderable {
                 new Quaternionf().rotateLocalY((float)Math.PI*1.5f),
                 new Quaternionf().rotateLocalX((float)Math.PI/2),
         };
+        Quaternionf[] rotationsIfFuckingUnwrapping = new Quaternionf[] {
+                new Quaternionf().rotateLocalX(-(float)Math.PI/2),
+                new Quaternionf(),
+                new Quaternionf().rotateLocalY((float)Math.PI/2).rotateLocalX((float)-Math.PI/2), // slightly wrong
+                new Quaternionf().rotateLocalY((float)Math.PI).rotateLocalZ((float)Math.PI), // completely wrong
+                new Quaternionf().rotateLocalY((float)Math.PI*1.5f).rotateLocalX((float)-Math.PI/2), // slightly wrong
+                new Quaternionf().rotateLocalX((float)Math.PI/2),
+        };
         diff.mul(scale);
 
 
 
         int faceind = 0;
-        for (var x : rotations) {
+        for (var x : (unwrapped ? rotationsIfFuckingUnwrapping : rotations)) {
             int xInd = -1, yInd = -1;
-            int counter = 0;
-            for (int i = 0; i < unwrappedMap.length; i++) {
-                for (int j = 0; j < unwrappedMap[i].length; j++) {
-                    if (unwrappedMap[i][j]) {
-                        if (counter++ == faceind) {
-                            xInd = i;
-                            yInd = j;
-                        }
+            for (int i = 0; i < unwrappedNumMap.length; i++) {
+                for (int j = 0; j < unwrappedNumMap[i].length; j++) {
+                    if (unwrappedNumMap[i][j] == faceind) {
+                        xInd = i;
+                        yInd = j;
                     }
                 }
             }
 
 
 
+
             float[][] UVs = unwrapped && xInd > -1 ?
                     new float[][] {
                             {
-                                    xInd * .25f, xInd * .25f + .25f
+                                    xInd * .25f + .25f, xInd * .25f
                             },
                             {
                                     yInd * .25f, yInd * .25f + .25f
