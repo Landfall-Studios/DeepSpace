@@ -3,6 +3,7 @@ package world.landfall.deepspace.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -16,12 +17,10 @@ import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.joml.Vector3f;
-import world.landfall.deepspace.Deepspace;
-import world.landfall.deepspace.ModAttatchments;
-import world.landfall.deepspace.ModDamageTypes;
-import world.landfall.deepspace.ModItems;
+import world.landfall.deepspace.*;
 import world.landfall.deepspace.item.JetHelmetItem;
 import world.landfall.deepspace.item.JetpackItem;
+import world.landfall.deepspace.planet.PlanetRegistry;
 
 public class SpacePlayerEvents {
     @EventBusSubscriber(modid = Deepspace.MODID, value = Dist.CLIENT)
@@ -70,7 +69,18 @@ public class SpacePlayerEvents {
                 Vector3f newVelocity = new Vector3f(storedVelocity);
                 if (!noGravity) {
                     rocketVelocity.add(new Vector3f(0f, .04f, 0f)).mul(.1f, 2f, .1f);
-                    newVelocity.add(0, -.06f, 0);
+
+                    if (player instanceof ServerPlayer serverPlayer && Util.isPlayerBeingTracked(serverPlayer, level)) {
+                        var nearest = PlanetRegistry.getAllPlanets().stream().min((p1, p2) -> {
+                            var dist1 = (int) p1.getCenter().distanceTo(player.position());
+                            var dist2 = (int) p2.getCenter().distanceTo(player.position());
+                            return Integer.compare(dist1, dist2);
+                        }).get();
+                        newVelocity.add(
+                                nearest.getCenter().subtract(player.position()).toVector3f().normalize().mul(0.06f)
+                        );
+                    } else
+                        newVelocity.add(0, -.06f, 0);
                 }
                 if (keyPressed) {
                     newVelocity.add(rocketVelocity);

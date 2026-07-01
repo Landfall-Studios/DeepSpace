@@ -54,6 +54,10 @@ public class SubLevelEvents {
                 var closestPlanet = PlanetRegistry.getAllPlanets().stream().min((p1, p2) -> {
                     var d1 = p1.getCenter().distanceTo(new Vec3(pos.x, pos.y, pos.z));
                     var d2 = p2.getCenter().distanceTo(new Vec3(pos.x, pos.y, pos.z));
+                    var s1 = (int) p1.getBoundingBoxMax().subtract(p1.getBoundingBoxMin()).length();
+                    var s2 = (int) p2.getBoundingBoxMax().subtract(p2.getBoundingBoxMin()).length();
+                    d1 *= s1;
+                    d2 *= s2;
                     if (d1 == d2) return 0;
                     return d2 < d1 ? 1 : -1;
                 }).get();
