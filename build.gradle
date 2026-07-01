@@ -153,7 +153,7 @@ dependencies {
     runtimeOnly ("net.caffeinemc:sodium-neoforge:0.8.12-beta.1+mc1.21.1")
     compileOnly "org.lwjgl:lwjgl:3.3.3"
 
-    implementation "blank:dimensional_sable:1.0.4"
+    implementation "blank:dimensional_sable:1.0.5"
 
     // Create mod
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") {
