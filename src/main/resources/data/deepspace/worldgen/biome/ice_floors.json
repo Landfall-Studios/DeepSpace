@@ -21,11 +21,11 @@
     [],
     [],
     [],
-    ["deepspace:moonstone_zinc_ore"],
+    ["deepspace:moonstone_zinc_ore", "oritech:ore_platinum", "oritech:ore_nickel"],
     [],
     [],
     [],
-    []
+    ["oritech:resource_node_common", "oritech:resource_node_other"]
   ],
   "has_precipitation": false,
   "spawn_costs": {},

@@ -172,6 +172,8 @@ dependencies {
     implementation "dev.simulated_team.simulated:simulated-neoforge-1.21.1:1.3.0"
     compileOnly "cc.tweaked:cc-tweaked-1.21.1-core-api:1.116.1"
     compileOnly "cc.tweaked:cc-tweaked-1.21.1-forge-api:1.116.1"
+
+    implementation "blank:oritech-neoforge:1.21.1-1.2.12"
     // Add the DH Api for compile time development
     //compileOnly "blank:DistantHorizonsApi:4.0.0"
     //compileOnly fg.deobf("blank:DistantHorizonsAPI:1.0.0") // local Jar file, file should be named in the format: "DistantHorizonsAPI-VERSION.jar" (IE "DistantHorizonsAPI-1.0.0.jar") or "DistantHorizonsAPI.jar"

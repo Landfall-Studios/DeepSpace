@@ -19,13 +19,13 @@
     [],
     [],
     [],
+    ["oritech:oil_spring"],
+    [],
+    ["deepspace:moonstone_zinc_ore", "oritech:ore_nickel", "oritech:uranium_patch"],
     [],
     [],
-    ["deepspace:moonstone_zinc_ore"],
     [],
-    [],
-    [],
-    []
+    ["oritech:resource_node_common","oritech:resource_node_rare"]
   ],
   "has_precipitation": false,
   "spawn_costs": {},
