@@ -13,11 +13,14 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.CubeVoxelShape;
@@ -82,7 +85,7 @@ public class ModBlocks {
     });
 
     public static final DeferredBlock<Block> SELENIC_GRASS_BLOCK = makeSelenicBlock("selenic_grass_block", BlockBehaviour.Properties.of());
-    public static final DeferredBlock<Block> SELENIC_VINE_BLOCK = makeUnstableSelenicBlock("selenic_vine_block", BlockBehaviour.Properties.of(),
+    public static final DeferredBlock<Block> SELENIC_VINE_BLOCK = makeVineSelenicBlock("selenic_vine_block", BlockBehaviour.Properties.of(),
             Shapes.create(new AABB(0, 0, 0, 1, 2/16., 1))
     );
     public static final DeferredBlock<Block> SELENIC_FAUNA_BLOCK = makeUnstableSelenicBlock("selenic_fauna_block", BlockBehaviour.Properties.of(),
@@ -96,14 +99,19 @@ public class ModBlocks {
 
         @Override
         public float spreadSpeed() {
-            return .6f;
+            return .7f;
         }
     });
 
     public static final DeferredBlock<Block> HEAT_PIPE_BLOCK = BLOCKS.register("heat_pipe", HeatPipeBlock::new);
 
     public static DeferredBlock<Block> makePickleBlock(String name, BlockBehaviour.Properties properties) {
-        return BLOCKS.register(name, () -> new PicklePlantBlock(properties));
+        return BLOCKS.register(name, () -> new PicklePlantBlock(properties) {
+            @Override
+            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
+            }
+        });
     }
     public static DeferredBlock<Block> makeUnstablePickleBlock(String name, BlockBehaviour.Properties properties, VoxelShape shape) {
         return BLOCKS.register(name, () -> new PicklePlantBlock(properties.instabreak()
@@ -134,7 +142,12 @@ public class ModBlocks {
         });
     }
     public static DeferredBlock<Block> makeSelenicBlock(String name, BlockBehaviour.Properties properties) {
-        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties));
+        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties) {
+            @Override
+            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
+            }
+        });
     }
     public static DeferredBlock<Block> makeUnstableSelenicBlock(String name, BlockBehaviour.Properties properties, VoxelShape shape) {
         return BLOCKS.register(name, () -> new SelenicPlantBlock(properties.instabreak()
@@ -145,6 +158,41 @@ public class ModBlocks {
             protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
                 var below = level.getBlockState(pos.below());
                 return !below.canBeReplaced() && !below.is(Blocks.AIR) && !below.getBlock().hasDynamicShape();
+            }
+
+            @Override
+            protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+                return shape;
+            }
+
+            @Override
+            protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+                return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
+            }
+            @Override
+            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
+            }
+        });
+    }
+    public static DeferredBlock<Block> makeVineSelenicBlock(String name, BlockBehaviour.Properties properties, VoxelShape shape) {
+        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties.instabreak()
+                .dynamicShape()
+                .replaceable()
+                .noCollission()) {
+            @Override
+            protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+                var above = level.getBlockState(pos.above());
+                List<Direction> vineCheckDirections = List.of(
+                        Direction.NORTH,
+                        Direction.SOUTH,
+                        Direction.EAST,
+                        Direction.WEST
+                );
+                var safeForVine = vineCheckDirections.stream().anyMatch(d -> MultifaceBlock.canAttachTo(
+                        level, d.getOpposite(), pos.relative(d), level.getBlockState(pos.relative(d))
+                )) || above.is(ModBlocks.SELENIC_VINE_BLOCK);
+                return safeForVine;
             }
 
             @Override
