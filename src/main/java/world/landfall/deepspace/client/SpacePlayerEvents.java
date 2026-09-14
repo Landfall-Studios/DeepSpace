@@ -30,7 +30,7 @@ import world.landfall.deepspace.planet.PlanetRegistry;
 import java.util.Comparator;
 
 public class SpacePlayerEvents {
-    @EventBusSubscriber(modid = Deepspace.MODID, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Deepspace.MODID)
     public static class Tick {
         private static void jetpackTick(Player player, Level level, ItemStack jetpack, boolean noGravity) {
             var hasJetpack = jetpack.is(ModItems.JETPACK_ITEM.get());
