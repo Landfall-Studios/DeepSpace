@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -175,6 +176,12 @@ public class SpacePlayerEvents {
                         );
                         if (state.getBlock() instanceof SelenicPlantBlock) {
                             player.setData(ModAttatchments.LAST_OXYGENATED, -1f);
+                            if (level.random.nextFloat() > 0.95f)
+                                player.addEffect(
+                                        new MobEffectInstance(
+                                                ModMobEffects.SELINIA, 120 * 20
+                                        )
+                                );
                             return;
                         }
                     }

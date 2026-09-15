@@ -75,6 +75,7 @@ public class Deepspace {
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModAttatchments.register(modEventBus);
+        ModMobEffects.init(modEventBus);
 
         CreateIntegration.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
