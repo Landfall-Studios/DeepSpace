@@ -1,5 +1,5 @@
 {
-  "parent": "deepspace:block/oxygenator",
+  "parent": "deepspace:block/selenic_core_block",
   "display": {
     "gui": {
       "rotation": [ 30, 225, 0 ],

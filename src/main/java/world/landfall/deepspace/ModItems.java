@@ -29,6 +29,7 @@ public class ModItems {
 
     public static final DeferredItem<BlockItem> SELENIC_GRASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_GRASS_BLOCK);
     public static final DeferredItem<BlockItem> SELENIC_FAUNA_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_FAUNA_BLOCK);
+    public static final DeferredItem<BlockItem> SELENIC_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_ROOTS_BLOCK);
     public static final DeferredItem<BlockItem> SELENIC_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_CORE_BLOCK);
     public static final DeferredItem<BlockItem> SELENIC_VINE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_VINE_BLOCK);
 
