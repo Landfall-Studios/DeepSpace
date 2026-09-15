@@ -1,6 +1,7 @@
 package world.landfall.deepspace.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,6 +21,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 import world.landfall.deepspace.*;
+import world.landfall.deepspace.block.SelenicPlantBlock;
 import world.landfall.deepspace.integration.DeepSeasIntegration;
 import world.landfall.deepspace.item.JetHelmetItem;
 import world.landfall.deepspace.item.JetpackItem;
@@ -159,6 +161,24 @@ public class SpacePlayerEvents {
             if (ModList.get().isLoaded("create_submarine")) {
                 if (DeepSeasIntegration.isPlayerOxygenated(player, level))
                     player.setData(ModAttatchments.LAST_OXYGENATED, -1f);
+            }
+            // Check for Selenia to oxygenate the player
+            var horizontalRange = 4;
+            var verticalRange = 6;
+            var pos = BlockPos.containing(player.position());
+            if (ticks % 20 != 0) return;
+            for (int i = -horizontalRange; i < horizontalRange; i++) {
+                for (int j = -horizontalRange; j < horizontalRange; j++) {
+                    for (int k = -verticalRange; k < verticalRange; k++) {
+                        var state = level.getBlockState(
+                                pos.offset(i, k, j)
+                        );
+                        if (state.getBlock() instanceof SelenicPlantBlock) {
+                            player.setData(ModAttatchments.LAST_OXYGENATED, -1f);
+                            return;
+                        }
+                    }
+                }
             }
         }
 
