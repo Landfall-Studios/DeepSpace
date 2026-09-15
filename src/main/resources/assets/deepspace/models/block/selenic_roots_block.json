@@ -2,6 +2,6 @@
 	"parent": "minecraft:block/cross",
 	"render_type": "minecraft:cutout",
 	"textures": {
-		"cross": "deepspace:block/selenic_fauna_block"
+		"cross": "deepspace:block/selenic_roots_block"
 	}
 }

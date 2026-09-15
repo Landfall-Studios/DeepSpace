@@ -1,21 +1,17 @@
 {
-	"credit": "Made with Blockbench",
-	"texture_size": [32, 32],
+	"ambientocclusion": false,
+	"render_type": "minecraft:cutout",
 	"textures": {
-		"0": "deepspace:block/pickle_vine_block",
-		"particle": "deepspace:block/pickle_vine_block"
+		"particle": "deepspace:block/selenic_vine_block",
+		"vine": "deepspace:block/selenic_vine_block"
 	},
 	"elements": [
-		{
-			"from": [0, 0, 0],
-			"to": [16, 2, 16],
+		{   "from": [ 0, 0, 0.8 ],
+			"to": [ 16, 16, 0.8 ],
+			"shade": false,
 			"faces": {
-				"north": {"uv": [8, 0, 16, 1], "texture": "#0"},
-				"east": {"uv": [8, 1, 16, 2], "texture": "#0"},
-				"south": {"uv": [8, 2, 16, 3], "texture": "#0"},
-				"west": {"uv": [8, 3, 16, 4], "texture": "#0"},
-				"up": {"uv": [8, 8, 0, 0], "texture": "#0"},
-				"down": {"uv": [8, 8, 0, 16], "texture": "#0"}
+				"north": { "uv": [ 16, 0, 0, 16 ], "texture": "#vine", "tintindex": 0 },
+				"south": { "uv": [ 0, 0, 16, 16 ], "texture": "#vine", "tintindex": 0 }
 			}
 		}
 	]

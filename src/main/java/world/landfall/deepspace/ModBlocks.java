@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
@@ -85,13 +86,18 @@ public class ModBlocks {
     });
 
     public static final DeferredBlock<Block> SELENIC_GRASS_BLOCK = makeSelenicBlock("selenic_grass_block", BlockBehaviour.Properties.of());
-    public static final DeferredBlock<Block> SELENIC_VINE_BLOCK = makeVineSelenicBlock("selenic_vine_block", BlockBehaviour.Properties.of(),
-            Shapes.create(new AABB(0, 0, 0, 1, 2/16., 1))
-    );
-    public static final DeferredBlock<Block> SELENIC_FAUNA_BLOCK = makeUnstableSelenicBlock("selenic_fauna_block", BlockBehaviour.Properties.of(),
+    public static final DeferredBlock<Block> SELENIC_VINE_BLOCK = makeVineSelenicBlock("selenic_vine_block", BlockBehaviour.Properties.of());
+    public static final DeferredBlock<Block> SELENIC_FAUNA_BLOCK = makeUnstableSelenicBlock("selenic_fauna_block", BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE).replaceable().noCollission().instabreak(),
             Shapes.create(new AABB(1/16., 0, 1/16., 15/16., 15/16., 15/16.))
     );
-    public static final DeferredBlock<Block> SELENIC_CORE_BLOCK = BLOCKS.register("selenic_core_block", () -> new SelenicPlantBlock(BlockBehaviour.Properties.of()) {
+    public static final DeferredBlock<Block> SELENIC_ROOTS_BLOCK = makeUnstableSelenicBlock("selenic_roots_block", BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE).replaceable().noCollission().instabreak(),
+            Shapes.create(new AABB(1/16., 0, 1/16., 15/16., 15/16., 15/16.))
+    );
+    public static final DeferredBlock<Block> SELENIC_CORE_BLOCK = BLOCKS.register("selenic_core_block", () -> new SelenicPlantBlock(BlockBehaviour.Properties.of()
+            .noOcclusion()
+    ) {
         @Override
         public int spreadRadius() {
             return 5;
@@ -142,7 +148,7 @@ public class ModBlocks {
         });
     }
     public static DeferredBlock<Block> makeSelenicBlock(String name, BlockBehaviour.Properties properties) {
-        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties) {
+        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties.destroyTime(1f).mapColor(MapColor.COLOR_PURPLE).sound(SoundType.AZALEA)) {
             @Override
             protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
                 return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
@@ -175,40 +181,11 @@ public class ModBlocks {
             }
         });
     }
-    public static DeferredBlock<Block> makeVineSelenicBlock(String name, BlockBehaviour.Properties properties, VoxelShape shape) {
-        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties.instabreak()
+    public static DeferredBlock<Block> makeVineSelenicBlock(String name, BlockBehaviour.Properties properties) {
+        return BLOCKS.register(name, () -> new SelenicVineBlock(properties.instabreak()
                 .dynamicShape()
                 .replaceable()
-                .noCollission()) {
-            @Override
-            protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-                var above = level.getBlockState(pos.above());
-                List<Direction> vineCheckDirections = List.of(
-                        Direction.NORTH,
-                        Direction.SOUTH,
-                        Direction.EAST,
-                        Direction.WEST
-                );
-                var safeForVine = vineCheckDirections.stream().anyMatch(d -> MultifaceBlock.canAttachTo(
-                        level, d.getOpposite(), pos.relative(d), level.getBlockState(pos.relative(d))
-                )) || above.is(ModBlocks.SELENIC_VINE_BLOCK);
-                return safeForVine;
-            }
-
-            @Override
-            protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-                return shape;
-            }
-
-            @Override
-            protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-                return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
-            }
-            @Override
-            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
-                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
-            }
-        });
+                .noCollission()));
     }
 
     public static void register(IEventBus eventBus) {

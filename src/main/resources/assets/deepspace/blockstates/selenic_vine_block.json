@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=north": {
       "model": "deepspace:block/selenic_vine_block"
+    },
+    "facing=east": {
+      "model": "deepspace:block/selenic_vine_block",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "deepspace:block/selenic_vine_block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "deepspace:block/selenic_vine_block",
+      "y": -90
     }
   }
 }
