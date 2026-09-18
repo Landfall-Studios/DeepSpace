@@ -55,7 +55,7 @@ public class PlanetTeleportHandler {
     private static final RandomSource random = RandomSource.create();
     private static final float DISTANCE_FROM_PLANET_TO_TELEPORT_FROM = 1.5f;
     // How high above the height limit do you need to go to teleport to deep space
-    public static final int SPACE_DISTANCE_FROM_CEILING = 10;
+    public static final int SPACE_DISTANCE_FROM_CEILING = 150;
     @SubscribeEvent
     public static void serverPlayerTick(PlayerTickEvent.Post event) {
         var player = event.getEntity();
