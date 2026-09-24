@@ -9,10 +9,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.MultifaceBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -70,6 +67,16 @@ public class SelenicVineBlock extends SelenicPlantBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
+        var directions = List.of(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
+        var level = context.getLevel();
+        for (var x : directions) {
+            if (VineBlock.isAcceptableNeighbour(level, context.getClickedPos().offset(x.getNormal()), x))
+                return super.getStateForPlacement(context).setValue(FACING, x);
+        }
+        var aboveState = level.getBlockState(context.getClickedPos().above());
+        if (aboveState.is(ModBlocks.SELENIC_VINE_BLOCK))
+            return aboveState;
+
         return super.getStateForPlacement(context).setValue(FACING, Direction.NORTH);
     }
 
