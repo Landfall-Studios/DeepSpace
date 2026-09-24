@@ -29,6 +29,9 @@ public class SeleniaMobEffect extends MobEffect {
 //                    Deepspace.path("selenia")
 //            ), HURT_AMOUNT + amplifier);
             livingEntity.hurt(ModDamageTypes.seleniaDamage(livingEntity), HURT_AMOUNT + amplifier);
+            var pos = BlockPos.containing(livingEntity.position());
+            if (livingEntity.getHealth() <= 02)
+                livingEntity.level().setBlockAndUpdate(pos, ModBlocks.SELENIC_CORE_BLOCK.get().defaultBlockState());
         }
         return true;
     }
@@ -38,12 +41,13 @@ public class SeleniaMobEffect extends MobEffect {
         return duration < 30 * 20 || amplifier > 1;
     }
 
-    @Override
-    public void onMobRemoved(LivingEntity livingEntity, int amplifier, Entity.RemovalReason reason) {
-//        super.onMobRemoved(livingEntity, amplifier, reason);
-        var level = livingEntity.level();
-        var pos = BlockPos.containing(livingEntity.position());
-        if (level.getBlockState(pos.below()).canOcclude())
-            level.setBlockAndUpdate(pos, ModBlocks.SELENIC_CORE_BLOCK.get().defaultBlockState());
-    }
+//    @Override
+//    public void onMobRemoved(LivingEntity livingEntity, int amplifier, Entity.RemovalReason reason) {
+////        super.onMobRemoved(livingEntity, amplifier, reason);
+//        var level = livingEntity.level();
+//        var pos = BlockPos.containing(livingEntity.position());
+//        if (level.getBlockState(pos.below()).canOcclude())
+//            level.setBlockAndUpdate(pos, ModBlocks.SELENIC_CORE_BLOCK.get().defaultBlockState());
+//    }
+
 }
