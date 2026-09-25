@@ -179,7 +179,7 @@ public class SpacePlayerEvents {
                             if (level.random.nextFloat() > 0.95f)
                                 player.addEffect(
                                         new MobEffectInstance(
-                                                ModMobEffects.SELINIA, 120 * 20
+                                                ModMobEffects.SELINIA, 120 * 20, 1, true, false
                                         )
                                 );
                             return;
