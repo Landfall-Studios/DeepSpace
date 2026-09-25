@@ -144,7 +144,7 @@ public class SpacePlayerEvents {
             var isOxygenated = player.hasData(ModAttatchments.LAST_OXYGENATED) && player.getData(ModAttatchments.LAST_OXYGENATED) < 3;
             var tick = player.tickCount;
             if (component != null && noGravity && !player.isCreative() && !isOxygenated) {
-                player.setAirSupply(component.playerOxygen());
+                player.setAirSupply(component.playerOxygen() * 2);
                 if (component.playerOxygen() < 1 && tick % 10 == 0)
                     player.hurt(ModDamageTypes.noAirDamage(player), 1);
             } else if (!hasJetHelmet && noGravity && !isOxygenated) {
