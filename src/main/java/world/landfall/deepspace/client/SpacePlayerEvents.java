@@ -163,6 +163,12 @@ public class SpacePlayerEvents {
                 if (DeepSeasIntegration.isPlayerOxygenated(player, level))
                     player.setData(ModAttatchments.LAST_OXYGENATED, -1f);
             }
+
+            var stack = player.getItemBySlot(EquipmentSlot.HEAD);
+            // Don't do the silly stuff if someone's protected
+            if (stack.is(ModItems.JET_HELMET_ITEM))
+                return;
+
             // Check for Selenia to oxygenate the player
             var horizontalRange = 4;
             var verticalRange = 6;
