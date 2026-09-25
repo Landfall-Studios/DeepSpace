@@ -2,7 +2,12 @@ package world.landfall.deepspace.item;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
+import com.simibubi.create.AllTags;
 import com.simibubi.create.Create;
+import com.simibubi.create.content.equipment.armor.BacktankItem;
+import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.simibubi.create.foundation.data.TagGen;
 import com.simibubi.create.infrastructure.data.CreateRegistrateTags;
 import io.netty.buffer.ByteBuf;
@@ -96,6 +101,18 @@ public class JetHelmetItem extends ArmorItem {
         var equipped = slotId == 39;
         if (!(entity instanceof Player player)) return;
         var dim = player.level().dimension().location();
+        if (equipped) {
+            var chestStack = ((Player) entity).getItemBySlot(EquipmentSlot.CHEST);
+            if (chestStack.getItem() instanceof BacktankItem) {
+                var component = stack.getComponents().get(JetHelmetComponent.SUPPLIER.get());
+                var air = BacktankItem.getRemainingAir(chestStack);
+                var tick = player.tickCount;
+                if (air > 0 && component.currentOxygen < component.maxOxygen && component.maxOxygen >= 0 && tick % 20 == 0) {
+                    stack.set(JetHelmetComponent.SUPPLIER, new JetHelmetComponent(component.currentOxygen + 1, component.maxOxygen));
+                    BacktankUtil.consumeAir(player, chestStack, 1);
+                }
+            }
+        }
         if (equipped &&
                 !player.isCreative() && (dim.equals(Deepspace.path("space")) || dim.equals(Deepspace.path("luna"))) &&
                 player.getData(ModAttatchments.LAST_OXYGENATED) > 3
