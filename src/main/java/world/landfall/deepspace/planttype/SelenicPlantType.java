@@ -22,7 +22,10 @@ public class SelenicPlantType extends PlantType {
                 "deepspace:selenic_grass_block",
                 "deepspace:selenic_fauna_block",
                 "deepspace:selenic_core_block",
-                "deepspace:selenic_vine_block"
+                "deepspace:selenic_vine_block",
+                "deepspace:selenic_bulb",
+                "deepspace:bloomlight",
+                "deepspace:selenic_stem"
         ).stream().map(ResourceLocation::parse).toList());
     }
 
@@ -30,7 +33,7 @@ public class SelenicPlantType extends PlantType {
     public Optional<BlockState> convert(BlockState in, Level level, BlockPos pos) {
         var above = level.getBlockState(pos.above());
         var below = level.getBlockState(pos.below());
-        if (in.is(ModBlocks.LUNAR_SOIL) && (above.is(Blocks.AIR) || above.is(ModBlocks.SELENIC_FAUNA_BLOCK)))
+        if (in.is(ModBlocks.LUNAR_SOIL) && (above.is(Blocks.AIR) || above.propagatesSkylightDown(level, pos.above())))
             return Optional.of(ModBlocks.SELENIC_GRASS_BLOCK.get().defaultBlockState());
         List<Direction> vineCheckDirections = List.of(
                 Direction.NORTH,
@@ -49,7 +52,10 @@ public class SelenicPlantType extends PlantType {
         }
 
         var hasSurroundingFauna = vineCheckDirections.stream().anyMatch(d -> level.getBlockState(pos.relative(d)).is(ModBlocks.SELENIC_FAUNA_BLOCK) || level.getBlockState(pos.relative(d)).is(ModBlocks.SELENIC_ROOTS_BLOCK));
-        var safeForVine = vineCheckDirections.stream().anyMatch(d -> !level.getBlockState(pos.relative(d)).propagatesSkylightDown(level, pos.relative(d)) || above.is(ModBlocks.SELENIC_VINE_BLOCK));
+        var safeForVine = vineCheckDirections.stream().anyMatch(d ->
+                (!level.getBlockState(pos.relative(d)).propagatesSkylightDown(level, pos.relative(d))
+                        || above.is(ModBlocks.SELENIC_VINE_BLOCK)) && level.getBlockState(pos.below()).is(Blocks.AIR)
+        );
         if (below.is(ModBlocks.SELENIC_GRASS_BLOCK) && in.is(Blocks.AIR) && above.is(Blocks.AIR)) {
             if (level.random.nextFloat() > .3f && !hasSurroundingFauna && countFauna < 2 && (pos.getX() % 3 == 0 ^ pos.getZ() % 3 == 0))
                 if (level.random.nextFloat() > 0.5f)
