@@ -4,14 +4,21 @@ import com.mojang.logging.LogUtils;
 import dev.egg.SubLevelWarper;
 import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
+import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.api.sublevel.ticket.SubLevelLoadingTicketType;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
+import dev.ryanhcode.sable.sublevel.storage.serialization.SubLevelSerializer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Unit;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -176,7 +183,8 @@ public class SubLevelEvents {
                     LOGGER.info("Teleporting sublevel to position {} in space, time fraction is {}", exitPos, (float) (level.getGameTime() % ServerLevel.TICKS_PER_DAY) / ServerLevel.TICKS_PER_DAY);
 
                     var oldSubLevels = List.copyOf(spaceContainer.getAllSubLevels());
-                    SubLevelWarper.WarpSubLevel(s, server.getLevel(ResourceKey.create(Registries.DIMENSION, Deepspace.path("space"))), new Vector3d(
+                    var newLevel = server.getLevel(ResourceKey.create(Registries.DIMENSION, Deepspace.path("space")));
+                    SubLevelWarper.WarpSubLevel(s, newLevel, new Vector3d(
                             exitPos.x,
                             exitPos.y,
                             exitPos.z
@@ -209,6 +217,14 @@ public class SubLevelEvents {
                     var pos = newSublevel.logicalPose().position();
                     LOGGER.info("Sublevel at: {} {} {}", pos.x, pos.y, pos.z);
                     LOGGER.info("UUID: {}", newSublevel.getUniqueId());
+
+                    diff.forEach(subLevel -> {
+//                        spaceContainer.addForceLoadTicket(subLevel, SubLevelLoadingTicketType.COMMAND_FORCED, Unit.INSTANCE);
+                        if (subLevel.getMassTracker() == null || subLevel.getMassTracker().getCenterOfMass() == null) {
+                            spaceContainer.removeSubLevel(subLevel, SubLevelRemovalReason.REMOVED);
+                        }
+
+                    });
 
                 }
             });

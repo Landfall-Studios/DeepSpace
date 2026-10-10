@@ -33,6 +33,13 @@ public class ModItems {
     public static final DeferredItem<BlockItem> SELENIC_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_CORE_BLOCK);
     public static final DeferredItem<BlockItem> SELENIC_VINE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_VINE_BLOCK);
 
+    public static final DeferredItem<BlockItem> SELENIC_PLANKS = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_PLANKS);
+    public static final DeferredItem<BlockItem> SELENIC_STAIRS = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_STAIRS);
+    public static final DeferredItem<BlockItem> SELENIC_DOOR = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_DOOR);
+    public static final DeferredItem<BlockItem> SELENIC_STEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_STEM);
+    public static final DeferredItem<BlockItem> SELENIC_BULB = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_BULB);
+    public static final DeferredItem<BlockItem> BLOOMLIGHT = ITEMS.registerSimpleBlockItem(ModBlocks.BLOOMLIGHT);
+
     public static final DeferredItem<Item> SILICON_CRYSTAL_ITEM = ITEMS.registerItem("silicon_crystal", Item::new);
     public static final DeferredItem<Item> RAW_SILICON_ITEM = ITEMS.registerItem("raw_silicon", Item::new);
     public static final DeferredItem<BlockItem> MOONSTONE_SILICON_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MOONSTONE_SILICON_ORE_BLOCK);

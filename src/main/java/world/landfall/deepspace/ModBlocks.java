@@ -11,12 +11,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.MultifaceBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -110,6 +108,13 @@ public class ModBlocks {
     });
 
     public static final DeferredBlock<Block> HEAT_PIPE_BLOCK = BLOCKS.register("heat_pipe", HeatPipeBlock::new);
+
+    public static final DeferredBlock<Block> SELENIC_PLANKS = BLOCKS.register("selenic_planks", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
+    public static final DeferredBlock<Block> SELENIC_STAIRS = BLOCKS.register("selenic_stairs", () -> new StairBlock(StairBlock.stateById(0), BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
+    public static final DeferredBlock<DoorBlock> SELENIC_DOOR = BLOCKS.register("selenic_door", () -> new DoorBlock(BlockSetType.OAK, BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
+    public static final DeferredBlock<Block> SELENIC_STEM = BLOCKS.register("selenic_stem", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
+    public static final DeferredBlock<Block> SELENIC_BULB = BLOCKS.register("selenic_bulb", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.AZALEA).destroyTime(5)));
+    public static final DeferredBlock<Block> BLOOMLIGHT = BLOCKS.register("bloomlight", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.FROGLIGHT).destroyTime(5).lightLevel((s) -> 5)));
 
     public static DeferredBlock<Block> makePickleBlock(String name, BlockBehaviour.Properties properties) {
         return BLOCKS.register(name, () -> new PicklePlantBlock(properties) {
