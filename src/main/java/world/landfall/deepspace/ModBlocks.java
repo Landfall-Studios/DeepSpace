@@ -111,6 +111,7 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> SELENIC_PLANKS = BLOCKS.register("selenic_planks", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
     public static final DeferredBlock<Block> SELENIC_STAIRS = BLOCKS.register("selenic_stairs", () -> new StairBlock(StairBlock.stateById(0), BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
+    public static final DeferredBlock<Block> SELENIC_SLAB = BLOCKS.register("selenic_slab", () -> new SlabBlock(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
     public static final DeferredBlock<DoorBlock> SELENIC_DOOR = BLOCKS.register("selenic_door", () -> new DoorBlock(BlockSetType.OAK, BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
     public static final DeferredBlock<Block> SELENIC_STEM = BLOCKS.register("selenic_stem", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
     public static final DeferredBlock<Block> SELENIC_BULB = BLOCKS.register("selenic_bulb", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.AZALEA).destroyTime(5)));

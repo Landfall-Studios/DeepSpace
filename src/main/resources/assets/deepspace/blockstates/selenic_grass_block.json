@@ -1,7 +1,21 @@
 {
   "variants": {
-    "": {
-      "model": "deepspace:block/selenic_grass_block"
-    }
+    "": [
+      {
+        "model": "deepspace:block/selenic_grass_block"
+      },
+      {
+        "model": "deepspace:block/selenic_grass_block",
+        "y": 90
+      },
+      {
+        "model": "deepspace:block/selenic_grass_block",
+        "y": 180
+      },
+      {
+        "model": "deepspace:block/selenic_grass_block",
+        "y": 270
+      }
+    ]
   }
 }

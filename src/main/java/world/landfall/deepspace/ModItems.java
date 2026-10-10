@@ -35,6 +35,7 @@ public class ModItems {
 
     public static final DeferredItem<BlockItem> SELENIC_PLANKS = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_PLANKS);
     public static final DeferredItem<BlockItem> SELENIC_STAIRS = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_STAIRS);
+    public static final DeferredItem<BlockItem> SELENIC_SLAB = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_SLAB);
     public static final DeferredItem<BlockItem> SELENIC_DOOR = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_DOOR);
     public static final DeferredItem<BlockItem> SELENIC_STEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_STEM);
     public static final DeferredItem<BlockItem> SELENIC_BULB = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_BULB);
