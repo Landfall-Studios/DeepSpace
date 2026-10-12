@@ -1,0 +1,13 @@
+{
+  "getting_started": {
+    "name": "\uD83D\uDCD5 起步",
+    "icon": null
+  },
+  "multiblocks.mdx": "多方块结构",
+  "addons.mdx": "插件",
+  "particle_accelerator.mdx": "粒子加速器",
+  "reactor": {
+    "name": "☢ 核反应堆",
+    "icon": null
+  }
+}

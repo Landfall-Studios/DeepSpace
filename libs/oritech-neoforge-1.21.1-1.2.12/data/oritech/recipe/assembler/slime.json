@@ -1,0 +1,24 @@
+{
+  "type": "oritech:assembler",
+  "ingredients": [
+    {
+      "item": "minecraft:honeycomb"
+    },
+    {
+      "tag": "c:fuels/bio"
+    },
+    {
+      "tag": "c:fuels/bio"
+    },
+    {
+      "tag": "c:fuels/bio"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "minecraft:slime_ball"
+    }
+  ],
+  "time": 96
+}

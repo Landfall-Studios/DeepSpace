@@ -25,7 +25,7 @@
     [],
     [],
     [],
-    ["oritech:resource_node_common"]
+    ["oritech:resource_node_common", "deepspace:selenic_core"]
   ],
   "has_precipitation": false,
   "spawn_costs": {},

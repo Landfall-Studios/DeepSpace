@@ -1,0 +1,15 @@
+{
+  "type": "oritech:grinder",
+  "ingredients": [
+    {
+      "tag": "c:storage_blocks/wheat"
+    }
+  ],
+  "results": [
+    {
+      "count": 16,
+      "id": "oritech:biomass"
+    }
+  ],
+  "time": 120
+}

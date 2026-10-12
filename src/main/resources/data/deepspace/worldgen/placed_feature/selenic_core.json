@@ -1,0 +1,26 @@
+{
+  "feature": {
+    "config": {
+      "to_place": {
+        "type": "minecraft:simple_state_provider",
+        "state": {
+          "Name": "deepspace:selenic_core_block"
+        }
+      }
+    },
+    "type": "minecraft:simple_block"
+  },
+  "placement": [
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "WORLD_SURFACE_WG"
+    },
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 40
+    }
+  ]
+}

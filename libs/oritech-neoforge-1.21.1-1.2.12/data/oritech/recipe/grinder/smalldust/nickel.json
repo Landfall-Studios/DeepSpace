@@ -1,0 +1,15 @@
+{
+  "type": "oritech:grinder",
+  "ingredients": [
+    {
+      "tag": "c:nuggets/nickel"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "oritech:small_nickel_dust"
+    }
+  ],
+  "time": 40
+}

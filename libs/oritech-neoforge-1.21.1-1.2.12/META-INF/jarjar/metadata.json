@@ -1,0 +1,16 @@
+{
+  "jars": [
+    {
+      "identifier": {
+        "group": "dev.technici4n",
+        "artifact": "GrandPower"
+      },
+      "version": {
+        "range": "[3.0.2,)",
+        "artifactVersion": "3.0.2"
+      },
+      "path": "META-INF/jarjar/GrandPower-3.0.2.jar",
+      "isObfuscated": false
+    }
+  ]
+}

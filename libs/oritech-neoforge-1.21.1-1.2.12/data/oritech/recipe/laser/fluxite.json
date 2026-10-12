@@ -1,0 +1,15 @@
+{
+  "type": "oritech:laser",
+  "ingredients": [
+    {
+      "item": "minecraft:amethyst_cluster"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "oritech:fluxite"
+    }
+  ],
+  "time": 1
+}

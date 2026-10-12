@@ -1,0 +1,10 @@
+{
+  "type": "oritech:reactor",
+  "ingredients": [
+    {
+      "item": "oritech:uranium_pellet"
+    }
+  ],
+  "results": [],
+  "time": 4000
+}

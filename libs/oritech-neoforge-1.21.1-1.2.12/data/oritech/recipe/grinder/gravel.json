@@ -1,0 +1,15 @@
+{
+  "type": "oritech:grinder",
+  "ingredients": [
+    {
+      "tag": "c:cobblestones"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "minecraft:gravel"
+    }
+  ],
+  "time": 120
+}

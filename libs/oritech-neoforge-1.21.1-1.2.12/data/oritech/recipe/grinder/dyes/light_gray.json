@@ -1,0 +1,15 @@
+{
+  "type": "oritech:grinder",
+  "ingredients": [
+    {
+      "tag": "c:raw_materials/dyes/light_gray"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "minecraft:light_gray_dye"
+    }
+  ],
+  "time": 120
+}
