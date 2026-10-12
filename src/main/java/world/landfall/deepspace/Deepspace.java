@@ -58,6 +58,8 @@ public class Deepspace {
                 output.accept(ModItems.SELENIC_SLAB);
                 output.accept(ModItems.SELENIC_STAIRS);
                 output.accept(ModItems.SELENIC_STEM);
+                output.accept(ModItems.BLOOMLIGHT);
+                output.accept(ModItems.SELENIA);
             })
             .icon(ModItems.ANGEL_BLOCK_ITEM::toStack)
             .title(Component.translatable("menu.deepspace.creative_mode_tab"))

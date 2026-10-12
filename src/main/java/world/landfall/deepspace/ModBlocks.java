@@ -165,7 +165,8 @@ public class ModBlocks {
         return BLOCKS.register(name, () -> new SelenicPlantBlock(properties.instabreak()
                 .dynamicShape()
                 .replaceable()
-                .noCollission()) {
+                .noCollission()
+                .requiresCorrectToolForDrops()) {
             @Override
             protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
                 var below = level.getBlockState(pos.below());
@@ -180,10 +181,6 @@ public class ModBlocks {
             @Override
             protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
                 return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
-            }
-            @Override
-            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
-                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
             }
         });
     }

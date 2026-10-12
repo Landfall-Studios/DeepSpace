@@ -1,6 +1,8 @@
 package world.landfall.deepspace;
 
 import com.simibubi.create.content.logistics.vault.ItemVaultBlock;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +12,8 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import world.landfall.deepspace.item.*;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class ModItems {
@@ -40,6 +44,15 @@ public class ModItems {
     public static final DeferredItem<BlockItem> SELENIC_STEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_STEM);
     public static final DeferredItem<BlockItem> SELENIC_BULB = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_BULB);
     public static final DeferredItem<BlockItem> BLOOMLIGHT = ITEMS.registerSimpleBlockItem(ModBlocks.BLOOMLIGHT);
+    public static final DeferredItem<Item> SELENIA = ITEMS.register("selenia", () -> new Item(new Item.Properties()
+            .stacksTo(16)
+            .food(new FoodProperties(
+                    1, 3, false, 2,
+                    Optional.empty(), List.of(
+                            new FoodProperties.PossibleEffect(() -> new MobEffectInstance(ModMobEffects.SELINIA, 20 * 120), 0.05f)
+            )
+            ))
+    ));
 
     public static final DeferredItem<Item> SILICON_CRYSTAL_ITEM = ITEMS.registerItem("silicon_crystal", Item::new);
     public static final DeferredItem<Item> RAW_SILICON_ITEM = ITEMS.registerItem("raw_silicon", Item::new);
