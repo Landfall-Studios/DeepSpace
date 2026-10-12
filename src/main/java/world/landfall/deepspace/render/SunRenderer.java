@@ -105,8 +105,9 @@ public class SunRenderer {
         var time = instance.level.getTimeOfDay(partialTicks.getGameTimeDeltaTicks());
         var x = (float)Math.cos(time * 2 * 3.14159f);
         var y = (float)Math.sin(time * 2 * 3.14159f);
+        float dist = in_skybox ? (float) PlanetRegistry.getPlanetByDimension(instance.level.dimension()).getCenter().distanceTo(PlanetRegistry.getSun().getCenter()): 0f;
         var pos = in_skybox ?
-            new Vector3f(-1500f * y, 1500f * x, 300f * y).sub(MESH.center).add(new Vector3f(0, -MESH.radius, 0)):
+            new Vector3f(-dist * y, dist * x, 300f * y).sub(MESH.center).add(new Vector3f(0, -MESH.radius, 0)):
             camera.getPosition().toVector3f().mul(-1);
         MESH.render(poseStack, sunBuilder, pos, new Quaternionf());
         VeilRenderSystem.setShader(Deepspace.path("sun"));
