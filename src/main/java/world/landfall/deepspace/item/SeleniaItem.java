@@ -20,7 +20,7 @@ public class SeleniaItem extends Item {
         if (effect == null) {
             livingEntity.addEffect(new MobEffectInstance(ModMobEffects.SELINIA, 20 * 120));
         } else {
-            livingEntity.addEffect(new MobEffectInstance(ModMobEffects.SELINIA, 20 * 120 + effect.getDuration()));
+            livingEntity.addEffect(new MobEffectInstance(ModMobEffects.SELINIA, 20 * 30 + effect.getDuration()));
         }
         return super.finishUsingItem(stack, level, livingEntity);
 
