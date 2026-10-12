@@ -44,13 +44,11 @@ public class ModItems {
     public static final DeferredItem<BlockItem> SELENIC_STEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_STEM);
     public static final DeferredItem<BlockItem> SELENIC_BULB = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_BULB);
     public static final DeferredItem<BlockItem> BLOOMLIGHT = ITEMS.registerSimpleBlockItem(ModBlocks.BLOOMLIGHT);
-    public static final DeferredItem<Item> SELENIA = ITEMS.register("selenia", () -> new Item(new Item.Properties()
+    public static final DeferredItem<Item> SELENIA = ITEMS.register("selenia", () -> new SeleniaItem(new Item.Properties()
             .stacksTo(16)
             .food(new FoodProperties(
-                    1, 3, false, 2,
-                    Optional.empty(), List.of(
-                            new FoodProperties.PossibleEffect(() -> new MobEffectInstance(ModMobEffects.SELINIA, 20 * 120), 0.05f)
-            )
+                    1, 3, true, 0.5f,
+                    Optional.empty(), List.of()
             ))
     ));
 
