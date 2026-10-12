@@ -157,6 +157,7 @@ public class SpacePlayerEvents {
         }
         private static void airTick(Player player, Level level, boolean noGravity) {
             if (!noGravity) return;
+            if (!level.isClientSide && player.isCreative()) return;
             var ticks = player.tickCount;
             if (ticks % 5 != 0) return;
             if (ModList.get().isLoaded("create_submarine")) {
