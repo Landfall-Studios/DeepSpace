@@ -14,6 +14,17 @@
   "block.deepspace.moonstone_zinc_ore_block": "Moonstone Zinc Ore",
   "block.deepspace.keplerometer": "Keplerometer",
   "block.deepspace.lunar_soil": "Lunar Soil",
+  "block.deepspace.selenic_bulb": "Selenic Bulb",
+  "block.deepspace.selenic_core_block": "Selenic Core",
+  "block.deepspace.selenic_door": "Selenic Door",
+  "block.deepspace.selenic_fauna_block": "Selenic Fauna",
+  "block.deepspace.selenic_grass_block": "Selenic Grass Block",
+  "block.deepspace.selenic_planks": "Selenic Planks",
+  "block.deepspace.selenic_roots_block": "Selenic Roots",
+  "block.deepspace.selenic_slab": "Selenic Slab",
+  "block.deepspace.selenic_stairs": "Selenic Stairs",
+  "block.deepspace.selenic_stem": "Selenic Stem",
+  "block.deepspace.selenic_vine_block": "Selenic Vines",
   "item.deepspace.rocket_booster": "Rocket Booster",
   "item.deepspace.jetpack": "Jetpack",
   "item.deepspace.jetpack.tooltip": "Fuel remaining: ",
@@ -23,5 +34,5 @@
   "item.deepspace.jetpack.creative": "Creative Jetpack",
   "item.deepspace.jet_helmet.creative": "Creative Jet Helmet",
   "item.deepspace.jet_helmet.jei": "Jet helmets can be aired up using a fan from Create.",
-  "deepspace.hurt.no_air": "%s succumbed to the cold grasp of space."
+  "death.attack.deepspace.hurt.no_air": "%s succumbed to the cold grasp of space."
 }
