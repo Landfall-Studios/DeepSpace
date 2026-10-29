@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "deepspace:block/selenic_roots"
+    "layer0": "deepspace:block/selenic_roots_block"
   }
 }

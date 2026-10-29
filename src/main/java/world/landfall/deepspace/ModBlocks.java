@@ -12,6 +12,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -31,6 +32,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import world.landfall.deepspace.block.*;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Deepspace.MODID);
@@ -93,6 +95,19 @@ public class ModBlocks {
                     .mapColor(MapColor.COLOR_PURPLE).replaceable().noCollission().instabreak(),
             Shapes.create(new AABB(1/16., 0, 1/16., 15/16., 15/16., 15/16.))
     );
+    public static final DeferredBlock<Block> SELENIC_SAPLING = BLOCKS.register("selenic_sapling_block", () -> new SaplingBlock(
+            new TreeGrower(
+                    "selenic_tree",
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty()
+            ), BlockBehaviour.Properties.of()
+    ) {
+        @Override
+        protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+            return state.is(SELENIC_GRASS_BLOCK) || state.is(LUNAR_SOIL);
+        }
+    });
     public static final DeferredBlock<Block> SELENIC_CORE_BLOCK = BLOCKS.register("selenic_core_block", () -> new SelenicPlantBlock(BlockBehaviour.Properties.of()
             .noOcclusion()
     ) {

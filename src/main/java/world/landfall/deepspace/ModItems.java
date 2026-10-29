@@ -44,6 +44,7 @@ public class ModItems {
     public static final DeferredItem<BlockItem> SELENIC_STEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_STEM);
     public static final DeferredItem<BlockItem> SELENIC_BULB = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_BULB);
     public static final DeferredItem<BlockItem> BLOOMLIGHT = ITEMS.registerSimpleBlockItem(ModBlocks.BLOOMLIGHT);
+    public static final DeferredItem<BlockItem> SELENIC_SAPLING = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_SAPLING);
     public static final DeferredItem<Item> SELENIA = ITEMS.register("selenia", () -> new SeleniaItem(new Item.Properties()
             .stacksTo(16)
             .food(new FoodProperties(

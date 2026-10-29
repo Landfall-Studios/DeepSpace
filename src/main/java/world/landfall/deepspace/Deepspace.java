@@ -47,10 +47,11 @@ public class Deepspace {
                 output.accept(ModItems.ROCKET_BOOSTER_ITEM);
                 output.accept(ModItems.ANGEL_BLOCK_ITEM);
                 output.accept(ModItems.OXYGENATOR_BLOCK_ITEM);
+                output.accept(ModItems.KEPLEROMETER_ITEM);
                 output.accept(ModItems.SELENIC_CORE_ITEM);
                 output.accept(ModItems.SELENIC_FAUNA_ITEM);
-                output.accept(ModItems.SELENIC_GRASS_ITEM);
                 output.accept(ModItems.SELENIC_ROOTS_ITEM);
+                output.accept(ModItems.SELENIC_SAPLING);
                 output.accept(ModItems.SELENIC_VINE_ITEM);
                 output.accept(ModItems.SELENIC_BULB);
                 output.accept(ModItems.SELENIC_DOOR);
@@ -60,6 +61,9 @@ public class Deepspace {
                 output.accept(ModItems.SELENIC_STEM);
                 output.accept(ModItems.BLOOMLIGHT);
                 output.accept(ModItems.SELENIA);
+                output.accept(ModItems.LUNAR_SOIL);
+                output.accept(ModItems.MOONSTONE_ITEM);
+                output.accept(ModItems.SELENIC_GRASS_ITEM);
             })
             .icon(ModItems.ANGEL_BLOCK_ITEM::toStack)
             .title(Component.translatable("menu.deepspace.creative_mode_tab"))
