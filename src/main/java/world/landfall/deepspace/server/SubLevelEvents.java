@@ -1,38 +1,25 @@
 package world.landfall.deepspace.server;
 
 import com.mojang.logging.LogUtils;
-import dev.egg.SubLevelWarper;
-import dev.ryanhcode.sable.api.SubLevelHelper;
+import dev.egg.dimensionalsable.SubLevelWarper;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
-import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
-import dev.ryanhcode.sable.api.sublevel.ticket.SubLevelLoadingTicketType;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
-import dev.ryanhcode.sable.sublevel.storage.serialization.SubLevelSerializer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Unit;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import org.joml.Quaterniond;
 import org.joml.Vector3d;
-import org.joml.Vector3dc;
 import org.slf4j.Logger;
 import world.landfall.deepspace.Deepspace;
-import dev.ryanhcode.sable.sublevel.SubLevel;
-import world.landfall.deepspace.Util;
-import world.landfall.deepspace.mixin.MixinSubLevelWarper;
 import world.landfall.deepspace.planet.Planet;
 import world.landfall.deepspace.planet.PlanetRegistry;
 import world.landfall.deepspace.planet.PlanetTeleportHandler;
@@ -155,7 +142,7 @@ public class SubLevelEvents {
                             }
 
                         }
-                        SubLevelWarper.WarpSubLevel(s, server.getLevel(planet.getDimension()), newPos);
+                        SubLevelWarper.warpConnectedSubLevels(s, server.getLevel(planet.getDimension()), newPos);
                         hasBeenMerked.set(true);
 
 
@@ -184,7 +171,7 @@ public class SubLevelEvents {
 
                     var oldSubLevels = List.copyOf(spaceContainer.getAllSubLevels());
                     var newLevel = server.getLevel(ResourceKey.create(Registries.DIMENSION, Deepspace.path("space")));
-                    SubLevelWarper.WarpSubLevel(s, newLevel, new Vector3d(
+                    SubLevelWarper.warpConnectedSubLevels(s, newLevel, new Vector3d(
                             exitPos.x,
                             exitPos.y,
                             exitPos.z

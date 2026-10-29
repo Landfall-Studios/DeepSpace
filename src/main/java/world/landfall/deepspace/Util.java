@@ -1,6 +1,6 @@
 package world.landfall.deepspace;
 
-import dev.egg.DimensionalSable;
+import dev.egg.dimensionalsable.DimensionalSable;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Util {
-    public static final HashMap<UUID, DimensionalSable.Pair<UUID, Vec3i>> OLD_TO_NEW = new HashMap<>();
 
     public static boolean isPlayerBeingTracked(Player player, Level level) {
         var sublevelContainer = SubLevelContainer.getContainer(level);
