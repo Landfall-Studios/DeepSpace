@@ -1,0 +1,8 @@
+{
+  "type": "deepspace:template_tree",
+  "config": {
+    "templates": [
+      "deepspace:tree/test_tree"
+    ]
+  }
+}

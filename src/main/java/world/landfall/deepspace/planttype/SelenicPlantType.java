@@ -59,7 +59,10 @@ public class SelenicPlantType extends PlantType {
         if (below.is(ModBlocks.SELENIC_GRASS_BLOCK) && in.is(Blocks.AIR) && above.is(Blocks.AIR)) {
             if (level.random.nextFloat() > .3f && !hasSurroundingFauna && countFauna < 2 && (pos.getX() % 3 == 0 ^ pos.getZ() % 3 == 0))
                 if (level.random.nextFloat() > 0.5f)
-                    return Optional.of(ModBlocks.SELENIC_FAUNA_BLOCK.get().defaultBlockState());
+                    if (level.random.nextFloat() > 0.9f)
+                        return Optional.of(ModBlocks.SELENIC_SAPLING.get().defaultBlockState());
+                    else
+                        return Optional.of(ModBlocks.SELENIC_FAUNA_BLOCK.get().defaultBlockState());
                 else
                     return Optional.of(ModBlocks.SELENIC_ROOTS_BLOCK.get().defaultBlockState());
         }

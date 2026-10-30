@@ -5,6 +5,8 @@ import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -99,9 +101,11 @@ public class ModBlocks {
             new TreeGrower(
                     "selenic_tree",
                     Optional.empty(),
-                    Optional.empty(),
+                    Optional.of(ResourceKey.create(Registries.CONFIGURED_FEATURE,
+                            Deepspace.path("selenia_tree")
+                    )),
                     Optional.empty()
-            ), BlockBehaviour.Properties.of()
+            ), BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.AZALEA_LEAVES).randomTicks()
     ) {
         @Override
         protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
