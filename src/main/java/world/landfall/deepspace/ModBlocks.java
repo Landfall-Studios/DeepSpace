@@ -105,7 +105,8 @@ public class ModBlocks {
     ) {
         @Override
         protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-            return state.is(SELENIC_GRASS_BLOCK) || state.is(LUNAR_SOIL);
+            var belowState = level.getBlockState(pos.below());
+            return belowState.is(SELENIC_GRASS_BLOCK) || belowState.is(LUNAR_SOIL);
         }
     });
     public static final DeferredBlock<Block> SELENIC_CORE_BLOCK = BLOCKS.register("selenic_core_block", () -> new SelenicPlantBlock(BlockBehaviour.Properties.of()
