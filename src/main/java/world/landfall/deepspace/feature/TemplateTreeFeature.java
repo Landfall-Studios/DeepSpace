@@ -1,5 +1,7 @@
 package world.landfall.deepspace.feature;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -27,15 +29,18 @@ public class TemplateTreeFeature extends Feature<TemplateTreeFeatureConfig> {
         Optional<StructureTemplate> opt = manager.get(id);
         if (opt.isEmpty()) return false;
         StructureTemplate template = opt.get();
-
         var rotation = Rotation.getRandom(random);
+
+        var size = template.getSize(rotation);
+        var offset = new Vec3i(size.getX() / 2, 0, size.getZ() / 2);
+        var corner = origin.subtract(offset);
+
         StructurePlaceSettings settings = new StructurePlaceSettings()
+                .setRotationPivot(new BlockPos(offset))
                 .setRotation(rotation)
                 .setRandom(random)
                 .setIgnoreEntities(true);
 
-        var size = template.getSize(rotation);
-        var corner = origin.offset(-size.getX() / 2, 0, size.getZ() / 2);
 
         return template.placeInWorld(level, corner, corner, settings, random, 2);
     }
