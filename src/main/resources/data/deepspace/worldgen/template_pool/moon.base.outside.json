@@ -1,0 +1,51 @@
+{
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "projection": "terrain_matching",
+        "location": "deepspace:moon/moon.base.outside.path.corner",
+        "processors": [],
+        "override_liquid_settings": "ignore_waterlogging"
+      }
+    },{
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "projection": "terrain_matching",
+        "location": "deepspace:moon/moon.base.outside.path.straight",
+        "processors": [],
+        "override_liquid_settings": "ignore_waterlogging"
+      }
+    },{
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "projection": "rigid",
+        "location": "deepspace:moon/moon.base.outside.courtyard.destroyed",
+        "processors": [],
+        "override_liquid_settings": "ignore_waterlogging"
+      }
+    },{
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "projection": "rigid",
+        "location": "deepspace:moon/moon.base.outside.greenroom.destroyed",
+        "processors": [],
+        "override_liquid_settings": "ignore_waterlogging"
+      }
+    },{
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "projection": "rigid",
+        "location": "deepspace:moon/moon.base.outside.connector.destroyed",
+        "processors": [],
+        "override_liquid_settings": "ignore_waterlogging"
+      }
+    }
+  ]
+}
