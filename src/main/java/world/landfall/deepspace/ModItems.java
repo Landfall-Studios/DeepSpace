@@ -70,10 +70,12 @@ public class ModItems {
         item.set(JetHelmetItem.JetHelmetComponent.SUPPLIER, new JetHelmetItem.JetHelmetComponent(100, -1));
         return item;
     };
+    public static final DeferredItem<SpaceNavigationItem> NAVIGATOR_ITEM = ITEMS.registerItem("navigator", SpaceNavigationItem::new);
     public static final DeferredItem<RocketBoosterItem> ROCKET_BOOSTER_ITEM = ITEMS.register("rocket_booster", RocketBoosterItem::new);
     public static void register(IEventBus eventBus) {
         JetpackItem.JetpackComponent.register(eventBus);
         JetHelmetItem.JetHelmetComponent.register(eventBus);
+        SpaceNavigationItem.SpaceNavigationItemComponent.register(eventBus);
 
         ITEMS.register(eventBus);
     }
