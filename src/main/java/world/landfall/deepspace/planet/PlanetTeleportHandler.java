@@ -67,7 +67,7 @@ public class PlanetTeleportHandler {
         var dimension = level.dimension().location();
         var height = level.getMaxBuildHeight();
 
-        if (player.position().y > height + SPACE_DISTANCE_FROM_CEILING && planet != null) {
+        if (player.position().y > height + SPACE_DISTANCE_FROM_CEILING && planet != null && false) { // No longer allowing players to exit on their own, needs a sublevel
 //            var sublevelContainer = SubLevelContainer.getContainer(level);
 //            var isTrackingSublevel = new AtomicBoolean(false);
 //            sublevelContainer.getAllSubLevels().forEach(s -> {

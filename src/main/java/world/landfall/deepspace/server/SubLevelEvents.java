@@ -5,6 +5,7 @@ import dev.egg.dimensionalsable.SubLevelWarper;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
 import net.minecraft.core.registries.Registries;
@@ -34,7 +35,7 @@ public class SubLevelEvents {
     private static final float DistanceScale = 1f;
     private static final int Tickrate = 20;
     private static final float PlanetTeleportOffset = 1.2345f;
-    private static final float PlanetTeleportAddedVelocity = 28f;
+    private static final float PlanetTeleportAddedVelocity = 0.1f;
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -89,8 +90,11 @@ public class SubLevelEvents {
 
 
                     if (isWithinBounds) {
+                        var newLevel = server.getLevel(planet.getDimension());
+                        if (newLevel == null) return;
+                        var y = newLevel.getMaxBuildHeight();
                         var newPos = new Vector3d(
-                                0, 300, 0
+                                0, y, 0
                         );
                         var dist = planet.getCenter().subtract(new Vec3(
                                 pos.x, pos.y, pos.z
@@ -105,12 +109,12 @@ public class SubLevelEvents {
                                 if (dist.x > 0) {
                                     newPos =
                                             new Vector3d(
-                                                -dist.z, 300, dist.y
+                                                -dist.z, y, dist.y
                                             );
                                 } else {
                                     newPos =
                                             new Vector3d(
-                                                    dist.z, 300, dist.y
+                                                    dist.z, y, dist.y
                                             );
                                 }
 
@@ -118,12 +122,12 @@ public class SubLevelEvents {
                                 if (dist.z > 0) {
                                     newPos =
                                             new Vector3d(
-                                                    dist.x, 300, dist.y
+                                                    dist.x, y, dist.y
                                             );
                                 } else {
                                     newPos =
                                             new Vector3d(
-                                                    -dist.x, 300, dist.y
+                                                    -dist.x, y, dist.y
                                             );
                                 }
                             }
@@ -131,18 +135,18 @@ public class SubLevelEvents {
                             if (dist.y > 0) {
                                 newPos =
                                         new Vector3d(
-                                                -dist.x, 300, dist.z
+                                                -dist.x, y, dist.z
                                         );
                             } else {
                                 newPos =
                                         new Vector3d(
-                                                dist.x, 300, -dist.z
+                                                dist.x, y, -dist.z
                                         );
 
                             }
 
                         }
-                        SubLevelWarper.warpConnectedSubLevels(s, server.getLevel(planet.getDimension()), newPos);
+                        SubLevelWarper.warpConnectedSubLevels(s, newLevel, newPos);
                         hasBeenMerked.set(true);
 
 
@@ -176,6 +180,17 @@ public class SubLevelEvents {
                             exitPos.y,
                             exitPos.z
                     ));
+                    HashMap<UUID, Vec3> RELATIVE_PLAYER_POSITIONS = new HashMap<>();
+                    level.getPlayers(player -> new BoundingBox3d(s.boundingBox()).expand(20).contains(new Vector3d(
+                            player.position().x,
+                            player.position().y,
+                            player.position().z
+                    )) && !player.isPassenger()).forEach(player -> {
+                        var pose = s.logicalPose();
+                        var relativePos = pose.transformPositionInverse(player.position());
+                        RELATIVE_PLAYER_POSITIONS.put(player.getUUID(), relativePos);
+                    });
+
                     var newSubLevels = List.copyOf(spaceContainer.getAllSubLevels());
                     var diff = new ArrayList<ServerSubLevel>();
                     for (var x : newSubLevels) {
@@ -197,11 +212,20 @@ public class SubLevelEvents {
                     var center = planet.getCenter();
                     var toPlanet = finalNewPos.sub(
                             new Vector3d(center.x, center.y, center.z)
-                    ).normalize().mul(PlanetTeleportAddedVelocity).rotateY(Math.PI / 8);
+                    ).mul(PlanetTeleportAddedVelocity).rotateY(Math.PI / 8);
                     newHandle.addLinearAndAngularVelocity(
                             toPlanet, new Vector3d(0, 0, 0)
                     );
-                    var pos = newSublevel.logicalPose().position();
+                    var pose = newSublevel.logicalPose();
+
+                    RELATIVE_PLAYER_POSITIONS.forEach((uuid, relativePos) -> {
+                        var playerPos = pose.transformPosition(relativePos);
+                        level.getPlayerByUUID(uuid).teleportTo(
+                                newLevel, playerPos.x, playerPos.y, playerPos.z, Set.of(), 0, 0
+                        );
+                    });
+
+                    var pos = pose.position();
                     LOGGER.info("Sublevel at: {} {} {}", pos.x, pos.y, pos.z);
                     LOGGER.info("UUID: {}", newSublevel.getUniqueId());
 
