@@ -2,13 +2,8 @@ package world.landfall.deepspace.item;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
-import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
-import dev.ryanhcode.sable.sublevel.ClientSubLevel;
-import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.content.blocks.nav_table.NavTableBlockEntity;
 import dev.simulated_team.simulated.content.blocks.nav_table.navigation_target.NavigationTarget;
@@ -37,7 +32,6 @@ import org.joml.Vector3f;
 import world.landfall.deepspace.Deepspace;
 import world.landfall.deepspace.ModItems;
 import world.landfall.deepspace.Util;
-import world.landfall.deepspace.blockentity.KeplerometerBlockEntity;
 import world.landfall.deepspace.planet.PlanetRegistry;
 
 import java.util.List;
@@ -81,11 +75,7 @@ public class SpaceNavigationItem extends Item implements NavigationTarget {
         var real_pos = Sable.HELPER.projectOutOfSubLevel(navBE.getLevel(), navBE.getBlockPos().getCenter());
         var planet = PlanetRegistry.getClosestPlanet(real_pos);
         if (planet == null) return null;
-        var velocity = new Vector3d();
-        if (sublevel instanceof ServerSubLevel serverSubLevel)
-            velocity = RigidBodyHandle.of(serverSubLevel).getLinearVelocity(new Vector3d());
-        else if (sublevel instanceof ClientSubLevel clientSubLevel)
-            velocity = clientSubLevel.logicalPose().position().sub(clientSubLevel.lastPose().position());
+        var velocity = new Vector3d(sublevel.logicalPose().position()).sub(sublevel.lastPose().position());
         var proper_velocity = Util.fromVector3f(new Vector3f(
                 (float) velocity.x,
                 (float) velocity.y,
@@ -95,10 +85,10 @@ public class SpaceNavigationItem extends Item implements NavigationTarget {
         var component = self.get(SpaceNavigationItemComponent.SUPPLIER);
         if (component == null) return null;
         return (switch (component.mode) {
-            case NORMAL -> planetDiff.normalize().add(real_pos);
-            case ANTINORMAL -> planetDiff.normalize().reverse().add(real_pos);
-            case PROGRADE -> proper_velocity.normalize().add(real_pos);
-            case RETROGRADE -> proper_velocity.normalize().reverse().add(real_pos);
+            case NORMAL -> planetDiff.normalize().scale(10).add(real_pos);
+            case ANTINORMAL -> planetDiff.normalize().reverse().scale(10).add(real_pos);
+            case PROGRADE -> proper_velocity.normalize().scale(10).add(real_pos);
+            case RETROGRADE -> proper_velocity.normalize().reverse().scale(10).add(real_pos);
             case null -> null;
         });
 
