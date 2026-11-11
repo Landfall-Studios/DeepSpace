@@ -16,11 +16,11 @@ public class SeleniaItem extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
         var random = level.random;
         if (random.nextFloat() > 0.1f) return super.finishUsingItem(stack, level, livingEntity);
-        var effect = livingEntity.getEffect(ModMobEffects.SELINIA);
+        var effect = livingEntity.getEffect(ModMobEffects.SELENIA);
         if (effect == null) {
-            livingEntity.addEffect(new MobEffectInstance(ModMobEffects.SELINIA, 20 * 120));
+            livingEntity.addEffect(new MobEffectInstance(ModMobEffects.SELENIA, 20 * 120));
         } else {
-            livingEntity.addEffect(new MobEffectInstance(ModMobEffects.SELINIA, 20 * 30 + effect.getDuration()));
+            livingEntity.addEffect(new MobEffectInstance(ModMobEffects.SELENIA, 20 * 30 + effect.getDuration()));
         }
         return super.finishUsingItem(stack, level, livingEntity);
 

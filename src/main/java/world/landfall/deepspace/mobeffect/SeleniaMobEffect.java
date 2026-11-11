@@ -2,17 +2,13 @@ package world.landfall.deepspace.mobeffect;
 
 import net.createmod.catnip.theme.Color;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import world.landfall.deepspace.Deepspace;
 import world.landfall.deepspace.ModBlocks;
 import world.landfall.deepspace.ModDamageTypes;
 import world.landfall.deepspace.ModMobEffects;
@@ -34,6 +30,7 @@ public class SeleniaMobEffect extends MobEffect {
 //                    Deepspace.path("selenia")
 //            ), HURT_AMOUNT + amplifier);
             livingEntity.hurt(ModDamageTypes.seleniaDamage(livingEntity), HURT_AMOUNT + amplifier);
+            livingEntity.playSound(SoundEvents.AZALEA_BREAK);
             var pos = BlockPos.containing(livingEntity.position());
         }
         return true;
@@ -50,7 +47,7 @@ public class SeleniaMobEffect extends MobEffect {
 
         var level = entity.level();
         var pos = BlockPos.containing(entity.position());
-        if (level.getBlockState(pos.below()).canOcclude() && entity.hasEffect(ModMobEffects.SELINIA))
+        if (level.getBlockState(pos.below()).canOcclude() && entity.hasEffect(ModMobEffects.SELENIA))
             level.setBlockAndUpdate(pos, ModBlocks.SELENIC_CORE_BLOCK.get().defaultBlockState());
     }
 

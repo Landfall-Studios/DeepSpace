@@ -38,6 +38,7 @@
   "item.deepspace.jet_helmet.creative": "Creative Jet Helmet",
   "item.deepspace.jet_helmet.jei": "Jet helmets can be aired up using a fan from Create.",
   "death.attack.deepspace.hurt.no_air": "%s succumbed to the cold grasp of space.",
+  "effect.deepspace.selenia": "Selenic Infection",
   "item.deepspace.navigator": "Space Navigator",
   "item.deepspace.navigator.prograde": "Prograde",
   "item.deepspace.navigator.retrograde": "Retrograde",

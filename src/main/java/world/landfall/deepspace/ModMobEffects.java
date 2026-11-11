@@ -9,7 +9,7 @@ import world.landfall.deepspace.mobeffect.SeleniaMobEffect;
 
 public class ModMobEffects {
     public static final DeferredRegister<MobEffect> REGISTER = DeferredRegister.create(Registries.MOB_EFFECT, Deepspace.MODID);
-    public static final DeferredHolder<MobEffect, SeleniaMobEffect> SELINIA = REGISTER.register("selinia",
+    public static final DeferredHolder<MobEffect, SeleniaMobEffect> SELENIA = REGISTER.register("selenia",
             SeleniaMobEffect::new);
 
     public static void init(IEventBus eventBus) {
