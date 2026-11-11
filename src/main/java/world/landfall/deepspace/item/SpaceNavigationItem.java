@@ -94,13 +94,13 @@ public class SpaceNavigationItem extends Item implements NavigationTarget {
         var planetDiff = real_pos.subtract(planet.getCenter());
         var component = self.get(SpaceNavigationItemComponent.SUPPLIER);
         if (component == null) return null;
-        return switch (component.mode) {
-            case NORMAL -> planetDiff.normalize().reverse();
-            case ANTINORMAL -> planetDiff.normalize();
-            case PROGRADE -> proper_velocity.normalize();
-            case RETROGRADE -> proper_velocity.normalize().reverse();
+        return (switch (component.mode) {
+            case NORMAL -> planetDiff.normalize().add(real_pos);
+            case ANTINORMAL -> planetDiff.normalize().reverse().add(real_pos);
+            case PROGRADE -> proper_velocity.normalize().add(real_pos);
+            case RETROGRADE -> proper_velocity.normalize().reverse().add(real_pos);
             case null -> null;
-        };
+        });
 
     }
 
