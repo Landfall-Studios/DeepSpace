@@ -1,8 +1,10 @@
 package world.landfall.deepspace.client;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -29,10 +31,16 @@ import world.landfall.deepspace.planet.Planet;
 import world.landfall.deepspace.planet.PlanetRegistry;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class SpacePlayerEvents {
     @EventBusSubscriber(modid = Deepspace.MODID)
     public static class Tick {
+
+        private static final HashMap<UUID, Integer> PLAYER_LAST_SAW_TOOLTIP = new HashMap<>();
+        private static final int TOOLTIP_COOLDOWN = 20 * 60; // 1 minute
+
         private static void jetpackTick(Player player, Level level, ItemStack jetpack, boolean noGravity) {
             var hasJetpack = jetpack.is(ModItems.JETPACK_ITEM.get());
             if (!player.hasData(ModAttatchments.IS_FLYING_JETPACK)) return;
@@ -165,8 +173,8 @@ public class SpacePlayerEvents {
 
             var stack = player.getItemBySlot(EquipmentSlot.HEAD);
             // Don't do the silly stuff if someone's protected
-            if (stack.is(ModItems.JET_HELMET_ITEM))
-                return;
+//            if (stack.is(ModItems.JET_HELMET_ITEM))
+//                return;
 
             // Check for Selenia to oxygenate the player
             var horizontalRange = 4;
@@ -180,6 +188,18 @@ public class SpacePlayerEvents {
                                 pos.offset(i, k, j)
                         );
                         if (state.getBlock() instanceof SelenicPlantBlock) {
+                            if (stack.is(ModItems.JET_HELMET_ITEM)) {
+                                var time = player.tickCount;
+                                var lastSaw = PLAYER_LAST_SAW_TOOLTIP.getOrDefault(player.getUUID(), 0);
+                                if (time - lastSaw >= TOOLTIP_COOLDOWN) {
+                                    player.displayClientMessage(
+                                            Component.literal("I think the air is breathable here...").withStyle(ChatFormatting.ITALIC),
+                                            true
+                                    );
+                                    PLAYER_LAST_SAW_TOOLTIP.put(player.getUUID(), time);
+                                }
+                                return;
+                            }
                             player.setData(ModAttatchments.LAST_OXYGENATED, -1f);
                             if (level.random.nextFloat() > 0.95f)
                                 player.addEffect(
