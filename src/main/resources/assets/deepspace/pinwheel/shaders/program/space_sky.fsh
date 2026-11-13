@@ -43,11 +43,12 @@ uniform vec4 FogColor;
 in float vertexDistance;
 in vec4 vertexColor;
 in vec2 texCoord0;
+in float amountOfFog;
 
 out vec4 fragColor;
 void main() {
     float verticality = abs(texCoord0.y-.5f)*2.0f;
-    vec4 color = texture(Sampler0, texCoord0) + (ColorModulator * (1.0f-verticality));
-    fragColor = color;
+    vec4 color = texture(Sampler0, texCoord0);
+    fragColor = color + (FogColor * vertexColor.a / 255) * 0.5f;
     gl_FragDepth = 1.0f;
 }
