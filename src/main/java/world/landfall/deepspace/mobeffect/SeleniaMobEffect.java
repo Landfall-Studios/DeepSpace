@@ -15,8 +15,8 @@ import world.landfall.deepspace.ModMobEffects;
 
 @EventBusSubscriber
 public class SeleniaMobEffect extends MobEffect {
-    private static final int HURT_DELAY_SECONDS = 5;
-    private static final int HURT_AMOUNT = 4;
+    private static final int HURT_DELAY_SECONDS = 3;
+    private static final int HURT_AMOUNT = 8;
     public SeleniaMobEffect() {
         super(MobEffectCategory.HARMFUL, Color.PURPLE.getRGB());
     }

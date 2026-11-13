@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "deepspace:selenic_bulb"
+          "name": "deepspace:bloomlight"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "deepspace:blocks/selenic_bulb"
+  "random_sequence": "deepspace:blocks/bloomlight"
 }
