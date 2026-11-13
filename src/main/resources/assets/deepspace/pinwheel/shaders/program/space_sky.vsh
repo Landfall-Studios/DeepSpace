@@ -71,7 +71,10 @@ void main() {
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
     vertexDistance = fog_distance(pos, FogShape);
     //vertexDistance = 1.0f/0.0f;
-    vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
+    if (pos.y > 0)
+        vertexColor = Color;
+    else
+        vertexColor = Color + vec4(0, 0, 0, 255);
     texCoord0 = UV0;
 
 }
