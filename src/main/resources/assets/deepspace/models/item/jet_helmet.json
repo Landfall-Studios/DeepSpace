@@ -1,6 +1,15 @@
 {
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "deepspace:item/jet_helmet"
+  "loader": "neoforge:separate_transforms",
+  "base": {
+    "parent": "deepspace:item/jet_helmet_3d"
+  },
+  "perspectives": {
+    "gui": { "parent": "deepspace:item/jet_helmet_flat" },
+    "ground": { "parent": "deepspace:item/jet_helmet_flat" },
+    "fixed": { "parent": "deepspace:item/jet_helmet_flat" },
+    "firstperson_righthand": { "parent": "deepspace:item/jet_helmet_flat" },
+    "firstperson_lefthand": { "parent": "deepspace:item/jet_helmet_flat" },
+    "thirdperson_righthand": { "parent": "deepspace:item/jet_helmet_flat" },
+    "thirdperson_lefthand": { "parent": "deepspace:item/jet_helmet_flat" }
   }
 }

@@ -57,13 +57,13 @@ public class Planet {
             ResourceLocation.CODEC.fieldOf("dimension").forGetter(planet -> planet.getDimension().location()),
             Vec3.CODEC.fieldOf("boundingBoxMin").forGetter(Planet::getBoundingBoxMin),
             Vec3.CODEC.fieldOf("boundingBoxMax").forGetter(Planet::getBoundingBoxMax),
-            Codec.list(PlanetDecoration.CODEC).optionalFieldOf("decorations").forGetter(Planet::getDecorations),
+            Codec.list(PlanetDecoration.CODEC).fieldOf("decorations").forGetter(Planet::getDecorations),
             Codec.DOUBLE.listOf().comapFlatMap((p_338175_) -> Util.fixedSize(p_338175_, 3).map((p_231081_) -> new Vec2((float)p_231081_.get(0).doubleValue(), (float)p_231081_.get(1).doubleValue())), (p_231083_) -> List.of((double)p_231083_.x, (double)p_231083_.y)).fieldOf("physicalMin").forGetter(Planet::getPhysicalMin),
             Codec.DOUBLE.listOf().comapFlatMap((p_338175_) -> Util.fixedSize(p_338175_, 3).map((p_231081_) -> new Vec2((float)p_231081_.get(0).doubleValue(), (float)p_231081_.get(1).doubleValue())), (p_231083_) -> List.of((double)p_231083_.x, (double)p_231083_.y)).fieldOf("physicalMax").forGetter(Planet::getPhysicalMax),
             Codec.STRING.optionalFieldOf("description", "").forGetter(Planet::getDescription)
         ).apply(instance, (id, name, dimensionLocation, min, max, decorations, physicalMin, physicalMax, description) ->
             new Planet(id, name, ResourceKey.create(Registries.DIMENSION, dimensionLocation),
-                    min, max, decorations.orElseGet(List::of), description,
+                    min, max, decorations, description,
                     physicalMin, physicalMax
             )
         )
@@ -173,8 +173,8 @@ public class Planet {
     }
 
     @NotNull
-    public Optional<List<PlanetDecoration>> getDecorations() {
-        return Optional.of(decorations.stream().toList());
+    public List<PlanetDecoration> getDecorations() {
+        return decorations.stream().toList();
     }
 
     /**

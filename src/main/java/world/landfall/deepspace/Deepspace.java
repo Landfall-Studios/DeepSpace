@@ -39,13 +39,31 @@ public class Deepspace {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
     public static final Supplier<CreativeModeTab> TAB = CREATIVE_MODE_TABS.register("deepspace", () -> CreativeModeTab.builder()
             .displayItems((params, output) -> {
-                output.accept(ModItems.JETPACK_ITEM);
-                output.accept(ModItems.CREATIVE_JETPACK_ITEM.get());
+                // Jetpack hasn't been planned for actual use for a while; too many issues
+//                output.accept(ModItems.JETPACK_ITEM);
+//                output.accept(ModItems.CREATIVE_JETPACK_ITEM.get());
                 output.accept(ModItems.JET_HELMET_ITEM);
                 output.accept(ModItems.CREATIVE_JET_HELMET_ITEM.get());
                 output.accept(ModItems.ROCKET_BOOSTER_ITEM);
                 output.accept(ModItems.ANGEL_BLOCK_ITEM);
                 output.accept(ModItems.OXYGENATOR_BLOCK_ITEM);
+                output.accept(ModItems.KEPLEROMETER_ITEM);
+                output.accept(ModItems.SELENIC_CORE_ITEM);
+                output.accept(ModItems.SELENIC_FAUNA_ITEM);
+                output.accept(ModItems.SELENIC_ROOTS_ITEM);
+                output.accept(ModItems.SELENIC_SAPLING);
+                output.accept(ModItems.SELENIC_VINE_ITEM);
+                output.accept(ModItems.SELENIC_BULB);
+                output.accept(ModItems.SELENIC_DOOR);
+                output.accept(ModItems.SELENIC_PLANKS);
+                output.accept(ModItems.SELENIC_SLAB);
+                output.accept(ModItems.SELENIC_STAIRS);
+                output.accept(ModItems.SELENIC_STEM);
+                output.accept(ModItems.BLOOMLIGHT);
+                output.accept(ModItems.SELENIA);
+                output.accept(ModItems.LUNAR_SOIL);
+                output.accept(ModItems.MOONSTONE_ITEM);
+                output.accept(ModItems.SELENIC_GRASS_ITEM);
             })
             .icon(ModItems.ANGEL_BLOCK_ITEM::toStack)
             .title(Component.translatable("menu.deepspace.creative_mode_tab"))
@@ -67,6 +85,7 @@ public class Deepspace {
             LOGGER.error("Failed to register space dimension", e);
             throw new RuntimeException("Failed to initialize mod", e);
         }
+        ModFeatures.init(modEventBus);
         // Register the Deferred Register to the mod event bus so blocks get registered
         ModBlocks.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
@@ -75,6 +94,7 @@ public class Deepspace {
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModAttatchments.register(modEventBus);
+        ModMobEffects.init(modEventBus);
 
         CreateIntegration.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered

@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.*;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
@@ -23,10 +24,14 @@ public class ModDamageTypes {
 //                (Entity)null
 //        );
 //    }
-    public static final ResourceKey<DamageType> NO_AIR_DAMAGE_KEY = ResourceKey.create(Registries.DAMAGE_TYPE, Deepspace.path("no_air"));
+public static final ResourceKey<DamageType> NO_AIR_DAMAGE_KEY = ResourceKey.create(Registries.DAMAGE_TYPE, Deepspace.path("no_air"));
+    public static final ResourceKey<DamageType> SELENIA_DAMAGE_KEY = ResourceKey.create(Registries.DAMAGE_TYPE, Deepspace.path("selenia"));
 
 
-    public static DamageSource noAirDamage(Player player) {
+    public static DamageSource noAirDamage(LivingEntity player) {
         return new DamageSource(player.level().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(NO_AIR_DAMAGE_KEY));
+    }
+    public static DamageSource seleniaDamage(LivingEntity player) {
+        return new DamageSource(player.level().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(SELENIA_DAMAGE_KEY));
     }
 }

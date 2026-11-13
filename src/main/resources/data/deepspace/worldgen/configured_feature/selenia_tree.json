@@ -1,0 +1,16 @@
+{
+  "type": "deepspace:template_tree",
+  "config": {
+    "templates": [
+      "deepspace:tree/tree.bush",
+      "deepspace:tree/tree.flower",
+      "deepspace:tree/tree.jeff",
+      "deepspace:tree/tree.large.alt",
+      "deepspace:tree/tree.large",
+      "deepspace:tree/tree.medium",
+      "deepspace:tree/tree.nether",
+      "deepspace:tree/tree.thick",
+      "deepspace:tree/tree.tiny"
+    ]
+  }
+}

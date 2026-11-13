@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import world.landfall.deepspace.Deepspace;
 import world.landfall.deepspace.planet.Planet;
@@ -24,7 +25,7 @@ import java.util.Objects;
 /**
  * Network packet for synchronizing planet data from server to client.
  */
-public record PlanetSyncPacket(List<Planet> planets, Sun sun) implements CustomPacketPayload {
+public record PlanetSyncPacket(List<Planet> planets, @Nullable Sun sun) implements CustomPacketPayload {
     
     private static final Logger LOGGER = LogUtils.getLogger();
     
@@ -42,8 +43,8 @@ public record PlanetSyncPacket(List<Planet> planets, Sun sun) implements CustomP
      *
      * @param planets The planets to sync
      */
-    public PlanetSyncPacket(@NotNull Collection<Planet> planets, Sun sun) {
-        this(new ArrayList<>(Objects.requireNonNull(planets, "Planets cannot be null")), Objects.requireNonNull(sun,"Sun cannot be null"));
+    public PlanetSyncPacket(@NotNull Collection<Planet> planets, @Nullable Sun sun) {
+        this(new ArrayList<>(Objects.requireNonNull(planets, "Planets cannot be null")), sun);
     }
     
     /**
@@ -65,12 +66,16 @@ public record PlanetSyncPacket(List<Planet> planets, Sun sun) implements CustomP
     public static void encode(@NotNull PlanetSyncPacket packet, @NotNull FriendlyByteBuf buffer) {
         Objects.requireNonNull(packet, "Packet cannot be null");
         Objects.requireNonNull(buffer, "Buffer cannot be null");
-        
+
         buffer.writeInt(packet.planets.size());
         for (Planet planet : packet.planets) {
             planet.toNetwork(buffer);
         }
-        packet.sun.toNetwork(buffer);
+        boolean hasSun = packet.sun != null;
+        buffer.writeBoolean(hasSun);
+        if (hasSun) {
+            packet.sun.toNetwork(buffer);
+        }
     }
     
     /**
@@ -85,12 +90,12 @@ public record PlanetSyncPacket(List<Planet> planets, Sun sun) implements CustomP
         
         int planetCount = buffer.readInt();
         List<Planet> planets = new ArrayList<>(planetCount);
-        
+
         for (int i = 0; i < planetCount; i++) {
             planets.add(Planet.fromNetwork(buffer));
         }
-        Sun sun = Sun.fromNetwork(buffer);
-        
+        Sun sun = buffer.readBoolean() ? Sun.fromNetwork(buffer) : null;
+
         return new PlanetSyncPacket(planets, sun);
     }
     

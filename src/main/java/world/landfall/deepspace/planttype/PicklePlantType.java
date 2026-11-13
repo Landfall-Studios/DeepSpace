@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.SeaPickleBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.WaterFluid;
 import net.minecraft.world.phys.AABB;
 import world.landfall.deepspace.ModBlocks;
 import world.landfall.deepspace.block.PicklePlantBlock;
@@ -32,16 +33,23 @@ public class PicklePlantType extends PlantType {
         int num = (int)BlockPos.betweenClosedStream(pos.below(), pos.below(8)).map(level::getBlockState).filter(state ->
                 BLOCKS.stream().anyMatch(block -> state.is(BuiltInRegistries.BLOCK.get(block)))).count();
         if (in.is(Blocks.AIR)) {
-            if (MultifaceBlock.canAttachTo(level, Direction.DOWN, pos, below) && !below.getBlock().hasDynamicShape())
+            if (level.random.nextFloat() > .2f)
+                return Optional.empty();
+            else if (MultifaceBlock.canAttachTo(level, Direction.DOWN, pos, below) && !below.getBlock().hasDynamicShape())
                 return level.random.nextFloat() > .2f ? Optional.of(ModBlocks.PICKLE_VINE_BLOCK.get().defaultBlockState())
                         : Optional.of(Blocks.SEA_PICKLE.defaultBlockState()
                             .setValue(SeaPickleBlock.WATERLOGGED, false)
                             .setValue(SeaPickleBlock.PICKLES, level.random.nextIntBetweenInclusive(1, 4)));
+        } else if (in.is(Blocks.WATER)) {
+            if (MultifaceBlock.canAttachTo(level, Direction.DOWN, pos, below) && !below.getBlock().hasDynamicShape())
+                return level.random.nextFloat() > .2f ? Optional.of(ModBlocks.PICKLE_VINE_BLOCK.get().defaultBlockState())
+                        : Optional.of(Blocks.SEA_PICKLE.defaultBlockState()
+                        .setValue(SeaPickleBlock.WATERLOGGED, true)
+                        .setValue(SeaPickleBlock.PICKLES, level.random.nextIntBetweenInclusive(1, 4)));
         }
 //        var chanceToDiscardUp = (float)(.95 * ((8-num)/8.) + 1 * ((num)/8.));
         if (in.is(ModBlocks.PICKLE_VINE_BLOCK) && level.random.nextFloat() > .95 && level.random.nextIntBetweenInclusive(0, 7) > num) {
 
-                System.out.println(num);
             return Optional.of(ModBlocks.PICKLE_MOSS_BLOCK.get().defaultBlockState());
         }
         return Optional.empty();

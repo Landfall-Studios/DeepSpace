@@ -1,0 +1,11 @@
+{
+  "max_lifetime": 40,
+  "loop": true,
+  "rate": 1,
+  "count": 16,
+  "emitter_settings": {
+    "shape": "deepspace:cube",
+    "particle_settings": "deepspace:asteroids"
+  },
+  "particle_data": "deepspace:asteroids"
+}

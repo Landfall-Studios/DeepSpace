@@ -5,19 +5,24 @@ import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.CubeVoxelShape;
@@ -29,11 +34,13 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import world.landfall.deepspace.block.*;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Deepspace.MODID);
     public static final DeferredBlock<Block> ANGEL_BLOCK = BLOCKS.register("angel_block", () -> new AngelBlock(BlockBehaviour.Properties.of()));
     public static final DeferredBlock<Block> OXYGENATOR_BLOCK = BLOCKS.register("oxygenator", OxygenatorBlock::new);
+    public static final DeferredBlock<Block> KEPLEROMETER_BLOCK = BLOCKS.registerBlock("keplerometer", KeplerometerBlock::new);
     public static final DeferredBlock<Block> GROUND_SOLAR_PANEL_BLOCK = BLOCKS.register("ground_solar_panel", GroundSolarPanelBlock::new);
     public static final DeferredBlock<Block> MOONSTONE_ZINC_ORE_BLOCK = BLOCKS.register("moonstone_zinc_ore_block", () -> new MoonstoneOreBlock(AllItems.RAW_ZINC));
     public static final DeferredBlock<Block> MOONSTONE_QUARTZ_ORE_BLOCK = BLOCKS.register("moonstone_quartz_ore_block", () -> new MoonstoneOreBlock(() -> Items.QUARTZ));
@@ -81,13 +88,36 @@ public class ModBlocks {
     });
 
     public static final DeferredBlock<Block> SELENIC_GRASS_BLOCK = makeSelenicBlock("selenic_grass_block", BlockBehaviour.Properties.of());
-    public static final DeferredBlock<Block> SELENIC_VINE_BLOCK = makeUnstableSelenicBlock("selenic_vine_block", BlockBehaviour.Properties.of(),
-            Shapes.create(new AABB(0, 0, 0, 1, 2/16., 1))
-    );
-    public static final DeferredBlock<Block> SELENIC_FAUNA_BLOCK = makeUnstableSelenicBlock("selenic_fauna_block", BlockBehaviour.Properties.of(),
+    public static final DeferredBlock<Block> SELENIC_VINE_BLOCK = makeVineSelenicBlock("selenic_vine_block", BlockBehaviour.Properties.of());
+    public static final DeferredBlock<Block> SELENIC_FAUNA_BLOCK = makeUnstableSelenicBlock("selenic_fauna_block", BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE).replaceable().noCollission().instabreak(),
             Shapes.create(new AABB(1/16., 0, 1/16., 15/16., 15/16., 15/16.))
     );
-    public static final DeferredBlock<Block> SELENIC_CORE_BLOCK = BLOCKS.register("selenic_core_block", () -> new SelenicPlantBlock(BlockBehaviour.Properties.of()) {
+    public static final DeferredBlock<Block> SELENIC_ROOTS_BLOCK = makeUnstableSelenicBlock("selenic_roots_block", BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE).replaceable().noCollission().instabreak(),
+            Shapes.create(new AABB(1/16., 0, 1/16., 15/16., 15/16., 15/16.))
+    );
+    public static final DeferredBlock<Block> SELENIC_SAPLING = BLOCKS.register("selenic_sapling_block", () -> new SaplingBlock(
+            new TreeGrower(
+                    "selenic_tree",
+                    Optional.empty(),
+                    Optional.of(ResourceKey.create(Registries.CONFIGURED_FEATURE,
+                            Deepspace.path("selenia_tree")
+                    )),
+                    Optional.empty()
+            ), BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.AZALEA_LEAVES).randomTicks()
+    ) {
+        @Override
+        protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+            var belowState = level.getBlockState(pos.below());
+            return belowState.is(SELENIC_GRASS_BLOCK) || belowState.is(LUNAR_SOIL);
+        }
+    });
+    public static final DeferredBlock<Block> SELENIC_CORE_BLOCK = BLOCKS.register("selenic_core_block", () -> new SelenicPlantBlock(BlockBehaviour.Properties.of()
+            .noOcclusion()
+            .mapColor(MapColor.COLOR_PURPLE)
+            .sound(SoundType.AZALEA)
+    ) {
         @Override
         public int spreadRadius() {
             return 5;
@@ -95,14 +125,35 @@ public class ModBlocks {
 
         @Override
         public float spreadSpeed() {
-            return .6f;
+            return .7f;
         }
     });
 
     public static final DeferredBlock<Block> HEAT_PIPE_BLOCK = BLOCKS.register("heat_pipe", HeatPipeBlock::new);
 
+    public static final DeferredBlock<Block> SELENIC_PLANKS = BLOCKS.register("selenic_planks", () -> new Block(BlockBehaviour.Properties.of()
+            .sound(SoundType.WOOD)
+            .destroyTime(2)
+            .mapColor(MapColor.COLOR_PINK)
+    ));
+    public static final DeferredBlock<Block> SELENIC_STAIRS = BLOCKS.register("selenic_stairs", () -> new StairBlock(StairBlock.stateById(0), BlockBehaviour.Properties.of()
+            .sound(SoundType.WOOD)
+            .destroyTime(2)
+            .mapColor(MapColor.COLOR_PINK)
+    ));
+    public static final DeferredBlock<Block> SELENIC_SLAB = BLOCKS.register("selenic_slab", () -> new SlabBlock(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(2).mapColor(MapColor.COLOR_PINK)));
+    public static final DeferredBlock<DoorBlock> SELENIC_DOOR = BLOCKS.register("selenic_door", () -> new DoorBlock(BlockSetType.OAK, BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(2).mapColor(MapColor.COLOR_PINK)));
+    public static final DeferredBlock<Block> SELENIC_STEM = BLOCKS.register("selenic_stem", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(2).mapColor(MapColor.COLOR_PINK)));
+    public static final DeferredBlock<Block> SELENIC_BULB = BLOCKS.register("selenic_bulb", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.AZALEA).destroyTime(0.5f).mapColor(MapColor.COLOR_PINK)));
+    public static final DeferredBlock<Block> BLOOMLIGHT = BLOCKS.register("bloomlight", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.FROGLIGHT).destroyTime(1).lightLevel((s) -> 5).mapColor(MapColor.COLOR_PURPLE)));
+
     public static DeferredBlock<Block> makePickleBlock(String name, BlockBehaviour.Properties properties) {
-        return BLOCKS.register(name, () -> new PicklePlantBlock(properties));
+        return BLOCKS.register(name, () -> new PicklePlantBlock(properties) {
+            @Override
+            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
+            }
+        });
     }
     public static DeferredBlock<Block> makeUnstablePickleBlock(String name, BlockBehaviour.Properties properties, VoxelShape shape) {
         return BLOCKS.register(name, () -> new PicklePlantBlock(properties.instabreak()
@@ -133,13 +184,25 @@ public class ModBlocks {
         });
     }
     public static DeferredBlock<Block> makeSelenicBlock(String name, BlockBehaviour.Properties properties) {
-        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties));
+        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties
+                .destroyTime(1f)
+                .mapColor(MapColor.COLOR_PURPLE)
+                .sound(SoundType.AZALEA)
+        ) {
+            @Override
+            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
+            }
+        });
     }
     public static DeferredBlock<Block> makeUnstableSelenicBlock(String name, BlockBehaviour.Properties properties, VoxelShape shape) {
-        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties.instabreak()
+        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties
+                .instabreak()
                 .dynamicShape()
                 .replaceable()
-                .noCollission()) {
+                .noCollission()
+                .requiresCorrectToolForDrops()
+        ) {
             @Override
             protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
                 var below = level.getBlockState(pos.below());
@@ -155,14 +218,18 @@ public class ModBlocks {
             protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
                 return canSurvive(state, level, pos) ? state : Blocks.AIR.defaultBlockState();
             }
-            @Override
-            protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
-                return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
-            }
         });
+    }
+    public static DeferredBlock<Block> makeVineSelenicBlock(String name, BlockBehaviour.Properties properties) {
+        return BLOCKS.register(name, () -> new SelenicVineBlock(properties.instabreak()
+                .dynamicShape()
+                .replaceable()
+                .noCollission()));
     }
 
     public static void register(IEventBus eventBus) {
+
         BLOCKS.register(eventBus);
+
     }
 }

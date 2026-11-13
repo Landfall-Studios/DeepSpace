@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "up": "deepspace:item/jet_helmet_top",
+    "down": "deepspace:item/jet_helmet_bottom",
+    "north": "deepspace:item/jet_helmet_front",
+    "east": "deepspace:item/jet_helmet_right",
+    "south": "deepspace:item/jet_helmet_back",
+    "west": "deepspace:item/jet_helmet_left",
+    "particle": "deepspace:block/jet_helmet"
+  }, "elements": [{
+    "from": [ 0, 0, 0 ],
+    "to": [ 16, 16, 16 ],
+    "faces": {
+      "down":  { "texture": "#down", "cullface": "down" },
+      "up":    { "texture": "#up", "cullface": "up" },
+      "north": { "texture": "#north", "cullface": "north" },
+      "south": { "texture": "#south", "cullface": "south" },
+      "west":  { "texture": "#west", "cullface": "west" },
+      "east":  { "texture": "#east", "cullface": "east" }
+    }
+  }],
+  "display": {
+    "head": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    "gui": {
+      "rotation": [30, 225, 0],
+      "translation": [0, 0, 0],
+      "scale": [0.625, 0.625, 0.625]
+    }
+  }
+}

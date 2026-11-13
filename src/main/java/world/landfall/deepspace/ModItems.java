@@ -1,6 +1,8 @@
 package world.landfall.deepspace;
 
 import com.simibubi.create.content.logistics.vault.ItemVaultBlock;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +12,8 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import world.landfall.deepspace.item.*;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class ModItems {
@@ -21,18 +25,38 @@ public class ModItems {
     public static final DeferredItem<BlockItem> LUNAR_COBBLE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.LUNAR_COBBLE);
     public static final DeferredItem<BlockItem> LUNAR_SOIL = ITEMS.registerSimpleBlockItem(ModBlocks.LUNAR_SOIL);
 
+    public static final DeferredItem<BlockItem> KEPLEROMETER_ITEM = ITEMS.registerItem("keplerometer", KeplerometerBlockItem::new);
+
     public static final DeferredItem<BlockItem> PICKLE_MOSS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PICKLE_MOSS_BLOCK);
     public static final DeferredItem<BlockItem> PICKLE_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PICKLE_CORE_BLOCK);
     public static final DeferredItem<BlockItem> PICKLE_VINE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.PICKLE_VINE_BLOCK);
 
     public static final DeferredItem<BlockItem> SELENIC_GRASS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_GRASS_BLOCK);
     public static final DeferredItem<BlockItem> SELENIC_FAUNA_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_FAUNA_BLOCK);
+    public static final DeferredItem<BlockItem> SELENIC_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_ROOTS_BLOCK);
     public static final DeferredItem<BlockItem> SELENIC_CORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_CORE_BLOCK);
     public static final DeferredItem<BlockItem> SELENIC_VINE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_VINE_BLOCK);
+
+    public static final DeferredItem<BlockItem> SELENIC_PLANKS = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_PLANKS);
+    public static final DeferredItem<BlockItem> SELENIC_STAIRS = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_STAIRS);
+    public static final DeferredItem<BlockItem> SELENIC_SLAB = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_SLAB);
+    public static final DeferredItem<BlockItem> SELENIC_DOOR = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_DOOR);
+    public static final DeferredItem<BlockItem> SELENIC_STEM = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_STEM);
+    public static final DeferredItem<BlockItem> SELENIC_BULB = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_BULB);
+    public static final DeferredItem<BlockItem> BLOOMLIGHT = ITEMS.registerSimpleBlockItem(ModBlocks.BLOOMLIGHT);
+    public static final DeferredItem<BlockItem> SELENIC_SAPLING = ITEMS.registerSimpleBlockItem(ModBlocks.SELENIC_SAPLING);
+    public static final DeferredItem<Item> SELENIA = ITEMS.register("selenia", () -> new SeleniaItem(new Item.Properties()
+            .stacksTo(16)
+            .food(new FoodProperties(
+                    1, 3, true, 0.5f,
+                    Optional.empty(), List.of()
+            ))
+    ));
 
     public static final DeferredItem<Item> SILICON_CRYSTAL_ITEM = ITEMS.registerItem("silicon_crystal", Item::new);
     public static final DeferredItem<Item> RAW_SILICON_ITEM = ITEMS.registerItem("raw_silicon", Item::new);
     public static final DeferredItem<BlockItem> MOONSTONE_SILICON_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MOONSTONE_SILICON_ORE_BLOCK);
+    public static final DeferredItem<BlockItem> MOONSTONE_ZINC_ORE_ITEM = ITEMS.registerSimpleBlockItem(ModBlocks.MOONSTONE_ZINC_ORE_BLOCK);
 
     public static final Supplier<ItemStack> CREATIVE_JETPACK_ITEM = () -> {
         var item = JETPACK_ITEM.toStack();
@@ -46,10 +70,12 @@ public class ModItems {
         item.set(JetHelmetItem.JetHelmetComponent.SUPPLIER, new JetHelmetItem.JetHelmetComponent(100, -1));
         return item;
     };
+    public static final DeferredItem<SpaceNavigationItem> NAVIGATOR_ITEM = ITEMS.registerItem("navigator", SpaceNavigationItem::new);
     public static final DeferredItem<RocketBoosterItem> ROCKET_BOOSTER_ITEM = ITEMS.register("rocket_booster", RocketBoosterItem::new);
     public static void register(IEventBus eventBus) {
         JetpackItem.JetpackComponent.register(eventBus);
         JetHelmetItem.JetHelmetComponent.register(eventBus);
+        SpaceNavigationItem.SpaceNavigationItemComponent.register(eventBus);
 
         ITEMS.register(eventBus);
     }

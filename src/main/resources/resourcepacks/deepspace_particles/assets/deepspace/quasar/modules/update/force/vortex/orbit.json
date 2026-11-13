@@ -1,0 +1,9 @@
+{
+  "module": "point_attractor",
+  "position": [0.0, 0.0, 10.0],
+  "localPosition": true,
+  "strengthByDistance": true,
+  "range": 50.0,
+  "invertDistanceModifier": false,
+  "strength": 0.1
+}

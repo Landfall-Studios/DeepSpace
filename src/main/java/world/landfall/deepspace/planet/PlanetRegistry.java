@@ -14,7 +14,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Registry for managing planets and their configurations.
@@ -99,8 +99,8 @@ public class PlanetRegistry {
                 planet.getBoundingBoxMax().y,
                 planet.getBoundingBoxMax().z
             };
-            if (planet.getDecorations().isPresent())
-                this.decorations = planet.getDecorations().get();
+            if (!planet.getDecorations().isEmpty())
+                this.decorations = planet.getDecorations();
             else
                 this.decorations = List.of();
             this.description = planet.getDescription();
@@ -229,6 +229,20 @@ public class PlanetRegistry {
                 new Vec2(1000, 1000)
             );
             registerPlanetUnsafe(nether);
+
+            Planet moon = new Planet(
+                    "luna",
+                    "Luna",
+                    ResourceKey.create(Registries.DIMENSION, Deepspace.path("luna")),
+                    new Vec3(2075, 175, -725),
+                    new Vec3(2125, 225, -675),
+                    List.of(new Planet.PlanetDecoration(Planet.PlanetDecoration.ASTEROIDS, 1.05f, Color.WHITE.getRGB())),
+                    "The moon",
+                    new Vec2(-1000, -1000),
+                    new Vec2(1000, 1000)
+
+            );
+            registerPlanetUnsafe(moon);
             sun = new Sun(
                     new Vec3(-200, 0, -200),
                     new Vec3(200, 400, 200),
@@ -344,6 +358,22 @@ public class PlanetRegistry {
     public static Planet getPlanet(@NotNull String planetId) {
         Objects.requireNonNull(planetId, "Planet ID cannot be null");
         return planets.get(planetId);
+    }
+
+    @Nullable
+    public static Planet getClosestPlanet(@NotNull Vec3 position) {
+        synchronized (registryLock) {
+            Planet closest = null;
+            double minDistance = Double.MAX_VALUE;
+            for (Planet planet : planets.values()) {
+                double dist = planet.getCenter().distanceTo(position);
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    closest = planet;
+                }
+            }
+            return closest;
+        }
     }
 
     /**

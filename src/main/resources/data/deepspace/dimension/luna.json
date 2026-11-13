@@ -18,7 +18,7 @@
       "noise": {
         "min_y": -64,
         "height": 208,
-        "size_horizontal": 2,
+        "size_horizontal": 1,
         "size_vertical": 2
       },
       "noise_router": {
@@ -38,10 +38,10 @@
         "ridges": "minecraft:overworld/ridges",
         "initial_density_without_jaggedness": {
           "type": "minecraft:mul",
-          "argument1": "minecraft:overworld/depth",
+          "argument1": "deepspace:depth",
           "argument2": 0.5
         },
-        "final_density": "minecraft:overworld/depth",
+        "final_density": "deepspace:depth",
         "vein_toggle": 1,
         "vein_ridged": 1,
         "vein_gap": 1
@@ -71,29 +71,27 @@
           {
             "type": "minecraft:condition",
             "if_true": {
-              "type": "minecraft:biome",
-              "biome_is": [
-                "deepspace:lunar_plains"
-              ]
+              "type": "minecraft:y_above",
+              "anchor": {
+                "absolute": 50
+              },
+              "surface_depth_multiplier": 2,
+              "add_stone_depth": false
             },
             "then_run": {
               "type": "minecraft:condition",
               "if_true": {
-                "type": "minecraft:y_above",
-                "anchor": {
-                  "absolute": 50
-                },
-                "surface_depth_multiplier": 2,
-                "add_stone_depth": false
+                "type": "minecraft:stone_depth",
+                "offset": 4,
+                "surface_type": "floor",
+                "add_surface_depth": false,
+                "secondary_depth_range": 0
               },
               "then_run": {
                 "type": "minecraft:condition",
                 "if_true": {
-                  "type": "minecraft:stone_depth",
-                  "offset": 4,
-                  "surface_type": "floor",
-                  "add_surface_depth": false,
-                  "secondary_depth_range": 0
+                  "type": "minecraft:biome",
+                  "biome_is": ["deepspace:lunar_plains"]
                 },
                 "then_run": {
                   "type": "minecraft:block",
@@ -103,6 +101,97 @@
                 }
               }
             }
+
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": {
+              "type": "minecraft:y_above",
+              "anchor": {
+                "absolute": 20
+              },
+              "surface_depth_multiplier": 2,
+              "add_stone_depth": false
+            },
+            "then_run": {
+              "type": "minecraft:condition",
+              "if_true": {
+                "type": "minecraft:stone_depth",
+                "offset": 4,
+                "surface_type": "floor",
+                "add_surface_depth": false,
+                "secondary_depth_range": 0
+              },
+              "then_run": {
+                "type": "minecraft:condition",
+                "if_true": {
+                  "type": "minecraft:biome",
+                  "biome_is": ["deepspace:ice_floors"]
+                },
+                "then_run": {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "noise": "deepspace:random",
+                    "min_threshold": -0.5,
+                    "max_threshold": 1,
+                    "is_3d": true
+                  },
+                  "then_run": {
+                    "type": "minecraft:block",
+                    "result_state": {
+                      "Name": "minecraft:packed_ice"
+                    }
+                  }
+                }
+              }
+            }
+
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": {
+              "type": "minecraft:y_above",
+              "anchor": {
+                "absolute": 48
+              },
+              "surface_depth_multiplier": 2,
+              "add_stone_depth": false
+            },
+            "then_run": {
+              "type": "minecraft:condition",
+              "if_true": {
+                "type": "minecraft:stone_depth",
+                "offset": 4,
+                "surface_type": "floor",
+                "add_surface_depth": false,
+                "secondary_depth_range": 0
+              },
+              "then_run": {
+                "type": "minecraft:condition",
+                "if_true": {
+                  "type": "minecraft:biome",
+                  "biome_is": ["deepspace:deep_craters"]
+                },
+                "then_run": {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "noise": "deepspace:random",
+                    "min_threshold": -0.5,
+                    "max_threshold": 1,
+                    "is_3d": true
+                  },
+                  "then_run": {
+                    "type": "minecraft:block",
+                    "result_state": {
+                      "Name": "deepspace:lunar_soil"
+                    }
+                  }
+                }
+              }
+            }
+
           }
         ]
       }
@@ -113,13 +202,37 @@
         {
           "biome": "deepspace:lunar_plains",
           "parameters": {
-            "continentalness": 0,
+            "continentalness": 0.42,
             "depth": 0,
-            "erosion": -0.5,
-            "humidity": 0,
+            "erosion": 0.2,
+            "humidity": 0.1,
             "offset": 0,
-            "temperature": 0,
-            "weirdness": -0.5
+            "temperature": 0.4,
+            "weirdness": 0.4
+          }
+        },
+        {
+          "biome": "deepspace:deep_craters",
+          "parameters": {
+            "continentalness": 0.02,
+            "depth": 0.0,
+            "erosion": 0.2,
+            "humidity": 0.1,
+            "offset": 0,
+            "temperature": 0.6,
+            "weirdness": 0.8
+          }
+        },
+        {
+          "biome": "deepspace:ice_floors",
+          "parameters": {
+            "continentalness": 0.5,
+            "depth": 0,
+            "erosion": 0.3,
+            "humidity": 0.2,
+            "offset": 0,
+            "temperature": 0.1,
+            "weirdness": 0.2
           }
         }
       ]

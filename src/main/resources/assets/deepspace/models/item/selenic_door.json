@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "deepspace:block/selenic_door_top_right"
+  }
+}

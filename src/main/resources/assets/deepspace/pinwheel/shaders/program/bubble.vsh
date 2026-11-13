@@ -69,7 +69,7 @@ out vec4 vertexColor;
 out vec2 texCoord0;
 
 void main() {
-    vec3 pos = Position + ChunkOffset + VeilCamera.CameraBobOffset;
+    vec3 pos = Position + ChunkOffset;
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
     vertexDistance = fog_distance(pos, FogShape);
     //vertexDistance = 1.0f/0.0f;
