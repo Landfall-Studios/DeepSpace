@@ -21,7 +21,7 @@ public class SelenicPlantType extends PlantType {
         super(List.of(
                 "deepspace:selenic_grass_block",
                 "deepspace:selenic_fauna_block",
-                "deepspace:selenic_core_block",
+                "deepspace:selenic_core_block.json",
                 "deepspace:selenic_vine_block",
                 "deepspace:selenic_bulb",
                 "deepspace:bloomlight",

@@ -115,6 +115,8 @@ public class ModBlocks {
     });
     public static final DeferredBlock<Block> SELENIC_CORE_BLOCK = BLOCKS.register("selenic_core_block", () -> new SelenicPlantBlock(BlockBehaviour.Properties.of()
             .noOcclusion()
+            .mapColor(MapColor.COLOR_PURPLE)
+            .sound(SoundType.AZALEA)
     ) {
         @Override
         public int spreadRadius() {
@@ -129,13 +131,21 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> HEAT_PIPE_BLOCK = BLOCKS.register("heat_pipe", HeatPipeBlock::new);
 
-    public static final DeferredBlock<Block> SELENIC_PLANKS = BLOCKS.register("selenic_planks", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
-    public static final DeferredBlock<Block> SELENIC_STAIRS = BLOCKS.register("selenic_stairs", () -> new StairBlock(StairBlock.stateById(0), BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
-    public static final DeferredBlock<Block> SELENIC_SLAB = BLOCKS.register("selenic_slab", () -> new SlabBlock(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
-    public static final DeferredBlock<DoorBlock> SELENIC_DOOR = BLOCKS.register("selenic_door", () -> new DoorBlock(BlockSetType.OAK, BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
-    public static final DeferredBlock<Block> SELENIC_STEM = BLOCKS.register("selenic_stem", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(5)));
-    public static final DeferredBlock<Block> SELENIC_BULB = BLOCKS.register("selenic_bulb", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.AZALEA).destroyTime(5)));
-    public static final DeferredBlock<Block> BLOOMLIGHT = BLOCKS.register("bloomlight", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.FROGLIGHT).destroyTime(5).lightLevel((s) -> 5)));
+    public static final DeferredBlock<Block> SELENIC_PLANKS = BLOCKS.register("selenic_planks", () -> new Block(BlockBehaviour.Properties.of()
+            .sound(SoundType.WOOD)
+            .destroyTime(2)
+            .mapColor(MapColor.COLOR_PINK)
+    ));
+    public static final DeferredBlock<Block> SELENIC_STAIRS = BLOCKS.register("selenic_stairs", () -> new StairBlock(StairBlock.stateById(0), BlockBehaviour.Properties.of()
+            .sound(SoundType.WOOD)
+            .destroyTime(2)
+            .mapColor(MapColor.COLOR_PINK)
+    ));
+    public static final DeferredBlock<Block> SELENIC_SLAB = BLOCKS.register("selenic_slab", () -> new SlabBlock(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(2).mapColor(MapColor.COLOR_PINK)));
+    public static final DeferredBlock<DoorBlock> SELENIC_DOOR = BLOCKS.register("selenic_door", () -> new DoorBlock(BlockSetType.OAK, BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(2).mapColor(MapColor.COLOR_PINK)));
+    public static final DeferredBlock<Block> SELENIC_STEM = BLOCKS.register("selenic_stem", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.WOOD).destroyTime(2).mapColor(MapColor.COLOR_PINK)));
+    public static final DeferredBlock<Block> SELENIC_BULB = BLOCKS.register("selenic_bulb", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.AZALEA).destroyTime(0.5f).mapColor(MapColor.COLOR_PINK)));
+    public static final DeferredBlock<Block> BLOOMLIGHT = BLOCKS.register("bloomlight", () -> new Block(BlockBehaviour.Properties.of().sound(SoundType.FROGLIGHT).destroyTime(1).lightLevel((s) -> 5).mapColor(MapColor.COLOR_PURPLE)));
 
     public static DeferredBlock<Block> makePickleBlock(String name, BlockBehaviour.Properties properties) {
         return BLOCKS.register(name, () -> new PicklePlantBlock(properties) {
@@ -174,7 +184,11 @@ public class ModBlocks {
         });
     }
     public static DeferredBlock<Block> makeSelenicBlock(String name, BlockBehaviour.Properties properties) {
-        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties.destroyTime(1f).mapColor(MapColor.COLOR_PURPLE).sound(SoundType.AZALEA)) {
+        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties
+                .destroyTime(1f)
+                .mapColor(MapColor.COLOR_PURPLE)
+                .sound(SoundType.AZALEA)
+        ) {
             @Override
             protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
                 return List.of(BuiltInRegistries.ITEM.get(ResourceLocation.parse(name)).getDefaultInstance());
@@ -182,11 +196,13 @@ public class ModBlocks {
         });
     }
     public static DeferredBlock<Block> makeUnstableSelenicBlock(String name, BlockBehaviour.Properties properties, VoxelShape shape) {
-        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties.instabreak()
+        return BLOCKS.register(name, () -> new SelenicPlantBlock(properties
+                .instabreak()
                 .dynamicShape()
                 .replaceable()
                 .noCollission()
-                .requiresCorrectToolForDrops()) {
+                .requiresCorrectToolForDrops()
+        ) {
             @Override
             protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
                 var below = level.getBlockState(pos.below());
