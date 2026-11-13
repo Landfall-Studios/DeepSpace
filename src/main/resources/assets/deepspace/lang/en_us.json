@@ -48,5 +48,6 @@
   "item.deepspace.navigator.retrograde.description": "Points opposite from current velocity",
   "item.deepspace.navigator.normal.description": "Points away from the planet",
   "item.deepspace.navigator.antinormal.description": "Points towards the planet",
-  "item.deepspace.navigator.explain": "Put this item in a Navigation Table to point it towards useful directions. Use this item to change its direction."
+  "item.deepspace.navigator.explain": "Put this item in a Navigation Table to point it towards useful directions. Use this item to change its direction.",
+  "item.deepspace.jet_helmet.info": "Can be filled with a backtank"
 }

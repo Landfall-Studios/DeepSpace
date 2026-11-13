@@ -11,6 +11,7 @@ import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.simibubi.create.foundation.data.TagGen;
 import com.simibubi.create.infrastructure.data.CreateRegistrateTags;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -23,6 +24,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagBuilder;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -33,6 +36,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.common.extensions.IItemExtension;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,10 +48,9 @@ import java.awt.*;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class JetHelmetItem extends ArmorItem {
+public class JetHelmetItem extends Item implements Equipable {
     public JetHelmetItem() {
-        super(ModArmorMaterials.JET_ARMOR_MATERIAL, Type.HELMET,new Properties()
-                .durability(Integer.MAX_VALUE)
+        super(new Properties()
                 .component(JetHelmetComponent.SUPPLIER, new JetHelmetComponent(100, 100))
                 .component(DataComponents.RARITY, Rarity.EPIC)
                 .component(DataComponents.CUSTOM_DATA, CustomData.of(
@@ -56,6 +59,15 @@ public class JetHelmetItem extends ArmorItem {
         );
 
     }
+
+    @Override
+    public boolean canEquip(ItemStack stack, EquipmentSlot slot, LivingEntity entity) {
+        return slot.getIndex() == EquipmentSlot.HEAD.getIndex();
+    }
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+        return swapWithEquipmentSlot(this, worldIn, playerIn, handIn);
+    }
+
     private static CompoundTag createModTag() {
 
         var createTag = new CompoundTag();
@@ -65,19 +77,17 @@ public class JetHelmetItem extends ArmorItem {
         return createTag;
 
     }
+
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<net.minecraft.network.chat.Component> tooltipComponents, TooltipFlag tooltipFlag) {
         //super.appendHoverText(stack, contexttranslatable("item.deepspace.jetpack.tooltip"), tooltipComponents, tooltipFlag);
         var jetHelmetComponent = stack.getComponents().get(JetHelmetComponent.SUPPLIER.get());
         if (jetHelmetComponent == null) return;
+        tooltipComponents.add(Component.translatable("item.deepspace.jet_helmet.info").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
         if (jetHelmetComponent.maxOxygen < 0)
             tooltipComponents.add(net.minecraft.network.chat.Component.translatable("item.deepspace.jet_helmet.tooltip").append(net.minecraft.network.chat.Component.literal("Infinite").setStyle(Style.EMPTY.withColor(0xFF00FFE))));
         else
             tooltipComponents.add(net.minecraft.network.chat.Component.translatable("item.deepspace.jet_helmet.tooltip").append(Component.literal(jetHelmetComponent.currentOxygen + "/" + jetHelmetComponent.maxOxygen)));
-    }
-    @Override
-    public @NotNull EquipmentSlot getEquipmentSlot() {
-        return EquipmentSlot.HEAD;
     }
 
     @Override
@@ -151,6 +161,10 @@ public class JetHelmetItem extends ArmorItem {
         return (component != null && component.playerOxygen() > 100) ? Color.WHITE.getRGB() : Color.RED.getRGB();
     }
 
+    @Override
+    public EquipmentSlot getEquipmentSlot() {
+        return EquipmentSlot.HEAD;
+    }
 
 
 //    @Override
