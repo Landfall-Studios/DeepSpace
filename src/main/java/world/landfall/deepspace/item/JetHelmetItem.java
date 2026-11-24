@@ -56,6 +56,7 @@ public class JetHelmetItem extends Item implements Equipable {
                 .component(DataComponents.CUSTOM_DATA, CustomData.of(
                         createModTag()
                 ))
+                .stacksTo(1)
         );
 
     }

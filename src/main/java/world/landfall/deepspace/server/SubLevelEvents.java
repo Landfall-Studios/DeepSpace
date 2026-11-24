@@ -198,7 +198,7 @@ public class SubLevelEvents {
                             diff.add(x);
                     }
 
-                    LOGGER.info("Lenghts: {}, {}", oldSubLevels.size(), newSubLevels.size());
+                    LOGGER.info("Lengths: {}, {}", oldSubLevels.size(), newSubLevels.size());
                     Vector3d finalNewPos = exitPos.toVector3f().get(new Vector3d());
 //                    var newSublevelUUID = Util.OLD_TO_NEW.get(s.getUniqueId()).first();
 //                    var newSublevel = (ServerSubLevel) spaceContainer.getSubLevel(newSublevelUUID);
@@ -213,9 +213,22 @@ public class SubLevelEvents {
                     var toPlanet = finalNewPos.sub(
                             new Vector3d(center.x, center.y, center.z)
                     ).mul(PlanetTeleportAddedVelocity).rotateY(Math.PI / 8);
-                    newHandle.addLinearAndAngularVelocity(
-                            toPlanet, new Vector3d(0, 0, 0)
-                    );
+                    diff.forEach(subLevel -> {
+//                        spaceContainer.addForceLoadTicket(subLevel, SubLevelLoadingTicketType.COMMAND_FORCED, Unit.INSTANCE);
+                        if (subLevel.getMassTracker() == null || subLevel.getMassTracker().getCenterOfMass() == null) {
+                            spaceContainer.removeSubLevel(subLevel, SubLevelRemovalReason.REMOVED);
+                        } else {
+                            var handle = RigidBodyHandle.of(subLevel);
+                            handle.addLinearAndAngularVelocity(
+                                    handle.getLinearVelocity(new Vector3d()).mul(-1), handle.getAngularVelocity(new Vector3d()).mul(-1)
+                            );
+                            handle.addLinearAndAngularVelocity(
+                                    toPlanet, new Vector3d(0, 0, 0)
+                            );
+                        }
+
+                    });
+
                     var pose = newSublevel.logicalPose();
 
                     RELATIVE_PLAYER_POSITIONS.forEach((uuid, relativePos) -> {
@@ -229,13 +242,7 @@ public class SubLevelEvents {
                     LOGGER.info("Sublevel at: {} {} {}", pos.x, pos.y, pos.z);
                     LOGGER.info("UUID: {}", newSublevel.getUniqueId());
 
-                    diff.forEach(subLevel -> {
-//                        spaceContainer.addForceLoadTicket(subLevel, SubLevelLoadingTicketType.COMMAND_FORCED, Unit.INSTANCE);
-                        if (subLevel.getMassTracker() == null || subLevel.getMassTracker().getCenterOfMass() == null) {
-                            spaceContainer.removeSubLevel(subLevel, SubLevelRemovalReason.REMOVED);
-                        }
 
-                    });
 
                 }
             });
