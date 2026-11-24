@@ -7,6 +7,7 @@ import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -35,7 +36,7 @@ public class SubLevelEvents {
     private static final float DistanceScale = 1f;
     private static final int Tickrate = 20;
     private static final float PlanetTeleportOffset = 1.2345f;
-    private static final float PlanetTeleportAddedVelocity = 0.1f;
+    private static final float PlanetTeleportAddedVelocity = 12f;
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -60,8 +61,8 @@ public class SubLevelEvents {
                     var d2 = p2.getCenter().distanceTo(new Vec3(pos.x, pos.y, pos.z));
                     var s1 = (int) p1.getBoundingBoxMax().subtract(p1.getBoundingBoxMin()).length();
                     var s2 = (int) p2.getBoundingBoxMax().subtract(p2.getBoundingBoxMin()).length();
-                    d1 *= s1;
-                    d2 *= s2;
+                    d1 *= s2;
+                    d2 *= s1;
                     if (d1 == d2) return 0;
                     return d2 < d1 ? 1 : -1;
                 }).get();
@@ -146,7 +147,22 @@ public class SubLevelEvents {
                             }
 
                         }
+                        var cont = SubLevelContainer.getContainer(newLevel);
+                        if (cont == null) return;
+                        var list = new ArrayList<ServerSubLevel>(cont.getAllSubLevels());
                         SubLevelWarper.warpConnectedSubLevels(s, newLevel, newPos);
+                        var newList = new ArrayList<ServerSubLevel>(cont.getAllSubLevels());
+                        var diff = new ArrayList<ServerSubLevel>();
+                        for (var x : newList) {
+                            if (!list.stream().anyMatch(sa -> sa.getUniqueId().equals(x.getUniqueId())))
+                                diff.add(x);
+                        }
+                        for (var x : diff) {
+                            var newHandle = RigidBodyHandle.of(x);
+                            newHandle.addLinearAndAngularVelocity(
+                                    newHandle.getLinearVelocity(new Vector3d()).mul(-1), newHandle.getAngularVelocity(new Vector3d()).mul(-1)
+                            );
+                        }
                         hasBeenMerked.set(true);
 
 
@@ -175,12 +191,8 @@ public class SubLevelEvents {
 
                     var oldSubLevels = List.copyOf(spaceContainer.getAllSubLevels());
                     var newLevel = server.getLevel(ResourceKey.create(Registries.DIMENSION, Deepspace.path("space")));
-                    SubLevelWarper.warpConnectedSubLevels(s, newLevel, new Vector3d(
-                            exitPos.x,
-                            exitPos.y,
-                            exitPos.z
-                    ));
                     HashMap<UUID, Vec3> RELATIVE_PLAYER_POSITIONS = new HashMap<>();
+
                     level.getPlayers(player -> new BoundingBox3d(s.boundingBox()).expand(20).contains(new Vector3d(
                             player.position().x,
                             player.position().y,
@@ -190,6 +202,12 @@ public class SubLevelEvents {
                         var relativePos = pose.transformPositionInverse(player.position());
                         RELATIVE_PLAYER_POSITIONS.put(player.getUUID(), relativePos);
                     });
+                    SubLevelWarper.warpConnectedSubLevels(s, newLevel, new Vector3d(
+                            exitPos.x,
+                            exitPos.y,
+                            exitPos.z
+                    ));
+
 
                     var newSubLevels = List.copyOf(spaceContainer.getAllSubLevels());
                     var diff = new ArrayList<ServerSubLevel>();
@@ -210,9 +228,12 @@ public class SubLevelEvents {
                     };
                     var newHandle = RigidBodyHandle.of(newSublevel);
                     var center = planet.getCenter();
+                    var dist = finalNewPos.distance(
+                            new Vector3d(center.x, center.y, center.z)
+                    );
                     var toPlanet = finalNewPos.sub(
                             new Vector3d(center.x, center.y, center.z)
-                    ).mul(PlanetTeleportAddedVelocity).rotateY(Math.PI / 8);
+                    ).mul(PlanetTeleportAddedVelocity).mul(planet.getSize()).rotateY(Math.PI / 7).div(dist * dist);
                     diff.forEach(subLevel -> {
 //                        spaceContainer.addForceLoadTicket(subLevel, SubLevelLoadingTicketType.COMMAND_FORCED, Unit.INSTANCE);
                         if (subLevel.getMassTracker() == null || subLevel.getMassTracker().getCenterOfMass() == null) {

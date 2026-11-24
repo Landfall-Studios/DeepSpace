@@ -199,6 +199,15 @@ public class Planet {
     }
 
     /**
+     * Gets the size corner-to-corner of this planet
+     *
+     * @return size of the planet
+     */
+    public double getSize() {
+        return boundingBoxMax.subtract(boundingBoxMin).length();
+    }
+
+    /**
      * Checks if a player is touching the planet
      *
      * @param player The player to check
