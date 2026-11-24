@@ -68,7 +68,7 @@ out vec4 vertexColor;
 out vec2 texCoord0;
 
 void main() {
-    vec3 pos = Position + ChunkOffset + VeilCamera.CameraBobOffset;
+    vec3 pos = Position + ChunkOffset;
 
     gl_Position = ProjMat * ModelViewMat * (vec4(pos + Normal * 1.0, 1.0));
 

@@ -1,0 +1,24 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "deepspace:item/selenia"
+  },
+  "overrides": [
+    {
+      "predicate": { "deepspace:navigator_state": 0},
+      "model": "deepspace:item/navigator_prograde"
+    },
+    {
+      "predicate": { "deepspace:navigator_state": 1},
+      "model": "deepspace:item/navigator_retrograde"
+    },
+    {
+      "predicate": { "deepspace:navigator_state": 2},
+      "model": "deepspace:item/navigator_normal"
+    },
+    {
+      "predicate": { "deepspace:navigator_state": 3},
+      "model": "deepspace:item/navigator_antinormal"
+    }
+  ]
+}

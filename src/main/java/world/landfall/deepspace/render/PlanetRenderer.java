@@ -49,30 +49,31 @@ public class PlanetRenderer {
         return VeilRenderBridge.toShaderInstance(shader);
     });
 
+    private static final RenderType PLANET_TYPE = RenderType.create(
+            "planet",
+            DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
+            VertexFormat.Mode.TRIANGLES,
+            786432, true, false,
+            RenderType.CompositeState.builder()
+                    .setShaderState(PLANET_RENDER_TYPE)
+                    .createCompositeState(true)
+    );
+    private static final RenderType PLANET_UNSHADED_TYPE = RenderType.create(
+            "planet_unshaded",
+            DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
+            VertexFormat.Mode.TRIANGLES,
+            786432, true, false,
+            RenderType.CompositeState.builder()
+                    .setShaderState(PLANET_UNSHADED_RENDER_TYPE)
+                    .setCullState(RenderStateShard.CullStateShard.NO_CULL)
+                    .createCompositeState(true)
+    );
+
     public static RenderType planetRenderType() {
-        var renderType = RenderType.CompositeState.builder()
-                .setShaderState(PLANET_RENDER_TYPE)
-                .createCompositeState(true);
-        return RenderType.create(
-                "planet",
-                DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
-                VertexFormat.Mode.TRIANGLES,
-                786432, true, false,
-                renderType
-        );
+        return PLANET_TYPE;
     }
     public static RenderType planetUnshadedRenderType() {
-        var renderType = RenderType.CompositeState.builder()
-                .setShaderState(PLANET_UNSHADED_RENDER_TYPE)
-                .setCullState(RenderStateShard.CullStateShard.NO_CULL)
-                .createCompositeState(true);
-        return RenderType.create(
-                "planet_unshaded",
-                DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP,
-                VertexFormat.Mode.TRIANGLES,
-                786432, true, false,
-                renderType
-        );
+        return PLANET_UNSHADED_TYPE;
     }
 
     public static void refreshMeshes() {
@@ -109,16 +110,20 @@ public class PlanetRenderer {
         RenderType planetUnshadedRenderType = planetUnshadedRenderType();
         var poseStack = matrixStack.toPoseStack();
         poseStack.pushPose();
+        var sun = PlanetRegistry.getSun();
         for (var x : MESHES.entrySet()) {
             // Planet surface
             BufferBuilder planetBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.NEW_ENTITY);
             var texture = TEXTURES.get(x.getKey());
 
-            var sun = PlanetRegistry.getSun();
-            var center = sun.getCenter();
-            VeilRenderSystem.setShader(Deepspace.path("planet"))
-                    .getUniform("SunPosition")
-                    .setVector(center.toVector3f().sub(camera.getPosition().toVector3f()));
+            // A planets.json without a sun still lets planets render, we just skip the
+            // shader's sun-position uniform (planet_unshaded ignores it anyway).
+            if (sun != null) {
+                var center = sun.getCenter();
+                VeilRenderSystem.setShader(Deepspace.path("planet"))
+                        .getUniform("SunPosition")
+                        .setVector(center.toVector3f().sub(camera.getPosition().toVector3f()));
+            }
 
             var rot = IrisIntegration.isShaderPackEnabled() ? new Quaternionf() : camera.rotation();
             x.getValue().render(poseStack, planetBuilder, camera.getPosition().toVector3f().mul(-1).add(0, 0, 0), new Quaternionf());

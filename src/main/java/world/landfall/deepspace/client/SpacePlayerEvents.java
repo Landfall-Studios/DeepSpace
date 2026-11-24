@@ -1,31 +1,46 @@
 package world.landfall.deepspace.client;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
-import world.landfall.deepspace.Deepspace;
-import world.landfall.deepspace.ModAttatchments;
-import world.landfall.deepspace.ModDamageTypes;
-import world.landfall.deepspace.ModItems;
+import world.landfall.deepspace.*;
+import world.landfall.deepspace.block.SelenicPlantBlock;
+import world.landfall.deepspace.integration.DeepSeasIntegration;
 import world.landfall.deepspace.item.JetHelmetItem;
 import world.landfall.deepspace.item.JetpackItem;
+import world.landfall.deepspace.network.JetpackPacket;
+import world.landfall.deepspace.planet.Planet;
+import world.landfall.deepspace.planet.PlanetRegistry;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class SpacePlayerEvents {
-    @EventBusSubscriber(modid = Deepspace.MODID, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Deepspace.MODID)
     public static class Tick {
+
+        private static final HashMap<UUID, Integer> PLAYER_LAST_SAW_TOOLTIP = new HashMap<>();
+        private static final int TOOLTIP_COOLDOWN = 20 * 60; // 1 minute
+
         private static void jetpackTick(Player player, Level level, ItemStack jetpack, boolean noGravity) {
             var hasJetpack = jetpack.is(ModItems.JETPACK_ITEM.get());
             if (!player.hasData(ModAttatchments.IS_FLYING_JETPACK)) return;
@@ -44,6 +59,13 @@ public class SpacePlayerEvents {
                 if (noGravity)
                     player.setPose(Pose.FALL_FLYING);
                 if (player.isShiftKeyDown() || player.onGround()) {
+                    // The client just decided we've stopped flying. The shift key path is already
+                    // announced by SpaceClientEvents when the key is pressed, but landing on the
+                    // ground has no other trigger, so the server would still think we're flying.
+                    // Send a BeginFlying(false) for the local player only so the server clears too.
+                    if (player.onGround() && player == Minecraft.getInstance().player) {
+                        PacketDistributor.sendToServer(new JetpackPacket.BeginFlying(false));
+                    }
                     player.setData(ModAttatchments.IS_FLYING_JETPACK, false);
                     player.setData(ModAttatchments.IS_ROCKETING_FORWARD, false);
                     player.setData(ModAttatchments.JETPACK_VELOCITY, new Vector3f());
@@ -70,7 +92,7 @@ public class SpacePlayerEvents {
                 Vector3f newVelocity = new Vector3f(storedVelocity);
                 if (!noGravity) {
                     rocketVelocity.add(new Vector3f(0f, .04f, 0f)).mul(.1f, 2f, .1f);
-                    newVelocity.add(0, -.06f, 0);
+
                 }
                 if (keyPressed) {
                     newVelocity.add(rocketVelocity);
@@ -86,11 +108,18 @@ public class SpacePlayerEvents {
 
                     }
                 }
+                Planet nearest = nearestPlanet(player.position());
+                if (nearest != null && nearest.getCenter().distanceTo(player.position()) < 1000 && !player.getAbilities().flying && !Util.isPlayerBeingTracked(player, player.level()))
+                    newVelocity.add(
+                            nearest.getCenter().subtract(player.position()).toVector3f().normalize().mul(0.008f)
+                    );
+                else if (!player.getAbilities().flying)
+                    newVelocity.add(0, -.01f, 0);
 
                 if (!keyPressed) {
-                    newVelocity.add(new Vector3f(0, -.01f, 0));
                     newVelocity.mul(.99f);
                 }
+
                 if (newVelocity.length() > 8) newVelocity.mul(.9f);
                 //player.setPos(player.getPosition(0).add(new Vec3(newVelocity.x, newVelocity.y, newVelocity.z)));
                 player.setData(ModAttatchments.JETPACK_VELOCITY, newVelocity);
@@ -121,7 +150,7 @@ public class SpacePlayerEvents {
             var isOxygenated = player.hasData(ModAttatchments.LAST_OXYGENATED) && player.getData(ModAttatchments.LAST_OXYGENATED) < 3;
             var tick = player.tickCount;
             if (component != null && noGravity && !player.isCreative() && !isOxygenated) {
-                player.setAirSupply(component.playerOxygen());
+                player.setAirSupply(component.playerOxygen() * 2);
                 if (component.playerOxygen() < 1 && tick % 10 == 0)
                     player.hurt(ModDamageTypes.noAirDamage(player), 1);
             } else if (!hasJetHelmet && noGravity && !isOxygenated) {
@@ -134,8 +163,55 @@ public class SpacePlayerEvents {
         }
         private static void airTick(Player player, Level level, boolean noGravity) {
             if (!noGravity) return;
+            if (!level.isClientSide && player.isCreative()) return;
             var ticks = player.tickCount;
+            if (ticks % 5 != 0) return;
+            if (ModList.get().isLoaded("create_submarine")) {
+                if (DeepSeasIntegration.isPlayerOxygenated(player, level))
+                    player.setData(ModAttatchments.LAST_OXYGENATED, -1f);
+            }
+
+            var stack = player.getItemBySlot(EquipmentSlot.HEAD);
+            // Don't do the silly stuff if someone's protected
+//            if (stack.is(ModItems.JET_HELMET_ITEM))
+//                return;
+
+            // Check for Selenia to oxygenate the player
+            var horizontalRange = 4;
+            var verticalRange = 6;
+            var pos = BlockPos.containing(player.position());
             if (ticks % 20 != 0) return;
+            for (int i = -horizontalRange; i < horizontalRange; i++) {
+                for (int j = -horizontalRange; j < horizontalRange; j++) {
+                    for (int k = -verticalRange; k < verticalRange; k++) {
+                        var state = level.getBlockState(
+                                pos.offset(i, k, j)
+                        );
+                        if (state.getBlock() instanceof SelenicPlantBlock) {
+                            if (stack.is(ModItems.JET_HELMET_ITEM)) {
+                                var time = player.tickCount;
+                                var lastSaw = PLAYER_LAST_SAW_TOOLTIP.getOrDefault(player.getUUID(), 0);
+                                if (time - lastSaw >= TOOLTIP_COOLDOWN) {
+                                    player.displayClientMessage(
+                                            Component.literal("I think the air is breathable here...").withStyle(ChatFormatting.ITALIC),
+                                            true
+                                    );
+                                    PLAYER_LAST_SAW_TOOLTIP.put(player.getUUID(), time);
+                                }
+                                return;
+                            }
+                            player.setData(ModAttatchments.LAST_OXYGENATED, -1f);
+                            if (level.random.nextFloat() > 0.95f)
+                                player.addEffect(
+                                        new MobEffectInstance(
+                                                ModMobEffects.SELENIA, 120 * 20, 0, true, false
+                                        )
+                                );
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
         @SubscribeEvent
@@ -145,8 +221,10 @@ public class SpacePlayerEvents {
             var dimension = player.level().dimension().location();
             var noGravity = dimension.equals(ResourceLocation.parse("deepspace:space")) || dimension.equals(ResourceLocation.parse("deepspace:luna"));
             player.setNoGravity(noGravity);
+            var moon = dimension.equals(ResourceLocation.parse("deepspace:luna"));
+            var isBeingTracked = Util.isPlayerBeingTracked(player, player.level());
             //player.setIgnoreFallDamageFromCurrentImpulse(noGravity);
-            if (noGravity && !player.getAbilities().flying) {
+            if (noGravity && !player.getAbilities().flying && (isBeingTracked || moon)) {
                 player.setDeltaMovement(player.getDeltaMovement().add(new Vec3(0, -.01f, 0)));
             }
             var jetpackSlot = player.getItemBySlot(EquipmentSlot.CHEST);
@@ -156,6 +234,21 @@ public class SpacePlayerEvents {
             airTick(player, player.level(), noGravity);
             var lastOxygenated = player.getData(ModAttatchments.LAST_OXYGENATED);
             player.setData(ModAttatchments.LAST_OXYGENATED, lastOxygenated + .05f);
+            if (dimension.equals(Deepspace.path("space"))) {
+                var newVelocity = new Vector3f();
+                Planet nearest = nearestPlanet(player.position());
+                if (nearest != null && nearest.getCenter().distanceTo(player.position()) < 1000 && !player.getAbilities().flying && !isBeingTracked)
+                    newVelocity.add(
+                            nearest.getCenter().subtract(player.position()).toVector3f().normalize().mul(0.008f)
+                    );
+                player.addDeltaMovement(new Vec3(newVelocity));
+            }
+
+        }
+        private static Planet nearestPlanet(Vec3 position) {
+            return PlanetRegistry.getAllPlanets().stream()
+                    .min(Comparator.comparingInt(p -> (int) p.getCenter().distanceTo(position)))
+                    .orElse(null);
         }
         private static float angle(float x, float y) {
             var rot = (float)Math.atan(y/x) / ((float)Math.PI*2) * 360;
@@ -167,7 +260,6 @@ public class SpacePlayerEvents {
         }
         @SubscribeEvent
         public static void fallEvent(LivingFallEvent event) {
-            ;
             if (event.getEntity() instanceof Player player) {
                 var dimension = player.level().dimension().location();
                 var noGravity = dimension.equals(ResourceLocation.parse("deepspace:space")) || dimension.equals(ResourceLocation.parse("deepspace:luna"));

@@ -58,6 +58,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
+import world.landfall.deepspace.ClientOxygenatorTracker;
 import world.landfall.deepspace.Deepspace;
 import world.landfall.deepspace.ModAttatchments;
 import world.landfall.deepspace.ModBlocks;
@@ -77,6 +78,7 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
     ).build(null);
     private boolean enabled = false;
     private int radius = 5;
+    private static float SPEED_INPUT_MULTIPLIER = 2f;
     public OxygenatorBlockEntity(BlockPos pos, BlockState state) {
         super(TYPE, pos, state);
         var vPos = pos.getCenter().toVector3f();
@@ -86,7 +88,33 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
     @Override
     public void onLoad() {
         super.onLoad();
+        if (level != null && level.isClientSide) {
+            ClientOxygenatorTracker.add(this);
+        }
+    }
 
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        if (level != null && level.isClientSide) {
+            ClientOxygenatorTracker.remove(this);
+        }
+    }
+
+    @Override
+    public void remove() {
+        super.remove();
+        if (level != null && level.isClientSide) {
+            ClientOxygenatorTracker.remove(this);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        if (level != null && level.isClientSide) {
+            ClientOxygenatorTracker.remove(this);
+        }
     }
 
     @Override
@@ -104,7 +132,7 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
         CreateLang.text("Kinetic Stress Impact: ")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
-        CreateLang.text(" " + this.lastStressApplied + "SU")
+        CreateLang.text("  %,dSU".formatted((int) (this.lastStressApplied * this.speed)))
                 .style(ChatFormatting.AQUA)
                 .add(Component.literal(" at current speed").withStyle(ChatFormatting.DARK_GRAY))
                 .forGoggles(tooltip);
@@ -121,27 +149,12 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
         if (!state.is(ModBlocks.OXYGENATOR_BLOCK.get()))
             return;
         var radius = blockEntity.radius;
-//        var corner1 = pos.offset(radius, radius, radius);
-//        var corner2 = pos.offset(-radius, -radius, -radius);
         var ticks = blockEntity.lazyTickCounter;
         if (ticks % 10 != 0)
             return;
-
-//        var newstate = state
-//                .setValue(OxygenatorBlock.ACTIVE, Math.abs(blockEntity.speed) >= 4f)
-//                .setValue(OxygenatorBlock.RADIUS, Math.clamp((int)(blockEntity.speed / 2f),5, 30));
-
         blockEntity.enabled = (Math.abs(blockEntity.speed) >= 4f) && !blockEntity.overStressed;
-        blockEntity.radius = Math.clamp((int)(Math.abs(blockEntity.speed) / 2f), 4, 32);
-
-
-//        level.getNearbyPlayers(TargetingConditions.DEFAULT, null, AABB.ofSize(
-//                blockEntity.worldPosition.getCenter(), radius, radius, radius
-//        )).forEach((player) -> {
-//            if (blockEntity.enabled && player.position().distanceTo(pos.getCenter()) < radius) {
-//                player.setData(ModAttatchments.LAST_OXYGENATED, 0f);
-//            }
-//        });
+        var r = Math.pow(Math.abs(blockEntity.speed) * (3f / 4f) / Math.PI, 1f/3f);
+        blockEntity.radius = Math.clamp(Math.round(Math.abs(r * SPEED_INPUT_MULTIPLIER)), 2, 16);
         level.players().forEach(p -> {
             SubLevelAccess subLevel = SableCompanion.INSTANCE.getContaining(blockEntity.getLevel(), blockEntity.worldPosition);
             Vec3 realPos;
@@ -160,6 +173,12 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
             }
         });
 
+    }
+    public int getRadius() {
+        return radius;
+    }
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public static class Renderer extends ShaftRenderer<OxygenatorBlockEntity> {
@@ -188,7 +207,8 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
             var renderTypeShaderPack = RenderType.CompositeState.builder()
                     .setShaderState(BUBBLE_SHADER_SHARD)
                     .setCullState(RenderStateShard.CullStateShard.NO_CULL)
-                    .setTransparencyState(RenderStateShard.GLINT_TRANSPARENCY)
+                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                    .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
                     .setLayeringState(RenderStateShard.LayeringStateShard.VIEW_OFFSET_Z_LAYERING)
                     .setWriteMaskState(RenderStateShard.WriteMaskStateShard.COLOR_WRITE)
                     .createCompositeState(true);
@@ -204,44 +224,13 @@ public class OxygenatorBlockEntity extends KineticBlockEntity {
 
         @Override
         public void renderSafe(OxygenatorBlockEntity oxygenatorBlockEntity, float v, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int i1) {
-
             var state = oxygenatorBlockEntity.getBlockState();
             if (!state.is(ModBlocks.OXYGENATOR_BLOCK))
                 return;
-            var mesh = new Sphere(oxygenatorBlockEntity.radius, 32, 32);
-            var cam = Minecraft.getInstance().gameRenderer.getMainCamera();
-            var type = type(IrisIntegration.isShaderPackEnabled());
             var shaftBuf = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
-            var buf = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
-//            ShaftRenderer.renderRotatingKineticBlock(oxygenatorBlockEntity, state, poseStack, shaftBuf, i);
-            VeilRenderSystem.setShader(Deepspace.path("bubble"));
-            var enabled = oxygenatorBlockEntity.enabled;
-            var TIME_UNIFORM = VeilRenderSystem.getShader().getUniform("Time");
-            TIME_UNIFORM.setFloat((oxygenatorBlockEntity.level.getDayTime() + v) / 2f);
             var fakeShaft = AllBlocks.SHAFT.getDefaultState().setValue(BlockStateProperties.AXIS, state.getValue(BlockStateProperties.AXIS));
             KineticBlockEntityRenderer.renderRotatingKineticBlock(oxygenatorBlockEntity, fakeShaft, poseStack, shaftBuf, i);
-
             getRenderType(oxygenatorBlockEntity, fakeShaft).draw(shaftBuf.buildOrThrow());
-            if (!enabled)
-                return;
-            RenderSystem.setShaderTexture(0, Deepspace.path("textures/atmosphere.png"));
-            poseStack.pushPose();
-
-            SubLevelAccess levelAccess = SableCompanion.INSTANCE.getContaining(oxygenatorBlockEntity.getLevel(), oxygenatorBlockEntity.worldPosition);
-            if (levelAccess != null){
-                Pose3dc pose = levelAccess.logicalPose();
-                mesh.render(poseStack, buf, pose.transformPosition(oxygenatorBlockEntity.worldPosition.getCenter()).toVector3f().sub(cam.getPosition().toVector3f()), new Quaternionf());
-            }
-            else{
-                mesh.render(poseStack, buf, oxygenatorBlockEntity.worldPosition.getCenter().toVector3f().sub(cam.getPosition().toVector3f()), new Quaternionf());
-            }
-
-            type.draw(buf.buildOrThrow());
-
-//            super.renderSafe(oxygenatorBlockEntity, v, poseStack, multiBufferSource, i, i1);
-            poseStack.popPose();
-
-
         }
 
         @Override

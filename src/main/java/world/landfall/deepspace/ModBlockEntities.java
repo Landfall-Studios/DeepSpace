@@ -12,6 +12,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import world.landfall.deepspace.blockentity.GroundSolarPanelBlockEntity;
 import world.landfall.deepspace.blockentity.HeatPipeBlockEntity;
+import world.landfall.deepspace.blockentity.KeplerometerBlockEntity;
 import world.landfall.deepspace.blockentity.OxygenatorBlockEntity;
 
 import java.util.function.Supplier;
@@ -26,6 +27,9 @@ public class ModBlockEntities {
     );
     public static final Supplier<BlockEntityType<?>> HEAT_PIPE_BLOCK_ENTITY_TYPE = BLOCK_ENTITIES.register(
             "heat_pipe_block_entity", () -> HeatPipeBlockEntity.TYPE
+    );
+    public static final Supplier<BlockEntityType<?>> KEPLEROMETER_BLOCK_ENTITY_TYPE = BLOCK_ENTITIES.register(
+            "keplerometer_block_entity", () -> KeplerometerBlockEntity.TYPE
     );
 
     public static void register(IEventBus eventBus) {

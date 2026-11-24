@@ -1,0 +1,36 @@
+{
+  "render_style": "CUBE",
+  "init_modules": [
+
+  ],
+  "update_modules": [
+
+  ],
+  "collision_modules": [
+
+  ],
+  "forces": [
+
+  ],
+  "render_modules": [
+    {
+      "module": "color",
+      "gradient": {
+        "color": [
+          100,
+          100,
+          100,
+          100
+        ]
+      },
+      "interpolant": "q.agePercent"
+    }
+  ],
+  "sprite_data": {
+    "sprite": "minecraft:textures/block/stone.png"
+  },
+  "additive": false,
+  "should_collide": true,
+  "face_velocity": true,
+  "velocity_stretch_factor": 1.0
+}

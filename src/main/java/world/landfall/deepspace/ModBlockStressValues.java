@@ -9,6 +9,6 @@ import java.util.function.DoubleSupplier;
 
 public class ModBlockStressValues {
     public static void register() {
-        BlockStressValues.IMPACTS.register(ModBlocks.OXYGENATOR_BLOCK.get(), () -> 32);
+        BlockStressValues.IMPACTS.register(ModBlocks.OXYGENATOR_BLOCK.get(), () -> 64);
     }
 }

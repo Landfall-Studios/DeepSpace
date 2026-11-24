@@ -59,7 +59,7 @@ public class PlanetDecorationsRenderer {
         for (var x : PlanetRegistry.getAllPlanets()) {
             var decorations = x.getDecorations();
             if (decorations.isEmpty()) return;
-            for (var decoration : decorations.get()) {
+            for (var decoration : decorations) {
                 if (decoration.type().equals(Planet.PlanetDecoration.ATMOSPHERE))
                     ATMOSPHERE_MESHES.put(x.getId(), new Atmosphere(
                             new Cube(x.getBoundingBoxMin().toVector3f(), x.getBoundingBoxMax().toVector3f(), decoration.scale(), true),
@@ -99,7 +99,10 @@ public class PlanetDecorationsRenderer {
                 .setShaderState(ATMOSPHERE_RENDER_TYPE)
                 .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                 .setCullState(RenderStateShard.CullStateShard.NO_CULL)
-                .setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
+                .setOutputState(RenderStateShard.MAIN_TARGET)
+                .setLayeringState(RenderStateShard.LayeringStateShard.POLYGON_OFFSET_LAYERING)
+                .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+                .setWriteMaskState(RenderStateShard.WriteMaskStateShard.COLOR_WRITE)
                 .createCompositeState(true);
         return RenderType.create(
                 "atmosphere",

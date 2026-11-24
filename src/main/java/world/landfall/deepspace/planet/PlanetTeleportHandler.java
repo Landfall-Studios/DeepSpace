@@ -27,6 +27,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import world.landfall.deepspace.Deepspace;
+import world.landfall.deepspace.Util;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -66,16 +67,18 @@ public class PlanetTeleportHandler {
         var dimension = level.dimension().location();
         var height = level.getMaxBuildHeight();
 
-        if (player.position().y > height + SPACE_DISTANCE_FROM_CEILING && planet != null) {
-            var sublevelContainer = SubLevelContainer.getContainer(level);
-            var isTrackingSublevel = new AtomicBoolean(false);
-            sublevelContainer.getAllSubLevels().forEach(s -> {
-                if (s instanceof ServerSubLevel subLevel) {
-                    if (subLevel.getTrackingPlayers().contains(player.getUUID()))
-                        isTrackingSublevel.set(true);
-                }
-            });
-            if (isTrackingSublevel.get()) return;
+        if (player.position().y > height + SPACE_DISTANCE_FROM_CEILING && planet != null && false) { // No longer allowing players to exit on their own, needs a sublevel
+//            var sublevelContainer = SubLevelContainer.getContainer(level);
+//            var isTrackingSublevel = new AtomicBoolean(false);
+//            sublevelContainer.getAllSubLevels().forEach(s -> {
+//                if (s instanceof ServerSubLevel subLevel) {
+//                    if (subLevel.getTrackingPlayers().contains(player.getUUID()))
+//                        isTrackingSublevel.set(true);
+//                }
+//            });
+//            if (isTrackingSublevel.get()) return;
+            if (player instanceof ServerPlayer serverPlayer && Util.isPlayerBeingTracked(serverPlayer, level))
+                return;
             LOGGER.info("Teleporting player {} to planet {}", player.getDisplayName().getString(), planet.getName());
             var pos = getSafePlanetExitLocation(planet);
             player.teleportTo(

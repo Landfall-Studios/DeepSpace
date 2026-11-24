@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "deepspace:block/selenic_slab"
+    },
+    "type=double": {
+      "model": "deepspace:block/selenic_planks"
+    },
+    "type=top": {
+      "model": "deepspace:block/selenic_slab_top"
+    }
+  }
+}

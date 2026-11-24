@@ -22,6 +22,7 @@ public class SpaceRenderSystem {
         SpaceSkyRenderer.init();
         SunRenderer.init();
         PlanetDecorationsRenderer.init();
+        OxygenatorRenderer.init();
 
         VeilEventPlatform.INSTANCE.preVeilPostProcessing((location, pipeline, ctx) -> {
 

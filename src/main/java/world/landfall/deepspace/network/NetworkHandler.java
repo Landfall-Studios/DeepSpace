@@ -27,6 +27,19 @@ public class NetworkHandler {
             PlanetSyncPacket.STREAM_CODEC,
             PlanetSyncPacket::handle
         );
+
+        registrar.playToServer(
+                KeplerometerSublevelDataPacket.Serverbound.TYPE,
+                KeplerometerSublevelDataPacket.Serverbound.STREAM_CODEC,
+                KeplerometerSublevelDataPacket.Serverbound::handle
+        );
+
+        registrar.playToClient(
+                KeplerometerSublevelDataPacket.Clientbound.TYPE,
+                KeplerometerSublevelDataPacket.Clientbound.STREAM_CODEC,
+                KeplerometerSublevelDataPacket.Clientbound::handle
+        );
+
         registrar.playToServer(
                 JetpackPacket.RocketForward.TYPE,
                 JetpackPacket.RocketForward.STREAM_CODEC,

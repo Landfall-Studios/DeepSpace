@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
 import foundry.veil.api.event.VeilRenderLevelStageEvent;
 
+import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -32,8 +33,8 @@ import world.landfall.deepspace.render.shapes.Sphere;
 public class SpaceSkyRenderer {
     private static final Sphere skySphere = new Sphere(30, 32, 64);
     private static final Cube skyCube = new Cube(
-            new Vector3f(-1, -1, -1),
-            new Vector3f(1, 1, 1),
+            new Vector3f(-100, -100, -100),
+            new Vector3f(100, 100, 100),
             1f,
             false,
             true
@@ -82,6 +83,7 @@ public class SpaceSkyRenderer {
             return;
         var in_sarrion = dim.equals(ResourceLocation.parse("deepspace:sarrion"));
         RenderType renderType = skyShaderType(SPACE_SKY_TEXTURE);
+        matrixStack.matrixPush();
         var poseStack = matrixStack.toPoseStack();
         poseStack.pushPose();
         skyCube.render(poseStack, builder, new Vector3f(), new Quaternionf());
@@ -97,6 +99,7 @@ public class SpaceSkyRenderer {
         //VeilRenderType.endGateway().draw(builder.buildOrThrow());
         bufferSource.endBatch(renderType);
         poseStack.popPose();
+        matrixStack.matrixPop();
 
     }
     public static void init() {
