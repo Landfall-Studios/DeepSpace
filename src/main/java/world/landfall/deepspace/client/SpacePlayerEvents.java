@@ -239,7 +239,7 @@ public class SpacePlayerEvents {
                 Planet nearest = nearestPlanet(player.position());
                 if (nearest != null && nearest.getCenter().distanceTo(player.position()) < 1000 && !player.getAbilities().flying && !isBeingTracked)
                     newVelocity.add(
-                            nearest.getCenter().subtract(player.position()).toVector3f().normalize().mul(0.008f)
+                            nearest.getCenter().subtract(player.position()).toVector3f().normalize().mul(0.035f)
                     );
                 player.addDeltaMovement(new Vec3(newVelocity));
             }

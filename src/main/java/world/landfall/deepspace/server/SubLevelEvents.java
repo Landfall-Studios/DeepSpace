@@ -193,6 +193,11 @@ public class SubLevelEvents {
                     var newLevel = server.getLevel(ResourceKey.create(Registries.DIMENSION, Deepspace.path("space")));
                     HashMap<UUID, Vec3> RELATIVE_PLAYER_POSITIONS = new HashMap<>();
 
+                    SubLevelWarper.warpConnectedSubLevels(s, newLevel, new Vector3d(
+                            exitPos.x,
+                            exitPos.y,
+                            exitPos.z
+                    ));
                     level.getPlayers(player -> new BoundingBox3d(s.boundingBox()).expand(20).contains(new Vector3d(
                             player.position().x,
                             player.position().y,
@@ -202,11 +207,6 @@ public class SubLevelEvents {
                         var relativePos = pose.transformPositionInverse(player.position());
                         RELATIVE_PLAYER_POSITIONS.put(player.getUUID(), relativePos);
                     });
-                    SubLevelWarper.warpConnectedSubLevels(s, newLevel, new Vector3d(
-                            exitPos.x,
-                            exitPos.y,
-                            exitPos.z
-                    ));
 
 
                     var newSubLevels = List.copyOf(spaceContainer.getAllSubLevels());
